@@ -87,10 +87,7 @@ function renderInventory() {
         row.innerHTML = `
             <td style="font-weight: 700; color: var(--text-primary);">#${item.id}</td>
             <td>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:30px; height:30px; border-radius:50%; background:var(--bg-light); display:flex; align-items:center; justify-content:center; color:var(--primary);">
-                        <i class="fas ${getProductIcon(item.product)}"></i>
-                    </div>
+                <div style="display:flex; align-items:center; gap:8px; font-weight:600; color:var(--text-primary);">
                     ${item.product}
                 </div>
             </td>
@@ -113,8 +110,8 @@ function renderInventory() {
                     <button class="action-btn" onclick="event.stopPropagation(); showQR('${item.id}')" style="background:none; border:none; padding:8px; cursor:pointer;" title="QR Code">
                         <i class="fas fa-qrcode" style="color:var(--primary);"></i>
                     </button>
-                    <button class="action-btn" onclick="event.stopPropagation(); dispatchAI('${item.id}')" style="background:none; border:none; padding:8px; cursor:pointer;" title="Dispatch AI Analysis" ${item.isAnalyzing ? 'disabled' : ''}>
-                         ${item.isAnalyzing ? '<i class="fas fa-circle-notch fa-spin" style="color:var(--primary);"></i>' : '<i class="fas fa-truck-fast" style="color:var(--primary-accent);"></i>'}
+                    <button class="action-btn" onclick="event.stopPropagation(); confirmDispatch('${item.id}')" style="background:none; border:none; padding:8px; cursor:pointer;" title="Execute Dispatch">
+                        <i class="fas fa-truck-fast" style="color:var(--primary-accent);"></i>
                     </button>
                 </div>
             </td>
@@ -406,14 +403,28 @@ window.runDispatchSimulator = async () => {
         const d1 = await r1.json();
         const d2 = await r2.json();
 
+        // Dynamic Revenue based on Qty and Risk
+        const qtyVal = parseInt(item.qty);
+        const baseRev = qtyVal * (item.product === 'Tomato' ? 100 : (item.product === 'Grapes' ? 300 : 80));
+        const rev1 = baseRev * (1 - (item.risk / 500));
+        const rev2 = baseRev * (1 - (d2.remaining_days < 3 ? 0.6 : 0.2));
+
         results.innerHTML = `
-            <div class="simulator-box" style="border-color:var(--primary);">
-                <div style="font-size:0.75rem; font-weight:800; color:var(--primary);">SCENARIO A: NOW</div>
-                <div style="font-size:0.85rem; font-weight:700;">Risk: ${d1.spoilage_risk} | Revenue: Full</div>
+            <div class="simulator-box" style="border-color:var(--primary); background:white;">
+                <div style="font-size:0.75rem; font-weight:800; color:var(--primary); margin-bottom:5px;">SCENARIO A: DISPATCH NOW</div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.8rem;">Risk: ${d1.spoilage_risk}</span>
+                    <span style="font-weight:800; color:var(--primary);">₹${Math.round(rev1).toLocaleString()}</span>
+                </div>
+                <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:5px;">Confidence: ${d1.confidence * 100}%</div>
             </div>
-            <div class="simulator-box" style="border-color:var(--danger); margin-top:10px;">
-                <div style="font-size:0.75rem; font-weight:800; color:var(--danger);">SCENARIO B: DELAY</div>
-                <div style="font-size:0.85rem; font-weight:700;">Risk: ${d2.spoilage_risk} | Projected Loss High</div>
+            <div class="simulator-box" style="border-color:var(--danger); margin-top:10px; background:white;">
+                <div style="font-size:0.75rem; font-weight:800; color:var(--danger); margin-bottom:5px;">SCENARIO B: DELAY 5 DAYS</div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.8rem;">Risk: ${d2.spoilage_risk}</span>
+                    <span style="font-weight:800; color:var(--danger);">₹${Math.round(rev2).toLocaleString()}</span>
+                </div>
+                <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:5px;">Projected Loss: ₹${Math.round(rev1 - rev2).toLocaleString()}</div>
             </div>
         `;
     } catch (e) {
@@ -465,8 +476,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function confirmDispatch(id) {
+    const item = inventoryData.find(d => d.id === id);
+    if (!item) return;
+
+    if (confirm(`Are you sure you want to execute dispatch for Batch #${id}?`)) {
+        inventoryData = inventoryData.map(b =>
+            b.id === id ? { ...b, status: 'Dispatched', risk: 0 } : b
+        );
+        applyFilters();
+        alert(`Successfully dispatched ${item.product} (Batch #${id}). System tracking active.`);
+        if (document.getElementById('detailModal')) closeModal('detailModal');
+    }
+}
+
+window.confirmDispatch = confirmDispatch;
+
 function getRiskColor(risk) { return risk > 70 ? '#D32F2F' : (risk > 30 ? '#F9A825' : '#2E7D32'); }
-function getProductIcon(p) { return p === 'Tomato' ? 'fa-apple-whole' : (p === 'Onion' ? 'fa-lemon' : 'fa-carrot'); }
+function getProductColor(p) {
+    const colorMap = {
+        'Tomato': '#e11d48', // Red
+        'Onion': '#a855f7',  // Purple
+        'Potato': '#92400e', // Brown
+        'Grapes': '#10b981', // Green
+        'Apples': '#ef4444'  // Red
+    };
+    return colorMap[p] || 'var(--primary)';
+}
+
+function getProductIcon(p) {
+    const iconMap = {
+        'Tomato': 'fa-apple-whole',
+        'Onion': 'fa-lemon',
+        'Potato': 'fa-egg',
+        'Grapes': 'fa-leaf',
+        'Apples': 'fa-apple-whole'
+    };
+    return iconMap[p] || 'fa-box';
+}
 function formatDate(d) { return new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); }
 window.showQR = (id) => {
     document.getElementById('qrTitle').innerText = `Batch #${id}`;
