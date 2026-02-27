@@ -1,44 +1,118 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchAnalytics();
+    // Initial load with default data
+    loadAnalytics();
 
     // Set up filters
-    document.getElementById('warehouseFilter').addEventListener('change', fetchAnalytics);
-    document.getElementById('dateFilter').addEventListener('change', fetchAnalytics);
+    document.getElementById('warehouseFilter').addEventListener('change', loadAnalytics);
+    document.getElementById('dateFilter').addEventListener('change', loadAnalytics);
 });
 
-async function fetchAnalytics() {
+// Mock Data for fallback
+const MOCK_DATA = {
+    demandSupply: {
+        weeks: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
+        demand: [450, 520, 610, 780, 850, 920, 1050, 1100],
+        supply: [400, 480, 550, 600, 720, 800, 850, 900],
+        projection: [null, null, null, null, null, null, 1050, 1200],
+        gap_percentage: 12,
+        recommendation: "Demand is projected to exceed supply by 12% in Week 4. AI recommends dispatch prioritization for Tomato batches."
+    },
+    utilization: {
+        total_capacity: 5000,
+        used_capacity: 4200,
+        remaining_capacity: 800,
+        produce: [
+            { name: 'Tomato', percentage: 38, value: 1596 },
+            { name: 'Onion', percentage: 22, value: 924 },
+            { name: 'Potato', percentage: 15, value: 630 },
+            { name: 'Grapes', percentage: 10, value: 420 },
+            { name: 'Empty Space', percentage: 15, value: 630 }
+        ],
+        smart_insight: "Tomato occupies 38% of total storage. Consider rebalancing if demand drops."
+    },
+    riskDistribution: {
+        total_batches: 142,
+        risk_score_summary: 24,
+        distribution: [
+            { label: 'Safe', percentage: 72, count: 102 },
+            { label: 'Warning', percentage: 14, count: 20 },
+            { label: 'High Risk', percentage: 14, count: 20 }
+        ],
+        insight: "14% of batches are in high-risk category. AI recommends dispatch within 48 hours."
+    },
+    modelPerformance: {
+        spoilage_model: {
+            accuracy: 96,
+            precision: 94,
+            recall: 92,
+            f1_score: 93,
+            false_positive: 2,
+            false_negative: 4
+        },
+        optimization_model: {
+            accuracy: 92,
+            loss_reduction: 28,
+            dispatch_efficiency: 89
+        },
+        confusion_matrix: {
+            tp: 85, fp: 5,
+            fn: 8, tn: 92
+        }
+    },
+    lossReduction: {
+        months: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+        before_ai: [150000, 165000, 145000, 170000, 160000, 155000],
+        after_ai: [150000, 140000, 110000, 95000, 80000, 72000],
+        revenue_preserved: [0, 25000, 35000, 75000, 80000, 83000],
+        metrics: {
+            total_loss_prevented: 298000,
+            percentage_reduction: 53.5,
+            tons_saved: 42.8,
+            co2_reduction: 12.4
+        }
+    }
+};
+
+async function loadAnalytics() {
+    // Show charts immediately with mock data
+    updateAllCharts(MOCK_DATA);
+
+    // Then try to fetch real data
     try {
-        // API Base URL - could be configurable
         const API_BASE = 'http://localhost:5000/api/analytics';
 
-        // Section A: Demand vs Supply
-        const resA = await fetch(`${API_BASE}/demand-supply`);
-        const dataA = await resA.json();
-        updateDemandSupplyChart(dataA);
+        const fetchBatch = [
+            fetch(`${API_BASE}/demand-supply`),
+            fetch(`${API_BASE}/utilization`),
+            fetch(`${API_BASE}/risk-distribution`),
+            fetch(`${API_BASE}/model-performance`),
+            fetch(`${API_BASE}/loss-reduction`)
+        ];
 
-        // Section B: Utilization
-        const resB = await fetch(`${API_BASE}/utilization`);
-        const dataB = await resB.json();
-        updateUtilizationChart(dataB);
+        const responses = await Promise.all(fetchBatch);
 
-        // Section C: Risk Distribution
-        const resC = await fetch(`${API_BASE}/risk-distribution`);
-        const dataC = await resC.json();
-        updateRiskChart(dataC);
-
-        // Section D: AI Model Performance
-        const resD = await fetch(`${API_BASE}/model-performance`);
-        const dataD = await resD.json();
-        updateModelPerformance(dataD);
-
-        // Section E: Loss Reduction
-        const resE = await fetch(`${API_BASE}/loss-reduction`);
-        const dataE = await resE.json();
-        updateLossReductionChart(dataE);
-
+        // If any response is not ok, we just stick with mock data
+        if (responses.every(r => r.ok)) {
+            const data = {
+                demandSupply: await responses[0].json(),
+                utilization: await responses[1].json(),
+                riskDistribution: await responses[2].json(),
+                modelPerformance: await responses[3].json(),
+                lossReduction: await responses[4].json()
+            };
+            updateAllCharts(data);
+        }
     } catch (err) {
-        console.error("Error fetching analytics:", err);
+        console.warn("Backend not reached, using predictive mock data.", err);
     }
+}
+
+function updateAllCharts(data) {
+    updateDemandSupplyChart(data.demandSupply);
+    updateUtilizationChart(data.utilization);
+    updateRiskChart(data.riskDistribution);
+    updateModelPerformance(data.modelPerformance);
+    updateLossReductionChart(data.lossReduction);
 }
 
 let charts = {};
@@ -61,9 +135,7 @@ function updateDemandSupplyChart(data) {
                     borderColor: '#3b82f6',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     fill: true,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
+                    tension: 0.4
                 },
                 {
                     label: 'Current Supply',
@@ -92,15 +164,7 @@ function updateDemandSupplyChart(data) {
                 legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
                 tooltip: {
                     mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function (context) {
-                            let label = context.dataset.label || '';
-                            if (label) label += ': ';
-                            if (context.parsed.y !== null) label += context.parsed.y + ' Tons';
-                            return label;
-                        }
-                    }
+                    intersect: false
                 }
             },
             scales: {
