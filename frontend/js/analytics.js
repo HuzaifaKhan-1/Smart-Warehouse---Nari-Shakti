@@ -1,8 +1,47 @@
 /**
- * AgriFresh Analytics Logic (Light Theme)
+ * AgriFresh Analytics Logic
+ * Enhanced for Enterprise AI Intelligence Dashboard
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Shared chart options for consistent look
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                align: 'end',
+                labels: {
+                    color: '#546E7A',
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    font: { weight: '600', size: 11 }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#1B5E20',
+                bodyColor: '#37474F',
+                borderColor: '#E8F5E9',
+                borderWidth: 1,
+                padding: 12,
+                boxPadding: 6,
+                usePointStyle: true
+            }
+        },
+        scales: {
+            y: {
+                grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false },
+                ticks: { color: '#90A4AE', font: { size: 10 } }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { color: '#90A4AE', font: { size: 10 } }
+            }
+        }
+    };
+
     // 1. Demand vs Supply Chart
     const ctxDemand = document.getElementById('demandSupplyChart').getContext('2d');
     new Chart(ctxDemand, {
@@ -17,7 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     backgroundColor: 'rgba(46, 125, 50, 0.05)',
                     fill: true,
                     tension: 0.4,
-                    borderWidth: 3
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#2E7D32',
+                    pointBorderWidth: 2
                 },
                 {
                     label: 'Available Supply',
@@ -25,24 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     borderColor: '#F9A825',
                     borderDash: [5, 5],
                     tension: 0.4,
-                    fill: false
+                    fill: false,
+                    pointRadius: 0
                 }
             ]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { color: '#37474F', font: { weight: 'bold' } }
-                }
-            },
-            scales: {
-                y: { grid: { color: '#E8F5E9' }, ticks: { color: '#546E7A' } },
-                x: { grid: { display: false }, ticks: { color: '#546E7A' } }
-            }
-        }
+        options: commonOptions
     });
 
     // 2. Capacity Utilization Pie
@@ -50,24 +81,75 @@ document.addEventListener('DOMContentLoaded', () => {
     new Chart(ctxUtil, {
         type: 'doughnut',
         data: {
-            labels: ['Tomato', 'Onion', 'Potato', 'Grapes', 'Available'],
+            labels: ['Tomato', 'Onion', 'Potato', 'Mango', 'Available'],
             datasets: [{
-                data: [38, 22, 15, 10, 15],
+                data: [35, 25, 15, 10, 15],
                 backgroundColor: ['#2E7D32', '#66BB6A', '#FFF176', '#81C784', '#F5F5F5'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
+                borderWidth: 3,
+                borderColor: '#ffffff',
+                hoverOffset: 15
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            ...commonOptions,
             plugins: {
+                ...commonOptions.plugins,
                 legend: {
                     position: 'bottom',
-                    labels: { color: '#37474F', padding: 20 }
+                    labels: { color: '#37474F', padding: 20, usePointStyle: true }
                 }
             },
-            cutout: '70%'
+            cutout: '75%'
+        }
+    });
+
+    // 3. Loss Reduction Timeline (New Chart)
+    const ctxLoss = document.getElementById('lossReductionChart').getContext('2d');
+    new Chart(ctxLoss, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [
+                {
+                    label: 'Loss Before AI (%)',
+                    data: [28, 26, 30, 29, 27, 28],
+                    backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                    borderColor: '#D12F2F',
+                    borderWidth: 1,
+                    borderRadius: 5
+                },
+                {
+                    label: 'Loss After AI (%)',
+                    data: [12, 10, 8, 7, 5, 4],
+                    backgroundColor: '#2E7D32',
+                    borderRadius: 5
+                },
+                {
+                    label: 'Revenue Saved (₹)',
+                    type: 'line',
+                    data: [15, 18, 22, 28, 35, 42],
+                    borderColor: '#0288D1',
+                    borderWidth: 3,
+                    yAxisID: 'y1',
+                    pointRadius: 5,
+                    pointBackgroundColor: '#fff',
+                    tension: 0.5
+                }
+            ]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Waste Percentage (%)', font: { size: 10 } }
+                },
+                y1: {
+                    position: 'right',
+                    grid: { display: false },
+                    title: { display: true, text: 'Revenue Saved (Lakhs)', font: { size: 10 } }
+                }
+            }
         }
     });
 });
