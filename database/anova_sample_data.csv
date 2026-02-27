@@ -1,0 +1,31 @@
+Setting,Sample_ID,Shelf_Life_Days,Weight_Loss_Percentage
+Room Temperature (25C),R1,12,8.5
+Room Temperature (25C),R2,14,7.9
+Room Temperature (25C),R3,11,9.2
+Room Temperature (25C),R4,13,8.1
+Room Temperature (25C),R5,12,8.4
+Room Temperature (25C),R6,11,9.0
+Room Temperature (25C),R7,14,7.8
+Room Temperature (25C),R8,13,8.3
+Room Temperature (25C),R9,12,8.6
+Room Temperature (25C),R10,12,8.5
+Standard Cold Storage (10C),S1,28,4.2
+Standard Cold Storage (10C),S2,30,4.0
+Standard Cold Storage (10C),S3,27,4.5
+Standard Cold Storage (10C),S4,29,4.1
+Standard Cold Storage (10C),S5,31,3.8
+Standard Cold Storage (10C),S6,28,4.3
+Standard Cold Storage (10C),S7,32,3.7
+Standard Cold Storage (10C),S8,29,4.2
+Standard Cold Storage (10C),S9,30,4.1
+Standard Cold Storage (10C),S10,27,4.4
+AI Optimized Storage (4C),A1,42,1.8
+AI Optimized Storage (4C),A2,45,1.5
+AI Optimized Storage (4C),A3,41,1.9
+AI Optimized Storage (4C),A4,44,1.6
+AI Optimized Storage (4C),A5,46,1.4
+AI Optimized Storage (4C),A6,43,1.7
+AI Optimized Storage (4C),A7,47,1.3
+AI Optimized Storage (4C),A8,44,1.6
+AI Optimized Storage (4C),A9,45,1.5
+AI Optimized Storage (4C),A10,42,1.8
