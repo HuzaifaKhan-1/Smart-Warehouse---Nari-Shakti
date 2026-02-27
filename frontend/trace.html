@@ -7,6 +7,9 @@
     <title>Enterprise Traceability | AgriFresh AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <!-- Leaflet Maps Integration -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
             --timeline-line: rgba(46, 125, 50, 0.1);
@@ -469,12 +472,17 @@
 
             <!-- Feature 2: VERTICAL LIFECYCLE TIMELINE -->
             <div class="glass-panel" style="padding: 40px; border-radius: 24px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="font-weight: 900; font-size: 1.5rem; color: var(--primary);">Lifecycle Provenance</h3>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Tracking ID:
                             <span id="trackingId" style="color: var(--text-primary);">BT-NSK-4922110</span></span>
                     </div>
+                </div>
+
+                <!-- Traceability Track Map -->
+                <div id="map"
+                    style="height: 350px; width: 100%; border-radius: 20px; margin-bottom: 30px; border: 1px solid var(--card-border); box-shadow: var(--shadow-soft); z-index: 1;">
                 </div>
 
                 <div id="timelineContainer" class="timeline-container">
@@ -519,6 +527,11 @@
                     { stage: "AI Prediction", time: "Processed Mar 02, 2026", status: "pending", isAi: true, meta: [["fa-brain", "Model: SpoilageV2_RL"], ["fa-calendar-check", "Shelf Life: 12 Days (Est)"], ["fa-chart-line-up", "Quality Retention: 94%"], ["fa-bullseye", "Best Exit: Local Retail"]] },
                     { stage: "Dispatch", time: "Awaiting AI Signal", status: "pending", meta: [["fa-truck-ramp-box", "Logistics Allocated"], ["fa-file-invoice", "Transit Permit Ready"]] },
                     { stage: "Market Delivery", time: "Final Milestone", status: "pending", meta: [["fa-shop", "Destination: APMC Vashi"], ["fa-handshake-angle", "Merchant Assigned"]] }
+                ],
+                route: [
+                    { name: "Farm (Sangli)", coords: [16.8524, 74.5815] },
+                    { name: "Transit Hub", coords: [18.5204, 73.8567] },
+                    { name: "Warehouse (Nashik)", coords: [19.9975, 73.7898] }
                 ]
             },
             "AF-431": {
@@ -550,6 +563,11 @@
                     { stage: "AI Prediction", time: "Processed Feb 17, 2026", status: "completed", isAi: true, meta: [["fa-brain", "Model: OnionLife v1"], ["fa-shipping-fast", "Dispatch Suggested: NOW"]] },
                     { stage: "Dispatch", time: "Feb 20, 2026 • 11:00 AM", status: "active", meta: [["fa-truck-ramp-box", "Loading for Vashi APMC"], ["fa-file-invoice", "Interstate Permit Active"]] },
                     { stage: "Market Delivery", time: "Projected Feb 21, 2026", status: "pending", meta: [["fa-shop", "Vashi Main Market"]] }
+                ],
+                route: [
+                    { name: "Farm (Pune)", coords: [18.5204, 73.8567] },
+                    { name: "Transit", coords: [18.8204, 73.1567] },
+                    { name: "Vashi Market", coords: [19.0760, 72.8777] }
                 ]
             },
             "AF-992": {
@@ -581,6 +599,11 @@
                     { stage: "AI Prediction", time: "Analyzing...", status: "active", isAi: true, meta: [["fa-brain", "Model: FruitExpert RL"], ["fa-camera", "Image Processing..."]] },
                     { stage: "Dispatch", time: "Pending Analysis", status: "pending", meta: [["fa-truck-fast", "Air Freight Assigned"]] },
                     { stage: "Market Delivery", time: "Dubai International Market", status: "pending", meta: [["fa-plane", "Awaiting Clearance"]] }
+                ],
+                route: [
+                    { name: "Farm (Ratnagiri)", coords: [16.9902, 73.3120] },
+                    { name: "Sorting Center", coords: [17.5000, 73.5000] },
+                    { name: "International Port", coords: [18.9500, 72.9500] }
                 ]
             },
             "AF-120": {
@@ -612,9 +635,63 @@
                     { stage: "AI Prediction", time: "Queued", status: "pending", isAi: true, meta: [] },
                     { stage: "Dispatch", time: "Future", status: "pending", meta: [] },
                     { stage: "Market Delivery", time: "Projected 10 Days", status: "pending", meta: [] }
+                ],
+                route: [
+                    { name: "Farm (Indore)", coords: [22.7196, 75.8577] },
+                    { name: "Interstate Checkpoint", coords: [21.0000, 74.5000] },
+                    { name: "Nashik Hub", coords: [19.9975, 73.7898] }
                 ]
             }
         };
+
+        /**
+         * FEATURE 6: MAP LOGIC
+         */
+        let map;
+        let routeLayer;
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map').setView([19.0760, 72.8777], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+        }
+
+        function updateMap(routeData) {
+            initMap();
+            if (routeLayer) map.removeLayer(routeLayer);
+
+            const coords = routeData.map(p => p.coords);
+            const markers = [];
+
+            // Add dots for each location
+            routeData.forEach((p, i) => {
+                const marker = L.circleMarker(p.coords, {
+                    radius: 8,
+                    fillColor: i === routeData.length - 1 ? "#F9A825" : "#2E7D32",
+                    color: "white",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 1
+                })
+                    .bindPopup(`<b>${p.name}</b>`)
+                    .addTo(map);
+                markers.push(marker);
+            });
+
+            // Draw line
+            routeLayer = L.polyline(coords, {
+                color: '#2E7D32',
+                weight: 4,
+                dashArray: '10, 10',
+                opacity: 0.7
+            }).addTo(map);
+
+            // Zoom to fit
+            const group = new L.featureGroup(markers.concat(routeLayer));
+            map.fitBounds(group.getBounds().pad(0.3));
+        }
 
         /**
          * FEATURE 3: DYNAMIC UI UPDATE (CORE LOGIC)
@@ -622,6 +699,11 @@
         function loadBatch(batchId) {
             const data = batchData[batchId];
             if (!data) return;
+
+            // Trigger Map Update
+            if (data.route) {
+                updateMap(data.route);
+            }
 
             // Update Header & Summary
             document.getElementById('displayBatchId').innerText = `#${data.batch_id}`;
