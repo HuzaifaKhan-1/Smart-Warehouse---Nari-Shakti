@@ -142,6 +142,28 @@ export const WarehouseHeatmap = {
         const content = document.getElementById('modalBody');
         if (!modal || !content) return;
 
+        // Dynamic badge logic based on risk
+        const tempStatus = zone.risk > 50 ?
+            { text: '⚠️ Abnormal Heat Detected', color: 'var(--danger)' } :
+            { text: '✅ Optimal for current inventory', color: 'var(--primary)' };
+
+        const humStatus = zone.humidity > 75 ?
+            { text: '⚠️ High Moisture Warning', color: 'var(--warning)' } :
+            { text: '✅ Stable conditions detected', color: 'var(--primary)' };
+
+        // Generate dynamic batches based on zone ID
+        const batchTypes = ['Tomato', 'Onion', 'Potato', 'Grapes', 'Apples'];
+        const zoneBatches = [];
+        for (let i = 0; i < 3; i++) {
+            const batchRisk = i === 0 ? zone.risk : Math.random() * 40;
+            zoneBatches.push({
+                id: `#AF-${100 + Math.floor(Math.random() * 899)}`,
+                product: batchTypes[parseInt(zone.id.charCodeAt(0) + i) % batchTypes.length],
+                risk: batchRisk,
+                condition: batchRisk > 80 ? 'Critical' : (batchRisk > 50 ? 'Weak' : 'Good')
+            });
+        }
+
         content.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px;">
                 <div>
@@ -155,49 +177,81 @@ export const WarehouseHeatmap = {
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:30px;">
-                <div style="background:var(--bg-light); padding:20px; border-radius:16px; border:1px solid #C8E6C9;">
+                <div style="background:var(--bg-light); padding:20px; border-radius:16px; border:1px solid ${zone.risk > 50 ? '#FFCDD2' : '#C8E6C9'}; transition: all 0.3s;">
                     <div style="color:var(--text-secondary); font-size:0.8rem;">Current Temperature</div>
                     <div style="font-size:1.8rem; font-weight:800; color:var(--text-primary);">${zone.temp.toFixed(2)}°C</div>
-                    <div style="font-size:0.75rem; color:var(--primary); margin-top:5px;"><i class="fas fa-info-circle"></i> Optimal for current inventory</div>
+                    <div style="font-size:0.75rem; color:${tempStatus.color}; margin-top:5px;"><i class="fas fa-info-circle"></i> ${tempStatus.text}</div>
                 </div>
-                <div style="background:var(--bg-light); padding:20px; border-radius:16px; border:1px solid #C8E6C9;">
+                <div style="background:var(--bg-light); padding:20px; border-radius:16px; border:1px solid ${zone.humidity > 75 ? '#FFF9C4' : '#C8E6C9'}; transition: all 0.3s;">
                     <div style="color:var(--text-secondary); font-size:0.8rem;">Air Humidity</div>
                     <div style="font-size:1.8rem; font-weight:800; color:var(--text-primary);">${zone.humidity.toFixed(0)}%</div>
-                    <div style="font-size:0.75rem; color:var(--primary); margin-top:5px;"><i class="fas fa-droplet"></i> Stable conditions detected</div>
+                    <div style="font-size:0.75rem; color:${humStatus.color}; margin-top:5px;"><i class="fas fa-droplet"></i> ${humStatus.text}</div>
                 </div>
             </div>
 
-            <h4 style="margin-bottom:15px; font-weight:700; color:var(--text-primary);">Stored Batches</h4>
+            <h4 style="margin-bottom:15px; font-weight:700; color:var(--text-primary);">Stored Batches in ${zone.id}</h4>
             <div style="max-height:200px; overflow-y:auto; border:1px solid var(--card-border); border-radius:12px;">
                 <table style="width:100%; text-align:left; border-collapse:collapse;">
-                    <tr style="background:var(--bg-light); font-size:0.75rem; color:var(--text-secondary);">
-                        <th style="padding:12px;">Batch ID</th>
-                        <th>Product</th>
-                        <th style="padding-right:12px;">Condition</th>
-                    </tr>
-                    <tr style="border-bottom:1px solid var(--card-border);">
-                        <td style="padding:15px 12px; font-weight:700;">#AF-290</td>
-                        <td>Tomato</td>
-                        <td style="color:${this.getRiskColor(87)}; font-weight:700;">Weak</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:15px 12px; font-weight:700;">#AF-412</td>
-                        <td>Onion</td>
-                        <td style="color:${this.getRiskColor(12)}; font-weight:700;">Good</td>
-                    </tr>
+                    <thead>
+                        <tr style="background:var(--bg-light); font-size:0.75rem; color:var(--text-secondary);">
+                            <th style="padding:12px;">Batch ID</th>
+                            <th>Product</th>
+                            <th style="padding-right:12px;">Condition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${zoneBatches.map(b => `
+                            <tr style="border-bottom:1px solid var(--card-border);">
+                                <td style="padding:15px 12px; font-weight:700;">${b.id}</td>
+                                <td>${b.product}</td>
+                                <td style="color:${this.getRiskColor(b.risk)}; font-weight:700;">${b.condition}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
                 </table>
             </div>
 
             <div style="margin-top:30px; display:flex; gap:15px;">
-                <button class="btn-premium" style="flex:1;">Adjust Zone Environment</button>
-                <button style="flex:1; background:white; border:1px solid var(--card-border); border-radius:12px; font-weight:700; cursor:pointer;">View Batch Timeline</button>
+                <button class="btn-premium" style="flex:1;" onclick="WarehouseHeatmap.adjustEnvironment(event, '${zone.id}')">
+                    <i class="fas fa-wind"></i> Adjust Environment
+                </button>
+                <button style="flex:1; background:white; border:1px solid var(--card-border); border-radius:12px; font-weight:700; cursor:pointer;" onclick="location.href='trace.html'">
+                    <i class="fas fa-history"></i> View Batch Timeline
+                </button>
             </div>
         `;
 
         modal.style.display = 'flex';
+    },
+
+    adjustEnvironment(event, zoneId) {
+        const zone = this.zones.find(z => z.id === zoneId);
+        if (zone) {
+            // Show a quick mock adjustment
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adjusting...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                this.updateZone(zoneId, {
+                    temp: 14.2,
+                    humidity: 62,
+                    risk: 8,
+                    status: 'safe'
+                });
+
+                // Refresh modal content
+                this.openZoneModal(this.zones.find(z => z.id === zoneId));
+
+                // Sync main metrics
+                AppState.fetchDashboardData();
+            }, 1000);
+        }
     }
 };
 
+window.WarehouseHeatmap = WarehouseHeatmap;
 window.closeZoneModal = () => {
     document.getElementById('zoneModal').style.display = 'none';
 };

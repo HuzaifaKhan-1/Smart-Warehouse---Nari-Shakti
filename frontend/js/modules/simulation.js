@@ -8,46 +8,54 @@ import { AIEngine } from './ai_engine.js';
 
 export const Simulation = {
     triggerTemperatureSpike() {
-        console.log("DEMO: Triggering Critical Temperature Spike in Zone D-1");
+        console.log("DEMO: Triggering Critical Event Across Warehouse");
 
-        // 1. Update State Logically
-        const targetZoneId = 'D1';
-        const zoneUpdate = {
-            temp: 22.4,
-            humidity: 78,
-            risk: 88,
-            status: 'critical'
-        };
+        // 1. Update Multiple Zones to create a "Heatmap Fire"
+        const criticalZones = ['A2', 'C4', 'D1'];
+        criticalZones.forEach(id => {
+            WarehouseHeatmap.updateZone(id, {
+                temp: 24.5 + Math.random() * 5,
+                humidity: 82,
+                risk: 92,
+                status: 'critical'
+            });
+        });
 
-        // 2. Add a new Urgent Recommendation
-        const newRec = {
-            id: 'REC-' + Date.now(),
-            target: 'Grade A Grapes (Lot #AF-295)',
-            reason: 'Critical temperature rise (22°C) in Zone D-1 detected. 88% Spoilage Risk.',
-            action: 'Immediate Dispatch Recommended',
-            priority: 'P1',
-            confidence: 96,
-            predictedLoss: 58000,
-            zoneId: 'D1',
-            status: 'pending'
-        };
+        // 2. Add multiple Urgent Recommendations to AI Decision Center
+        const events = [
+            { target: 'Grade A Grapes (Lot #AF-295)', loss: 58000, zone: 'D1' },
+            { target: 'Export Tomatoes (Lot #AF-290)', loss: 42000, zone: 'C4' },
+            { target: 'Spring Onions (Lot #AF-112)', loss: 12500, zone: 'A2' }
+        ];
 
-        AppState.recommendations.unshift(newRec);
+        events.forEach(ev => {
+            const newRec = {
+                id: 'REC-' + Math.random(),
+                target: ev.target,
+                reason: `CRITICAL: Sensor in Zone ${ev.zone} reading 24°C+. Spoilage imminent within 4 hours.`,
+                action: 'Emergency Dispatch to Tier-1 Market',
+                priority: 'P1',
+                confidence: 99,
+                predictedLoss: ev.loss,
+                zoneId: ev.zone,
+                status: 'pending'
+            };
+            AppState.recommendations.unshift(newRec);
+        });
 
         // 3. Trigger UI Updates
-        WarehouseHeatmap.updateZone(targetZoneId, zoneUpdate);
         AIEngine.renderDecisionCards('aiDecisionCenter');
 
-        // 4. Update Overview Metrics
-        AppState.metrics.atRiskBatches += 1;
-        AppState.metrics.status = 'Action Required';
+        // 4. Force Metrics to Red Alert
+        AppState.metrics.atRiskBatches += 3;
+        AppState.metrics.status = 'CRITICAL ALERT';
         AppState.updateMetrics();
 
-        // 5. Visual Notification
+        // 5. Visual Drama
         this.dramaticAlert();
         AIEngine.showNotification(
-            "CRITICAL ALERT",
-            "Zone D-1 temperature is rising dangerously. AI suggests immediate dispatch of Grapes to prevent loss.",
+            "CRITICAL WAREHOUSE FAILURE",
+            "Multiple zone temperature breaches detected. AI has automatically calculated emergency dispatch routes.",
             "critical"
         );
     },

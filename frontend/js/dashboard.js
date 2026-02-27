@@ -10,6 +10,8 @@ import { AppState } from './modules/state.js';
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initial State Load
     AppState.fetchDashboardData();
+    updateClock();
+    setInterval(updateClock, 1000);
 
     // 2. Initialize Operational Modules
     WarehouseHeatmap.init('heatmapGrid');
@@ -20,6 +22,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (demoBtn) {
         demoBtn.addEventListener('click', () => {
             Simulation.triggerTemperatureSpike();
+        });
+    }
+
+    const citySelector = document.getElementById('citySelector');
+    if (citySelector) {
+        citySelector.addEventListener('change', (e) => {
+            const city = e.target.value;
+            const hubText = document.getElementById('currentHubText');
+            if (hubText) hubText.innerText = `${city} Hub`;
+
+            // Simulation shortcut: randomize data on city change
+            AppState.metrics.lossPrevented += Math.floor(Math.random() * 50000);
+            AppState.fetchDashboardData();
         });
     }
 
@@ -34,7 +49,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Initialize Analytics
+    // 4. Trend Chart Overlays
+    const btn24h = document.getElementById('btn24h');
+    const btn7d = document.getElementById('btn7d');
+
+    if (btn24h && btn7d) {
+        btn24h.addEventListener('click', () => {
+            updateTrendData('24h');
+            btn24h.style.background = 'var(--primary)';
+            btn24h.style.color = 'white';
+            btn7d.style.background = 'transparent';
+            btn7d.style.color = 'var(--text-secondary)';
+        });
+
+        btn7d.addEventListener('click', () => {
+            updateTrendData('7d');
+            btn7d.style.background = 'var(--primary)';
+            btn7d.style.color = 'white';
+            btn24h.style.background = 'transparent';
+            btn24h.style.color = 'var(--text-secondary)';
+        });
+    }
+
+    // 5. Initialize Analytics
     initDashboardCharts();
 
     // 5. Hero Accuracy Animation
@@ -64,6 +101,34 @@ function simulateLiveTelemetry() {
     }
 
     AppState.updateMetrics();
+}
+
+function updateClock() {
+    const clockEl = document.getElementById('liveClock');
+    if (clockEl) {
+        const now = new Date();
+        clockEl.innerText = now.toLocaleTimeString();
+    }
+}
+
+function updateTrendData(range) {
+    if (!window.envTrendChart) return;
+
+    const data24h = [13.1, 13.4, 14.2, 14.8, 14.2, 13.8, 14.2];
+    const labels24h = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Now'];
+
+    const data7d = [12.5, 13.8, 15.2, 14.1, 13.9, 14.5, 14.2];
+    const labels7d = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    if (range === '24h') {
+        window.envTrendChart.data.labels = labels24h;
+        window.envTrendChart.data.datasets[0].data = data24h;
+    } else {
+        window.envTrendChart.data.labels = labels7d;
+        window.envTrendChart.data.datasets[0].data = data7d;
+    }
+
+    window.envTrendChart.update();
 }
 
 function initDashboardCharts() {

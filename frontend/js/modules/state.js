@@ -57,12 +57,23 @@ export const AppState = {
             this.metrics.lossPrevented = lossData.metrics.total_loss_prevented;
             this.metrics.utilization = ((utilData.used_capacity / utilData.total_capacity) * 100).toFixed(1);
             this.metrics.atRiskBatches = riskData.distribution.find(d => d.label === 'High Risk')?.count || 0;
-            this.metrics.status = this.metrics.atRiskBatches > 10 ? 'Action Required' : 'Optimal';
 
+            // Only update status if not in manual simulation mode
+            if (this.metrics.status !== 'CRITICAL ALERT') {
+                this.metrics.status = this.metrics.atRiskBatches > 10 ? 'Action Required' : 'Optimal';
+            }
+
+            this.simulateLiveFlux();
             this.updateMetrics();
         } catch (error) {
             console.error("Dashboard Sync Failed:", error);
         }
+    },
+
+    simulateLiveFlux() {
+        // Add tiny jitters to make numbers look "live"
+        this.metrics.utilization = (parseFloat(this.metrics.utilization) + (Math.random() * 0.2 - 0.1)).toFixed(1);
+        this.metrics.lossPrevented += Math.floor(Math.random() * 10);
     },
 
     updateMetrics() {
@@ -127,3 +138,5 @@ export const AppState = {
         return false;
     }
 };
+
+window.AppState = AppState;

@@ -66,11 +66,25 @@
         </div>
 
         <section style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <div>
-                <h1 style="font-size: 2.4rem; font-weight: 800; color: var(--text-primary); letter-spacing: -1px;">
-                    Command Center</h1>
-                <p style="color: var(--text-secondary); font-weight: 500;">Connected to Nashik Central Hub • Live
-                    Intelligence</p>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div>
+                    <h1 style="font-size: 2.4rem; font-weight: 800; color: var(--text-primary); letter-spacing: -1px;">
+                        Command Center</h1>
+                    <p
+                        style="color: var(--text-secondary); font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                        Connected to <span id="currentHubText" style="color: var(--primary); font-weight: 700;">Nashik
+                            Central Hub</span> •
+                        Live Intelligence •
+                        <span id="liveClock"
+                            style="font-family: 'Courier New', Courier, monospace; font-weight: 900; color: var(--primary);">00:00:00</span>
+                    </p>
+                </div>
+                <select id="citySelector"
+                    style="background: white; border: 1px solid var(--card-border); padding: 12px 20px; border-radius: 15px; font-weight: 700; color: var(--primary); cursor: pointer; outline: none; box-shadow: var(--shadow-small);">
+                    <option value="Nashik">Nashik Hub</option>
+                    <option value="Mumbai">Mumbai Hub</option>
+                    <option value="Pune">Pune Hub</option>
+                </select>
             </div>
             <div style="display: flex; gap: 16px;">
                 <button class="btn-premium" id="demoModeBtn">
@@ -165,8 +179,9 @@
                     <h3 style="font-weight: 800; color:var(--text-primary);"><i class="fas fa-chart-area"
                             style="color:var(--primary);"></i> Environmental Trends</h3>
                     <div style="display:flex; gap:8px;">
-                        <button class="filter-select" style="font-size: 0.7rem; padding: 5px 12px;">24 Hours</button>
-                        <button class="filter-select"
+                        <button id="btn24h" class="filter-select" style="font-size: 0.7rem; padding: 5px 12px;">24
+                            Hours</button>
+                        <button id="btn7d" class="filter-select"
                             style="font-size: 0.7rem; padding: 5px 12px; background: transparent;">7 Days</button>
                     </div>
                 </div>
