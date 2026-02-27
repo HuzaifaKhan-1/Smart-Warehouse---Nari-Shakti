@@ -45,9 +45,9 @@ export const AppState = {
         try {
             // Fetch real metrics from Node.js backend
             const [lossRes, utilRes, riskRes] = await Promise.all([
-                fetch('http://localhost:5000/api/analytics/loss-reduction'),
-                fetch('http://localhost:5000/api/analytics/utilization'),
-                fetch('http://localhost:5000/api/analytics/risk-distribution')
+                fetch('/api/analytics/loss-reduction'),
+                fetch('/api/analytics/utilization'),
+                fetch('/api/analytics/risk-distribution')
             ]);
 
             const lossData = await lossRes.json();

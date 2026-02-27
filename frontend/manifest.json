@@ -1,0 +1,36 @@
+{
+  "name": "AgriFresh Pro",
+  "short_name": "AgriFresh",
+  "description": "AI-Powered Smart Warehouse & Traceability System",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#F8FAF8",
+  "theme_color": "#1B5E20",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Inventory",
+      "url": "/inventory.html",
+      "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Traceability",
+      "url": "/trace.html",
+      "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
