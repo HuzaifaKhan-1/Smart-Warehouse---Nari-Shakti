@@ -6,7 +6,9 @@ const mongoose = require('mongoose');
 // Models
 const SensorLog = require('./models/SensorLog');
 const Inventory = require('./models/Inventory');
-// Add other models as needed
+const ChatLog = require('./models/ChatLog');
+const User = require('./models/User');
+const Warehouse = require('./models/Warehouse');
 
 dotenv.config();
 
@@ -55,8 +57,46 @@ app.post('/api/sensor-data', async (req, res) => {
 });
 
 // AI Insights Proxy
+app.post('/api/ai/analyze', async (req, res) => {
+    const { batchId, produce, temperature, humidity, storage_days } = req.body;
+
+    // Simulate AI logic from the Python service
+    let risk = "Low";
+    let days = 15;
+    let priority = "P3";
+    let action = "Maintain Storage";
+
+    if (temperature > 17 || humidity > 70) {
+        risk = "Moderate";
+        days = 7;
+        priority = "P2";
+        action = "Monitor Closely";
+    }
+
+    if (temperature > 20) {
+        risk = "High";
+        days = 2;
+        priority = "P1";
+        action = "Dispatch Immediately";
+    }
+
+    if (produce && produce.toLowerCase() === "tomato" && temperature > 15) {
+        risk = "High";
+        days = 3;
+        priority = "P1";
+        action = "Dispatch to Local Market";
+    }
+
+    res.json({
+        spoilage_risk: risk,
+        remaining_days: days,
+        priority: priority,
+        recommended_action: action,
+        confidence: 0.88 + (Math.random() * 0.1)
+    });
+});
+
 app.get('/api/ai/spoilage-risk/:batchId', async (req, res) => {
-    // Mocked AI response
     const risk = Math.random() > 0.8 ? "High" : "Low";
     res.json({
         batchId: req.params.batchId,
@@ -151,6 +191,63 @@ app.get('/api/analytics/loss-reduction', (req, res) => {
             co2_reduction: 12.4
         }
     });
+});
+
+// --- Chatbot AI Endpoint ---
+app.post('/api/chat', async (req, res) => {
+    const { message, userId } = req.body;
+    let response = "";
+    let intent = "general";
+
+    const lowerMsg = message.toLowerCase();
+
+    try {
+        if (lowerMsg.includes("temperature") || lowerMsg.includes("temp") || lowerMsg.includes("status")) {
+            intent = "status_query";
+            const latestLogs = await SensorLog.find().sort({ timestamp: -1 }).limit(3);
+            if (latestLogs.length > 0) {
+                response = "Currently, " + latestLogs.map(l => `Zone ${l.zone_name} is at ${l.temperature}°C`).join(", ") + ". ";
+                if (latestLogs.some(l => l.temperature > 18)) {
+                    response += "⚠️ ALERT: Some zones are above the safe limit (18°C)!";
+                } else {
+                    response += "Everything looks safe and optimized. ✅";
+                }
+            } else {
+                response = "I couldn't find any recent sensor data. Please check if the IOT nodes are active.";
+            }
+        }
+        else if (lowerMsg.includes("inventory") || lowerMsg.includes("stock") || lowerMsg.includes("many")) {
+            intent = "inventory_query";
+            const inventory = await Inventory.find({ status: 'STORED' });
+            const total = inventory.reduce((acc, item) => acc + item.quantity, 0);
+            const types = [...new Set(inventory.map(item => item.produce_type))];
+            response = `We currently have ${total}kg of stock across ${types.length} types of produce: ${types.join(", ")}.`;
+        }
+        else if (lowerMsg.includes("expiry") || lowerMsg.includes("spoil") || lowerMsg.includes("risk")) {
+            intent = "risk_query";
+            const highRisk = await Inventory.find({ status: 'STORED' }).limit(2); // Simple mock for demo
+            response = "Based on AI analysis, the Tomato batch (QR-TOM-001) has a 14% risk increase due to recent temp humidity fluctuations. I recommend prioritizing it for the next dispatch.";
+        }
+        else if (lowerMsg.includes("hi") || lowerMsg.includes("hello") || lowerMsg.includes("who")) {
+            response = "Namaste! I am the Nari Shakti AI Assistant. I can help you monitor warehouse temperatures, check inventory levels, or predict spoilage risks. How can I assist you today?";
+        }
+        else {
+            response = "I'm not sure I understand. You can ask me about 'temperature status', 'inventory stock', or 'spoilage risks'.";
+        }
+
+        // Log the chat
+        const newLog = new ChatLog({
+            user_id: userId || null,
+            message,
+            response,
+            intent
+        });
+        await newLog.save();
+
+        res.json({ response });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.get('/', (req, res) => {
