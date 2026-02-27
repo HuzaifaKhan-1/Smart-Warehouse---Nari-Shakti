@@ -41,20 +41,53 @@ export const AppState = {
         }
     ],
 
+    async fetchDashboardData() {
+        try {
+            // Fetch real metrics from Node.js backend
+            const [lossRes, utilRes, riskRes] = await Promise.all([
+                fetch('http://localhost:5000/api/analytics/loss-reduction'),
+                fetch('http://localhost:5000/api/analytics/utilization'),
+                fetch('http://localhost:5000/api/analytics/risk-distribution')
+            ]);
+
+            const lossData = await lossRes.json();
+            const utilData = await utilRes.json();
+            const riskData = await riskRes.json();
+
+            this.metrics.lossPrevented = lossData.metrics.total_loss_prevented;
+            this.metrics.utilization = ((utilData.used_capacity / utilData.total_capacity) * 100).toFixed(1);
+            this.metrics.atRiskBatches = riskData.distribution.find(d => d.label === 'High Risk')?.count || 0;
+            this.metrics.status = this.metrics.atRiskBatches > 10 ? 'Action Required' : 'Optimal';
+
+            this.updateMetrics();
+        } catch (error) {
+            console.error("Dashboard Sync Failed:", error);
+        }
+    },
+
     updateMetrics() {
         const lossEl = document.getElementById('lossPrevented');
         const riskEl = document.getElementById('atRiskCount');
         const utilEl = document.getElementById('utilizationVal');
+        const utilFill = document.getElementById('utilFill');
         const healthEl = document.getElementById('healthStatus');
         const insightBar = document.getElementById('aiInsightBar');
+        const aiText = document.getElementById('aiInsightText');
 
         if (lossEl) lossEl.innerText = `₹${this.metrics.lossPrevented.toLocaleString()}`;
         if (riskEl) riskEl.innerText = `${this.metrics.atRiskBatches}`;
         if (utilEl) utilEl.innerText = `${this.metrics.utilization}%`;
+        if (utilFill) utilFill.style.width = `${this.metrics.utilization}%`;
 
         if (healthEl) {
             healthEl.innerText = this.metrics.status;
             healthEl.style.color = this.metrics.status === 'Optimal' ? 'var(--primary)' : 'var(--danger)';
+        }
+
+        if (aiText) {
+            aiText.innerText = this.metrics.atRiskBatches > 0
+                ? `AI Caution: ${this.metrics.atRiskBatches} High-Risk batches detected. Recommended action: Prioritize Early Dispatch.`
+                : `Systems Optimal: Total loss prevented ₹${this.metrics.lossPrevented.toLocaleString()} today.`;
         }
 
         if (insightBar) {

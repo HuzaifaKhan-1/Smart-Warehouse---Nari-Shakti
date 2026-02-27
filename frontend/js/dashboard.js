@@ -9,17 +9,28 @@ import { AppState } from './modules/state.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initial State Load
-    AppState.updateMetrics();
+    AppState.fetchDashboardData();
 
     // 2. Initialize Operational Modules
     WarehouseHeatmap.init('heatmapGrid');
     AIEngine.init();
 
-    // 3. Setup Simulation Trigger
+    // 3. Setup Simulation & Refresh Triggers
     const demoBtn = document.getElementById('demoModeBtn');
     if (demoBtn) {
         demoBtn.addEventListener('click', () => {
             Simulation.triggerTemperatureSpike();
+        });
+    }
+
+    const refreshBtn = document.getElementById('manualRefreshBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            const icon = refreshBtn.querySelector('i');
+            icon.classList.add('fa-spin');
+            AppState.fetchDashboardData().then(() => {
+                setTimeout(() => icon.classList.remove('fa-spin'), 600);
+            });
         });
     }
 
@@ -37,12 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Live Heartbeat
     setInterval(() => {
         simulateLiveTelemetry();
+        AppState.fetchDashboardData(); // Sync with backend every 5s
     }, 5000);
 });
 
 function simulateLiveTelemetry() {
     // Minor flux in avg values
     AppState.metrics.avgTemp = parseFloat((14 + Math.random() * 0.5).toFixed(1));
+
+    // Randomly fluctuate one zone for visual feedback
+    if (WarehouseHeatmap.zones.length > 0) {
+        const randomZone = WarehouseHeatmap.zones[Math.floor(Math.random() * WarehouseHeatmap.zones.length)];
+        const newVal = randomZone.temp + (Math.random() * 0.4 - 0.2);
+        WarehouseHeatmap.updateZone(randomZone.id, { temp: newVal });
+    }
+
     AppState.updateMetrics();
 }
 

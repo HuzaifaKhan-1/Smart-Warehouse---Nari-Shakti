@@ -152,7 +152,7 @@ window.dispatchAI = async (batchId) => {
     };
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/analyze', {
+        const response = await fetch('http://localhost:8000/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -191,10 +191,10 @@ window.dispatchAI = async (batchId) => {
                     spoilage_risk: 'Error',
                     remaining_days: '?',
                     priority: 'P3',
-                    recommended_action: "Connection Failed",
+                    recommended_action: `Error: ${error.message || "Connection Failed"}`,
                     confidence: 0
                 },
-                human_explanation: `Critical Error: Could not reach backend server.`,
+                human_explanation: `Critical Error: ${error.message || "Could not reach backend server."}`,
                 isAnalyzing: false
             } : b
         );
@@ -392,14 +392,15 @@ window.runDispatchSimulator = async () => {
 
     try {
         const payload1 = {
+            batchId: id,
             produce: item.product, temperature: item.temperature, humidity: item.humidity,
             storage_days: Math.max(1, Math.floor((new Date() - new Date(item.storage)) / (1000 * 60 * 60 * 24)))
         };
-        const payload2 = { ...payload1, temperature: payload1.temperature + 2.5, storage_days: payload1.storage_days + 3 };
+        const payload2 = { ...payload1, batchId: id, temperature: payload1.temperature + 2.5, storage_days: payload1.storage_days + 3 };
 
         const [r1, r2] = await Promise.all([
-            fetch('http://127.0.0.1:8000/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload1) }),
-            fetch('http://127.0.0.1:8000/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload2) })
+            fetch('http://localhost:8000/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload1) }),
+            fetch('http://localhost:8000/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload2) })
         ]);
 
         const d1 = await r1.json();
