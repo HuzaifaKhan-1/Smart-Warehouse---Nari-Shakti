@@ -4,76 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictive Intelligence | AgriFresh AI Dashboard</title>
+    <title>Predictive Intelligence | AgriFresh AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .ai-glow-card {
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(59, 130, 246, 0.05));
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .analytics-hero {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .stats-mini-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .efficiency-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
-            color: var(--text-secondary);
-        }
-
-        .crop-card {
-            padding: 15px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: var(--transition-smooth);
-        }
-
-        .crop-card:hover {
-            border-color: var(--primary);
-            background: rgba(16, 185, 129, 0.05);
-        }
-
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .matrix-item {
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid var(--card-border);
-            font-size: 0.7rem;
-        }
-    </style>
 </head>
 
 <body>
@@ -81,12 +15,14 @@
     <div class="blob-2"></div>
 
     <aside class="sidebar">
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding: 0 10px;">
+        <div class="brand" style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding: 0 10px;">
             <div
-                style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; transform: rotate(45deg); display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-leaf" style="transform: rotate(-45deg); color: white;"></i>
+                style="width: 45px; height: 45px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="fas fa-leaf"></i>
             </div>
-            <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;">AgriFresh</span>
+            <div>
+                <h2 style="font-weight: 800; font-size: 1.4rem; color: var(--primary);">AgriFresh</h2>
+            </div>
         </div>
 
         <nav>
@@ -98,230 +34,117 @@
     </aside>
 
     <main class="main-wrapper">
-        <!-- TOP FILTER BAR -->
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <div>
-                <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -1px;">Predictive Intelligence Center
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-primary);">Predictive Intelligence
                 </h1>
-                <p style="color: var(--text-secondary);">Enterprise AI analytics for agricultural warehouse optimization
-                </p>
+                <p style="color: var(--text-secondary); font-weight: 500;">AI performance reports and market trend
+                    analysis</p>
             </div>
-            <div class="filter-group">
-                <select class="filter-select" id="timeRange">
-                    <option value="7">Last 7 Days</option>
-                    <option value="30" selected>Last 30 Days</option>
-                    <option value="90">Last 90 Days</option>
+            <div style="display: flex; gap: 16px;">
+                <select class="filter-select">
+                    <option>Last 30 Days</option>
+                    <option>Last 90 Days</option>
                 </select>
-                <select class="filter-select" id="cropFilter">
-                    <option value="all">All Crops</option>
-                    <option value="tomato">Tomato</option>
-                    <option value="onion">Onion</option>
-                    <option value="potato">Potato</option>
-                </select>
-                <button class="btn-premium" onclick="exportAnalytics()">
-                    <i class="fas fa-download"></i> Export Data
+                <button class="btn-premium">
+                    <i class="fas fa-download"></i> Download Report
                 </button>
             </div>
         </header>
 
-        <!-- A. AI INSIGHTS SUMMARY -->
-        <section class="ai-insight-panel ai-glow-card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <span class="ai-badge" style="margin-bottom: 12px; display: inline-block;">AI Intelligence
-                        Brief</span>
-                    <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Executive Summary</h2>
-                    <p style="color: var(--text-secondary); max-width: 600px;">
-                        This week, the AI model successfully reduced predicted spoilage by <strong
-                            style="color: var(--primary);">28%</strong> through optimized dispatch routing. Zone B is
-                        currently operating at peak efficiency (<strong style="color: var(--secondary);">94%</strong>).
-                    </p>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase;">Overall
-                        Confidence</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--secondary);">96<small
-                            style="font-size: 1rem;">%</small></div>
-                </div>
-            </div>
-            <div class="stats-mini-row">
-                <div class="glass-panel" style="padding: 15px; background: rgba(255,255,255,0.01);">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary);">Best Performing Zone</div>
-                    <div style="font-weight: 700; color: var(--primary);">Zone A (Nashik)</div>
-                </div>
-                <div class="glass-panel" style="padding: 15px; background: rgba(255,255,255,0.01);">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary);">Predicted High Risk</div>
-                    <div style="font-weight: 700; color: var(--danger);">Zone D (Pune)</div>
-                </div>
-            </div>
-        </section>
-
-        <div class="analytics-hero">
-            <!-- 1. Demand vs Supply Projection -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 40px;">
             <div class="glass-panel" style="padding: 30px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="font-weight: 700;"><i class="fas fa-chart-line"
-                            style="color: var(--secondary); margin-right: 10px;"></i>Market Dynamics</h3>
-                    <div style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">+12.4% Trend</div>
-                </div>
+                <h3 style="margin-bottom: 24px; font-weight: 800;">Demand vs. Supply Projection <i
+                        class="fas fa-info-circle" title="Comparison of warehouse stock vs market market demand"></i>
+                </h3>
                 <div style="height: 300px;">
                     <canvas id="demandSupplyChart"></canvas>
                 </div>
-                <div class="decision-card action-stable"
-                    style="margin-top: 20px; background: rgba(16, 185, 129, 0.05);">
-                    <strong style="color: var(--primary); font-size: 0.8rem;">AI RECOMMENDATION:</strong>
-                    <p style="font-size: 0.9rem; margin-top: 5px;">Demand is peaking in Week 4. Dispatch prioritization
-                        for Tomato batches is advised to maximize market revenue.</p>
-                </div>
+                <p style="margin-top:20px; font-size:0.85rem; color:var(--text-secondary);">Market demand for Tomatoes
+                    is projected to rise by 12% next week. Current stock levels are sufficient.</p>
             </div>
 
-            <!-- 2. Capacity Utilization -->
             <div class="glass-panel" style="padding: 30px;">
-                <h3 style="margin-bottom: 24px; font-weight: 700;"><i class="fas fa-database"
-                        style="color: var(--accent); margin-right: 10px;"></i>Storage Efficiency</h3>
+                <h3 style="margin-bottom: 24px; font-weight: 800;">Space Reservation <i class="fas fa-info-circle"
+                        title="Current warehouse capacity distribution among crops"></i></h3>
                 <div style="height: 250px; display: flex; justify-content: center;">
-                    <canvas id="utilizationChart"></canvas>
+                    <canvas id="utilizationPieChart"></canvas>
                 </div>
-                <div style="margin-top: 25px;">
-                    <div class="efficiency-label">
-                        <span>Utilization Score</span>
-                        <span>84/100</span>
+                <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                        <span>Empty Space (Available)</span>
+                        <span style="font-weight:700;">15%</span>
                     </div>
-                    <div class="performance-track">
-                        <div class="performance-fill" style="width: 84%; background: var(--accent);"></div>
+                    <div style="height:6px; background:var(--bg-light); border-radius:10px; overflow:hidden;">
+                        <div style="width: 15%; height: 100%; background: var(--primary); border-radius:10px;"></div>
                     </div>
-                </div>
-                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px; text-align: center;">
-                    Clear capacity: <strong style="color: white;">800 Tons</strong> available for new incoming harvests.
                 </div>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
-            <!-- 3. AI Spoilage Heatmap -->
-            <div class="glass-panel" style="padding: 25px; grid-column: span 2;">
-                <h3 style="margin-bottom: 20px; font-weight: 700;"><i class="fas fa-fire-flame-curved"
-                        style="color: var(--danger); margin-right: 10px;"></i>7-Day Spoilage Risk Heatmap</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <!-- AI Spoilage heatmap forecast -->
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 20px; font-weight: 800;">Forecasted Spoilage Risk (7-Day)</h3>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:20px;">Likelihood of produce
+                    quality decline based on upcoming weather and current IoT trends.</p>
                 <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;">
-                    <div class="zone-tile zone-safe" style="height: 120px;">
-                        <span class="zone-meta">MON</span>
-                        <span class="zone-temp">4%</span>
+                    <div class="zone-tile zone-safe" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">MON</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--primary);">4%</div>
                     </div>
-                    <div class="zone-tile zone-safe" style="height: 120px;">
-                        <span class="zone-meta">TUE</span>
-                        <span class="zone-temp">6%</span>
+                    <div class="zone-tile zone-safe" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">TUE</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--primary);">6%</div>
                     </div>
-                    <div class="zone-tile zone-warning" style="height: 120px;">
-                        <span class="zone-meta">WED</span>
-                        <span class="zone-temp">18%</span>
+                    <div class="zone-tile zone-warning" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">WED</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--warning);">18%</div>
                     </div>
-                    <div class="zone-tile zone-warning" style="height: 120px;">
-                        <span class="zone-meta">THU</span>
-                        <span class="zone-temp">22%</span>
+                    <div class="zone-tile zone-warning" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">THU</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--warning);">22%</div>
                     </div>
-                    <div class="zone-tile zone-critical" style="height: 120px;">
-                        <span class="zone-meta" style="color: white; opacity: 1;">FRI</span>
-                        <span class="zone-temp" style="color: white;">85%</span>
+                    <div class="zone-tile zone-critical" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">FRI</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--danger);">85%</div>
                     </div>
-                    <div class="zone-tile zone-warning" style="height: 120px;">
-                        <span class="zone-meta">SAT</span>
-                        <span class="zone-temp">30%</span>
+                    <div class="zone-tile zone-warning" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">SAT</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--warning);">30%</div>
                     </div>
-                    <div class="zone-tile zone-safe" style="height: 120px;">
-                        <span class="zone-meta">SUN</span>
-                        <span class="zone-temp">12%</span>
-                    </div>
-                </div>
-                <p style="margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary);">
-                    <i class="fas fa-info-circle"></i> High probability of spoilage on Friday. Most affected:
-                    <strong>Tomato (Batch #442)</strong>.
-                </p>
-            </div>
-
-            <!-- D. AI Model Performance -->
-            <div class="glass-panel" style="padding: 25px;">
-                <h3 style="margin-bottom: 20px; font-weight: 700;"><i class="fas fa-brain"
-                        style="color: var(--secondary); margin-right: 10px;"></i>AI Diagnostics</h3>
-                <div style="margin-bottom: 15px;">
-                    <div class="efficiency-label"><span>Model Accuracy</span><span>96.2%</span></div>
-                    <div class="performance-track">
-                        <div class="performance-fill" style="width: 96%; background: var(--secondary);"></div>
-                    </div>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <div class="efficiency-label"><span>Precision (Spoilage)</span><span>94.1%</span></div>
-                    <div class="performance-track">
-                        <div class="performance-fill" style="width: 94%; background: var(--primary);"></div>
-                    </div>
-                </div>
-                <div class="matrix-grid">
-                    <div class="matrix-item"
-                        style="border-color: var(--primary); background: rgba(16, 185, 129, 0.05);">
-                        <div style="opacity: 0.6;">True Pos</div>
-                        <div style="font-weight: 800; font-size: 1rem;">85</div>
-                    </div>
-                    <div class="matrix-item" style="border-color: var(--danger); background: rgba(239, 68, 68, 0.05);">
-                        <div style="opacity: 0.6;">False Pos</div>
-                        <div style="font-weight: 800; font-size: 1rem;">5</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; margin-bottom: 24px;">
-            <!-- B & C: Zone and Crop Performance -->
-            <div class="glass-panel" style="padding: 25px;">
-                <h3 style="margin-bottom: 20px; font-weight: 700;">Crop Health Comparison</h3>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div class="crop-card">
-                        <div
-                            style="width: 40px; height: 40px; border-radius: 50%; background: #ef444422; display: flex; align-items: center; justify-content: center; color: #ef4444;">
-                            <i class="fas fa-apple-whole"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700;">Tomato</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Highest Risk • 12 Days Avg
-                            </div>
-                        </div>
-                        <div style="font-weight: 800; color: var(--danger);">HIGH</div>
-                    </div>
-                    <div class="crop-card">
-                        <div
-                            style="width: 40px; height: 40px; border-radius: 50%; background: #f59e0b22; display: flex; align-items: center; justify-content: center; color: #f59e0b;">
-                            <i class="fas fa-lemon"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700;">Onion</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Stable • 45 Days Avg</div>
-                        </div>
-                        <div style="font-weight: 800; color: var(--accent);">MED</div>
-                    </div>
-                    <div class="crop-card">
-                        <div
-                            style="width: 40px; height: 40px; border-radius: 50%; background: #10b98122; display: flex; align-items: center; justify-content: center; color: #10b981;">
-                            <i class="fas fa-carrot"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700;">Potato</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Optimal • 60 Days Avg</div>
-                        </div>
-                        <div style="font-weight: 800; color: var(--primary);">LOW</div>
+                    <div class="zone-tile zone-safe" style="text-align: center; padding: 10px;">
+                        <span style="font-size:0.7rem; color:var(--text-secondary);">SUN</span>
+                        <div style="font-weight:800; font-size:1.1rem; color:var(--primary);">12%</div>
                     </div>
                 </div>
             </div>
 
-            <!-- E. Loss Reduction Timeline -->
-            <div class="glass-panel" style="padding: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="font-weight: 700;"><i class="fas fa-sack-dollar"
-                            style="color: var(--primary); margin-right: 10px;"></i>Measured Economic Impact</h3>
+            <!-- Economic Impact -->
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 25px; font-weight: 800;">Realized AI Benefits</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div
-                        style="padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.8rem; font-weight: 700;">
-                        53% Loss Reduction
+                        style="padding:20px; background:var(--bg-light); border-radius:16px; border-left:4px solid var(--primary);">
+                        <div
+                            style="font-size:0.7rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">
+                            Revenue Preserved</div>
+                        <div style="font-size:1.8rem; font-weight:900; color:var(--primary);">₹1.2M</div>
+                        <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:5px;">Across Nashik Hub</p>
+                    </div>
+                    <div
+                        style="padding:20px; background:var(--bg-light); border-radius:16px; border-left:4px solid var(--primary);">
+                        <div
+                            style="font-size:0.7rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">
+                            Food Saved</div>
+                        <div style="font-size:1.8rem; font-weight:900; color:var(--primary);">4.2T</div>
+                        <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:5px;">Post-harvest loss
+                            prevented</p>
                     </div>
                 </div>
-                <div style="height: 300px;">
-                    <canvas id="lossReductionChart"></canvas>
+                <div
+                    style="margin-top:20px; padding:15px; background:var(--success-bg); border-radius:12px; font-size:0.85rem; color:var(--primary); font-weight:600;">
+                    <i class="fas fa-check-circle"></i> AI Optimization has reduced overall warehouse waste by 53%.
                 </div>
             </div>
         </div>

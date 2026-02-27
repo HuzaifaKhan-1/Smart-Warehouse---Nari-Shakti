@@ -4,93 +4,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Platform Login | AgriFresh</title>
+    <title>Login | AgriFresh AI Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .login-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-box {
+        .login-card {
             width: 100%;
             max-width: 450px;
             padding: 50px;
+            margin: 100px auto;
         }
 
-        input,
-        select {
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
             width: 100%;
             padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
             border-radius: 12px;
-            color: white;
-            margin-bottom: 20px;
+            border: 1px solid var(--card-border);
             outline: none;
             transition: var(--transition-smooth);
         }
 
-        input:focus {
+        .input-group input:focus {
             border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
         }
     </style>
 </head>
 
-<body>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
     <div class="blob"></div>
-    <div class="blob-2"></div>
 
-    <div class="login-wrap">
-        <div class="glass-panel login-box">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <div
-                    style="width: 50px; height: 50px; background: var(--primary); border-radius: 12px; transform: rotate(45deg); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                    <i class="fas fa-leaf" style="transform: rotate(-45deg); color: white; font-size: 1.2rem;"></i>
-                </div>
-                <h2 style="font-size: 1.8rem; font-weight: 800;">Enterprise Access</h2>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">Sign in to your AgriFresh account</p>
+    <div class="glass-panel login-card">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <div
+                style="width: 60px; height: 60px; background: var(--primary); border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; color: white; margin-bottom: 20px; font-size: 2rem;">
+                <i class="fas fa-leaf"></i>
             </div>
+            <h1 style="font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">Welcome Back</h1>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Access your Smart Warehouse Control Center</p>
+        </div>
 
-            <form id="loginForm">
-                <div
-                    style="margin-bottom: 5px; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">
-                    Corporate Email</div>
-                <input type="email" placeholder="name@company.com" required>
-
-                <div
-                    style="margin-bottom: 5px; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">
-                    Password</div>
+        <form onsubmit="event.preventDefault(); window.location.href='dashboard.html'">
+            <div class="input-group">
+                <label>Registered Email</label>
+                <input type="email" placeholder="farmer@agrifresh.in" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
                 <input type="password" placeholder="••••••••" required>
-
-                <div
-                    style="margin-bottom: 5px; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">
-                    Access Role</div>
-                <select required>
-                    <option value="manager">Warehouse Manager</option>
-                    <option value="admin">Global Admin</option>
-                    <option value="farmer">Registered Supplier</option>
-                </select>
-
-                <button type="submit" class="btn-premium"
-                    style="width: 100%; justify-content: center; margin-top: 10px;">
-                    Enter Command Center <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
-
-            <div style="margin-top: 30px; text-align: center; font-size: 0.85rem; color: var(--text-secondary);">
-                Don't have access? <a href="#"
-                    style="color: var(--primary); text-decoration: none; font-weight: 600;">Contact IT Support</a>
             </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 0.85rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary);">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; padding: 16px;">
+                Secure Sign In <i class="fas fa-sign-in-alt"></i>
+            </button>
+        </form>
+
+        <div style="margin-top: 40px; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+            New Hub Manager? <a href="#"
+                style="color: var(--primary); font-weight: 700; text-decoration: none;">Register Warehouse</a>
         </div>
     </div>
-
-    <script src="js/auth.js"></script>
 </body>
 
 </html>

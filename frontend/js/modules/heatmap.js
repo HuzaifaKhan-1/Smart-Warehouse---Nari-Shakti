@@ -1,6 +1,6 @@
 /**
  * AgriFresh Advanced Warehouse Heatmap Module
- * Operational & Interactive
+ * Operational & Interactive (Light Theme)
  */
 import { AppState } from './state.js';
 
@@ -26,12 +26,11 @@ export const WarehouseHeatmap = {
                     id: `${r}${i}`,
                     temp: 14 + Math.random() * 4,
                     humidity: 55 + Math.random() * 10,
-                    risk: Math.random() * 100, // Increased range for variety
+                    risk: Math.random() * 80,
                     batches: Math.floor(Math.random() * 10) + 2,
                     status: 'safe'
                 };
 
-                // Specific dangerous zone for demo
                 if (zone.id === 'C4') {
                     zone.temp = 14.5;
                     zone.risk = 12;
@@ -54,16 +53,19 @@ export const WarehouseHeatmap = {
 
         tile.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div class="zone-name">${zone.id}</div>
-                <div class="badge" style="font-size:0.6rem; padding:2px 6px;">${zone.batches} BATCHES</div>
+                <div class="zone-name" style="color:var(--primary); font-weight:800;">Zone ${zone.id}</div>
+                <div class="badge" style="font-size:0.6rem; padding:2px 6px; background:rgba(0,0,0,0.05); color:var(--text-secondary);">${zone.batches} BATCHES</div>
             </div>
-            <div class="zone-temp">${zone.temp.toFixed(1)}°C</div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                <div class="zone-meta">${zone.humidity.toFixed(0)}% Hum</div>
-                <div style="font-size:0.7rem; font-weight:700; color:${this.getRiskColor(zone.risk)}">${zone.risk.toFixed(0)}%</div>
+            <div style="display:flex; align-items:baseline; gap:5px; margin:10px 0;">
+                <span class="zone-temp">${zone.temp.toFixed(1)}°C</span>
+                <i class="fas fa-thermometer-half" style="font-size:0.8rem; color:var(--text-secondary);"></i>
             </div>
-            <div class="accuracy-bar" style="height:3px; margin-top:8px;">
-                <div class="accuracy-fill" style="width: ${zone.risk}%; background: ${this.getRiskColor(zone.risk)}"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fas fa-droplet"></i> ${zone.humidity.toFixed(0)}%</div>
+                <div style="font-size:0.75rem; font-weight:700; color:${this.getRiskColor(zone.risk)}">${zone.risk.toFixed(0)}% Risk</div>
+            </div>
+            <div style="height:4px; background:rgba(0,0,0,0.05); border-radius:10px; margin-top:10px; overflow:hidden;">
+                <div style="width:${zone.risk}%; height:100%; background:${this.getRiskColor(zone.risk)}; border-radius:10px;"></div>
             </div>
         `;
 
@@ -75,9 +77,9 @@ export const WarehouseHeatmap = {
     },
 
     getRiskColor(risk) {
-        if (risk > 80) return '#ef4444';
-        if (risk > 50) return '#f59e0b';
-        return '#10b981';
+        if (risk > 80) return '#D32F2F'; // Danger
+        if (risk > 50) return '#F9A825'; // Warning
+        return '#2E7D32'; // Success
     },
 
     updateZone(zoneId, data) {
@@ -109,20 +111,20 @@ export const WarehouseHeatmap = {
         const recommendation = AppState.recommendations.find(r => r.zoneId === zone.id);
 
         tooltip.innerHTML = `
-            <strong style="color:var(--primary)">Zone ${zone.id} Intelligence</strong><br/>
-            <div style="margin:5px 0;">
-                <span>AI Risk Prediction: </span>
+            <strong style="color:var(--primary); display:block; margin-bottom:8px;">Zone ${zone.id} Insights</strong>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span>Current Risk Condition:</span>
                 <span style="color:${this.getRiskColor(zone.risk)}; font-weight:800;">${zone.risk.toFixed(1)}%</span>
             </div>
-            <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:8px;">
-                Confidence: ${(92 + Math.random() * 4).toFixed(1)}% (96% Spoilage Model)
-            </div>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:12px;">
+                Calculated by 96% Spoilage Model
+            </p>
             ${recommendation ? `
-                <div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; border-left:3px solid var(--primary);">
-                    <div style="font-weight:700; font-size:0.7rem; color:var(--primary);">RECOMMENDATION:</div>
-                    <div style="font-size:0.8rem;">${recommendation.action}</div>
+                <div style="padding:10px; background:var(--bg-light); border-radius:8px; border-left:3px solid var(--primary);">
+                    <div style="font-weight:700; font-size:0.7rem; color:var(--primary); text-transform:uppercase;">Advisor Suggestion:</div>
+                    <div style="font-size:0.8rem; color:var(--text-primary);">${recommendation.action}</div>
                 </div>
-            ` : `<div style="font-size:0.8rem; color:var(--primary);">Status: All parameters optimal</div>`}
+            ` : `<div style="font-size:0.8rem; color:var(--primary); font-weight:600;"><i class="fas fa-check-circle"></i> Environment is optimal</div>`}
         `;
 
         tooltip.style.display = 'block';
@@ -143,52 +145,52 @@ export const WarehouseHeatmap = {
         content.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px;">
                 <div>
-                    <h2 style="font-size:2rem; font-weight:800;">Zone ${zone.id} Details</h2>
-                    <p style="color:var(--text-secondary);">Real-time Telemetry & AI Risk Profile</p>
+                    <h2 style="font-size:2rem; font-weight:800; color:var(--primary);">Zone ${zone.id} Profile</h2>
+                    <p style="color:var(--text-secondary);">Real-time monitoring for agricultural safety</p>
                 </div>
-                <div class="glass-panel" style="padding:10px 20px; border-color:${this.getRiskColor(zone.risk)};">
-                    <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-secondary);">Current Risk</div>
-                    <div style="font-size:1.5rem; font-weight:800; color:${this.getRiskColor(zone.risk)};">${zone.risk.toFixed(1)}%</div>
+                <div style="text-align:right;">
+                    <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-secondary);">Health Score</div>
+                    <div style="font-size:1.8rem; font-weight:800; color:${this.getRiskColor(zone.risk)};">${(100 - zone.risk).toFixed(0)}/100</div>
                 </div>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:30px;">
-                <div class="glass-panel" style="padding:20px;">
-                    <div style="color:var(--text-secondary); font-size:0.8rem;">Temperature</div>
-                    <div style="font-size:1.8rem; font-weight:700;">${zone.temp.toFixed(2)}°C</div>
-                    <div style="font-size:0.75rem; color:var(--primary); margin-top:5px;"><i class="fas fa-check-circle"></i> Within Threshold</div>
+                <div style="background:var(--bg-light); padding:20px; border-radius:16px; border:1px solid #C8E6C9;">
+                    <div style="color:var(--text-secondary); font-size:0.8rem;">Current Temperature</div>
+                    <div style="font-size:1.8rem; font-weight:800; color:var(--text-primary);">${zone.temp.toFixed(2)}°C</div>
+                    <div style="font-size:0.75rem; color:var(--primary); margin-top:5px;"><i class="fas fa-info-circle"></i> Optimal for current inventory</div>
                 </div>
-                <div class="glass-panel" style="padding:20px;">
-                    <div style="color:var(--text-secondary); font-size:0.8rem;">Humidity</div>
-                    <div style="font-size:1.8rem; font-weight:700;">${zone.humidity.toFixed(0)}%</div>
-                    <div style="font-size:0.75rem; color:var(--primary); margin-top:5px;"><i class="fas fa-check-circle"></i> Stable Environment</div>
+                <div style="background:var(--bg-light); padding:20px; border-radius:16px; border:1px solid #C8E6C9;">
+                    <div style="color:var(--text-secondary); font-size:0.8rem;">Air Humidity</div>
+                    <div style="font-size:1.8rem; font-weight:800; color:var(--text-primary);">${zone.humidity.toFixed(0)}%</div>
+                    <div style="font-size:0.75rem; color:var(--primary); margin-top:5px;"><i class="fas fa-droplet"></i> Stable conditions detected</div>
                 </div>
             </div>
 
-            <h4 style="margin-bottom:15px; font-weight:700; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px;">Active Batches in Zone</h4>
-            <div style="max-height:200px; overflow-y:auto;">
+            <h4 style="margin-bottom:15px; font-weight:700; color:var(--text-primary);">Stored Batches</h4>
+            <div style="max-height:200px; overflow-y:auto; border:1px solid var(--card-border); border-radius:12px;">
                 <table style="width:100%; text-align:left; border-collapse:collapse;">
-                    <tr style="color:var(--text-secondary); font-size:0.7rem; border-bottom:1px solid var(--card-border);">
-                        <th style="padding:10px 0;">Batch ID</th>
+                    <tr style="background:var(--bg-light); font-size:0.75rem; color:var(--text-secondary);">
+                        <th style="padding:12px;">Batch ID</th>
                         <th>Product</th>
-                        <th>ML Risk Prediction</th>
+                        <th style="padding-right:12px;">Condition</th>
                     </tr>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
-                        <td style="padding:15px 0; font-weight:700;">#AF-290</td>
+                    <tr style="border-bottom:1px solid var(--card-border);">
+                        <td style="padding:15px 12px; font-weight:700;">#AF-290</td>
                         <td>Tomato</td>
-                        <td style="color:${this.getRiskColor(87)}">87.4% High Risk</td>
+                        <td style="color:${this.getRiskColor(87)}; font-weight:700;">Weak</td>
                     </tr>
                     <tr>
-                        <td style="padding:15px 0; font-weight:700;">#AF-412</td>
+                        <td style="padding:15px 12px; font-weight:700;">#AF-412</td>
                         <td>Onion</td>
-                        <td style="color:${this.getRiskColor(12)}">12.1% Safe</td>
+                        <td style="color:${this.getRiskColor(12)}; font-weight:700;">Good</td>
                     </tr>
                 </table>
             </div>
 
             <div style="margin-top:30px; display:flex; gap:15px;">
-                <button class="btn-premium" style="flex:1;">Initiate Cooling</button>
-                <button class="glass-panel" style="flex:1; border-color:var(--primary); color:var(--primary);">Dispatch Batch #AF-290</button>
+                <button class="btn-premium" style="flex:1;">Adjust Zone Environment</button>
+                <button style="flex:1; background:white; border:1px solid var(--card-border); border-radius:12px; font-weight:700; cursor:pointer;">View Batch Timeline</button>
             </div>
         `;
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory | AgriFresh Intelligence</title>
+    <title>Inventory Management | AgriFresh AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,12 +14,14 @@
     <div class="blob-2"></div>
 
     <aside class="sidebar">
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding: 0 10px;">
+        <div class="brand" style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding: 0 10px;">
             <div
-                style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; transform: rotate(45deg); display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-leaf" style="transform: rotate(-45deg); color: white;"></i>
+                style="width: 45px; height: 45px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="fas fa-leaf"></i>
             </div>
-            <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;">AgriFresh</span>
+            <div>
+                <h2 style="font-weight: 800; font-size: 1.4rem; color: var(--primary);">AgriFresh</h2>
+            </div>
         </div>
 
         <nav>
@@ -33,17 +35,17 @@
     <main class="main-wrapper">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <div>
-                <h1 style="font-size: 2.2rem; font-weight: 800;">Inventory Registry</h1>
-                <p style="color: var(--text-secondary);">Managed batches tracked by ML Spoilage Models (96% accuracy)
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-primary);">Stock Inventory</h1>
+                <p style="color: var(--text-secondary); font-weight: 500;">Manage and track crop batches across the hub
                 </p>
             </div>
             <button class="btn-premium">
-                <i class="fas fa-plus"></i> Ingest New Batch
+                <i class="fas fa-plus"></i> Add New Batch
             </button>
         </header>
 
-        <div class="glass-panel"
-            style="padding: 24px; margin-bottom: 30px; display: flex; gap: 20px; align-items: center;">
+        <!-- Filters -->
+        <div style="display: flex; gap: 16px; margin-bottom: 30px; align-items: center;">
             <div style="flex: 1; position: relative;">
                 <i class="fas fa-search"
                     style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
@@ -57,28 +59,26 @@
                 <option value="potato">Potato</option>
             </select>
             <div style="display: flex; gap: 8px;">
-                <button class="glass-panel"
-                    style="padding: 10px 16px; color: var(--text-secondary); cursor: pointer;"><i
-                        class="fas fa-filter"></i> High Risk Only</button>
-                <button class="glass-panel"
-                    style="padding: 10px 16px; color: var(--text-secondary); cursor: pointer;"><i
-                        class="fas fa-sort-amount-down"></i> Sort by Expiry</button>
+                <button class="filter-select" style="font-weight: 700;">High Risk Only</button>
+                <button class="filter-select"><i class="fas fa-sort-amount-down"></i> Sort by Expiry</button>
             </div>
         </div>
 
-        <div class="glass-panel" style="padding: 20px; overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <!-- Table -->
+        <div class="glass-panel" style="padding: 0; overflow: hidden;">
+            <table class="premium-table">
                 <thead>
-                    <tr
-                        style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid var(--card-border);">
-                        <th style="padding: 15px;">Batch ID</th>
-                        <th style="padding: 15px;">Product</th>
-                        <th style="padding: 15px;">Zone</th>
-                        <th style="padding: 15px;">Quantity</th>
-                        <th style="padding: 15px;">Harvest Date</th>
-                        <th style="padding: 15px;">AI Risk</th>
-                        <th style="padding: 15px;">Safe Life</th>
-                        <th style="padding: 15px;">Actions</th>
+                    <tr>
+                        <th>Batch ID <i class="fas fa-info-circle" title="Unique identification code for each lot"></i>
+                        </th>
+                        <th>Product</th>
+                        <th>Zone</th>
+                        <th>Quantity</th>
+                        <th>Harvest Date</th>
+                        <th>AI Risk Prediction <i class="fas fa-info-circle"
+                                title="Calculated risk of produce getting spoiled"></i></th>
+                        <th>Safe Life</th>
+                        <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryBody">
@@ -88,7 +88,20 @@
         </div>
     </main>
 
-    <script type="module" src="js/inventory.js"></script>
+    <!-- QR Modal -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <button onclick="document.getElementById('qrModal').style.display='none'"
+                style="position:absolute; right:20px; top:20px; background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            <h3 id="qrTitle" style="margin-bottom: 20px;">Batch ID QR</h3>
+            <div id="qrContainer" style="background:#eee; padding:20px; border-radius:12px; display:inline-block;">
+            </div>
+            <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary);">Scan this code for full
+                traceability link</p>
+        </div>
+    </div>
+
+    <script src="js/inventory.js" type="module"></script>
 </body>
 
 </html>
