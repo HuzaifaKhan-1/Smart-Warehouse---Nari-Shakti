@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriFresh | AI Powered Smart Warehouse Intelligence</title>
+    <meta name="description" content="Reduce post-harvest losses with AgriFresh - the next generation of AI-driven agricultural warehouse management.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+        }
+        .hero-stat-item {
+            text-align: center;
+        }
+        .hero-stat-item h3 {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav data-aos="fade-down">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                AgriFresh
+            </div>
+            <div style="display: flex; gap: 30px; align-items: center;">
+                <a href="#features" style="color: var(--text-dim); text-decoration: none;">Features</a>
+                <a href="#impact" style="color: var(--text-dim); text-decoration: none;">Impact</a>
+                <a href="login.html" class="btn btn-outline">Sign In</a>
+                <a href="dashboard.html" class="btn btn-primary">Try Demo</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <h1 data-aos="zoom-in" data-aos-delay="200">
+                Revolutionizing <span class="gradient-text">Agricultural Intelligence</span>
+            </h1>
+            <p data-aos="fade-up" data-aos-delay="400">
+                AgriFresh leverages cutting-edge AI and IoT sensors to monitor, predict, and optimize warehouse conditions. Reduce post-harvest losses by up to 35% with smart insights.
+            </p>
+            <div class="hero-actions" data-aos="fade-up" data-aos-delay="600">
+                <a href="login.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 15px 35px;">Launch Platform</a>
+                <a href="#demo" class="btn btn-outline" style="margin-left: 15px; font-size: 1.1rem; padding: 15px 35px;">Watch Breakdown</a>
+            </div>
+
+            <div class="hero-stats" data-aos="fade-up" data-aos-delay="800">
+                <div class="hero-stat-item">
+                    <h3 class="counter">35%</h3>
+                    <p>Loss Reduction</p>
+                </div>
+                <div class="hero-stat-item" style="border-left: 1px solid var(--glass-border); padding-left: 40px;">
+                    <h3 class="counter">12k</h3>
+                    <p>Metric Tons Saved</p>
+                </div>
+                <div class="hero-stat-item" style="border-left: 1px solid var(--glass-border); padding-left: 40px;">
+                    <h3 class="counter">92%</h3>
+                    <p>Model Accuracy</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" style="padding: 100px 0;">
+            <div style="text-align: center; margin-bottom: 60px;">
+                <h2 style="font-size: 2.5rem;" data-aos="fade-up">Platform Capabilities</h2>
+                <p style="color: var(--text-dim);" data-aos="fade-up">Everything you need to run a high-efficiency warehouse</p>
+            </div>
+            <div class="stats-grid">
+                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-microchip" style="font-size: 2rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3>IoT Monitoring</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Real-time temperature and humidity tracking across all warehouse zones.</p>
+                </div>
+                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-brain" style="font-size: 2rem; color: var(--secondary); margin-bottom: 15px;"></i>
+                    <h3>AI Prediction</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Advanced ML models predict spoilage risks before they happen.</p>
+                </div>
+                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-qrcode" style="font-size: 2rem; color: var(--accent); margin-bottom: 15px;"></i>
+                    <h3>QR Traceability</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">End-to-end tracking from farm to market using unique lot IDs.</p>
+                </div>
+                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="400">
+                    <i class="fas fa-chart-line" style="font-size: 2rem; color: #10B981; margin-bottom: 15px;"></i>
+                    <h3>Inventory Optimization</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Smart dispatch recommendations based on expiry and market trends.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-in-out'
+        });
+
+        // Simple counter animation
+        document.querySelectorAll('.counter').forEach(counter => {
+            const target = parseInt(counter.innerText);
+            let count = 0;
+            const updateCount = () => {
+                const speed = target / 50;
+                if(count < target) {
+                    count += speed;
+                    counter.innerText = Math.ceil(count) + (counter.innerText.includes('%') ? '%' : '');
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target + (counter.innerText.includes('%') ? '%' : '');
+                }
+            }
+            // updateCount(); 
+        });
+    </script>
+</body>
+</html>

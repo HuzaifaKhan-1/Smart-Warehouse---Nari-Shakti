@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traceability | AgriFresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 15px;
+            width: 2px;
+            height: 100%;
+            background: var(--glass-border);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-date {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                AgriFresh
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+                <a href="inventory.html" class="nav-link">
+                    <i class="fas fa-boxes-stacked"></i> Inventory
+                </a>
+                <a href="analytics.html" class="nav-link">
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </a>
+                <a href="trace.html" class="nav-link active">
+                    <i class="fas fa-qrcode"></i> Traceability
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <div>
+                    <h1>Batch Traceability</h1>
+                    <p style="color: var(--text-dim);">Trace the journey from farm gate to market shelf.</p>
+                </div>
+                <div class="glass" style="display: flex; padding: 5px 15px; border-radius: 8px;">
+                    <input type="text" placeholder="Enter Batch UID..."
+                        style="background: transparent; border: none; color: white; padding: 10px; outline: none;">
+                    <button style="background: transparent; border: none; color: var(--primary); cursor: pointer;"><i
+                            class="fas fa-search"></i></button>
+                </div>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px;">
+                <div class="glass" style="padding: 30px; text-align: center;">
+                    <div
+                        style="background: white; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AF-290" alt="QR Code">
+                    </div>
+                    <h2>Batch #AF-290</h2>
+                    <p style="color: var(--primary); font-weight: 600;">Tomato (Hybrid Grade A)</p>
+
+                    <div style="margin-top: 30px; text-align: left;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span style="color: var(--text-dim);">Farmer</span>
+                            <span style="font-weight: 600;">Rahul Sharma</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span style="color: var(--text-dim);">Location</span>
+                            <span>Sangli, MH</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span style="color: var(--text-dim);">Quantity</span>
+                            <span>450 Kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass" style="padding: 30px;">
+                    <h3>Lifecycle Timeline</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">2026-02-18 09:15 AM</div>
+                            <h4>Harvested</h4>
+                            <p style="color: var(--text-dim); font-size: 0.9rem;">Harvested at Green Valley Farms,
+                                Sangli. Temp: 24°C.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2026-02-19 02:30 PM</div>
+                            <h4>Warehouse Arrival</h4>
+                            <p style="color: var(--text-dim); font-size: 0.9rem;">Received at Nashik Hub. Quality check
+                                passed (Grade A).</p>
+                        </div>
+                        <div class="timeline-item" style="--primary: #f59e0b;">
+                            <div class="timeline-date">2026-02-20 11:00 AM</div>
+                            <h4>Assigned to Zone C-1</h4>
+                            <p style="color: var(--text-dim); font-size: 0.9rem;">Moved to Cold Storage. Target Temp:
+                                12°C. Humidity: 65%.</p>
+                        </div>
+                        <div class="timeline-item" style="--primary: #9ca3af;">
+                            <div class="timeline-date">Pending</div>
+                            <h4>Dispatch Preparation</h4>
+                            <p style="color: var(--text-dim); font-size: 0.9rem;">AI Recommendation: Dispatch by
+                                2026-02-28.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

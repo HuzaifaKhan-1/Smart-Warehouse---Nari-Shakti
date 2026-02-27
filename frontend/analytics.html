@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | AgriFresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                AgriFresh
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+                <a href="inventory.html" class="nav-link">
+                    <i class="fas fa-boxes-stacked"></i> Inventory
+                </a>
+                <a href="analytics.html" class="nav-link active">
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </a>
+                <a href="trace.html" class="nav-link">
+                    <i class="fas fa-qrcode"></i> Traceability
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <div>
+                    <h1>Intelligence Dashboard</h1>
+                    <p style="color: var(--text-dim);">AI-driven correlations and predictive trends.</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <span class="btn btn-outline">Last 30 Days</span>
+                    <span class="btn btn-primary"><i class="fas fa-download"></i> Export Data</span>
+                </div>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div class="glass" style="padding: 30px;">
+                    <h3>Demand vs. Supply Forecast</h3>
+                    <canvas id="demandChart" height="200"></canvas>
+                </div>
+                <div class="glass" style="padding: 30px;">
+                    <h3>Stock Utilization by Produce</h3>
+                    <canvas id="utilizationChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
+                <div class="glass" style="padding: 30px;">
+                    <h3>Spoilage Risk Heatmap (7-Day Projection)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 20px;">
+                        <!-- Mocked risk cells -->
+                        <div class="zone-cell zone-safe" title="Day 1: 5% risk">Mon</div>
+                        <div class="zone-cell zone-safe">Tue</div>
+                        <div class="zone-cell zone-warning">Wed</div>
+                        <div class="zone-cell zone-warning">Thu</div>
+                        <div class="zone-cell zone-danger">Fri</div>
+                        <div class="zone-cell zone-safe">Sat</div>
+                        <div class="zone-cell zone-safe">Sun</div>
+                    </div>
+                </div>
+                <div class="glass" style="padding: 30px;">
+                    <h3>Impact Insights</h3>
+                    <div style="margin-top: 20px;">
+                        <div style="margin-bottom: 20px;">
+                            <p style="color: var(--text-dim); font-size: 0.8rem;">Carbon Footprint Reduced</p>
+                            <h2 style="color: var(--primary);">4.2 Tons</h2>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <p style="color: var(--text-dim); font-size: 0.8rem;">Local Farmer Revenue Increase</p>
+                            <h2 style="color: var(--secondary);">+ ₹124,000</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Demand Forecast Chart
+            new Chart(document.getElementById('demandChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [
+                        { label: 'Supply', data: [45, 52, 48, 60], borderColor: '#10b981', tension: 0.4 },
+                        { label: 'Demand', data: [40, 58, 55, 65], borderColor: '#3b82f6', borderDash: [5, 5], tension: 0.4 }
+                    ]
+                }
+            });
+
+            // Utilization Donut
+            new Chart(document.getElementById('utilizationChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tomato', 'Onion', 'Potato', 'Empty Space'],
+                    datasets: [{
+                        data: [30, 25, 20, 25],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', 'rgba(255,255,255,0.05)'],
+                        borderWidth: 0
+                    }]
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
