@@ -23,10 +23,10 @@
         </div>
 
         <nav>
-            <a href="dashboard.html" class="nav-item"><i class="fas fa-grid-2"></i> Dashboard</a>
-            <a href="inventory.html" class="nav-item active"><i class="fas fa-box-archive"></i> Inventory</a>
-            <a href="analytics.html" class="nav-item"><i class="fas fa-analytics"></i> Analytics</a>
-            <a href="trace.html" class="nav-item"><i class="fas fa-barcode-read"></i> Traceability</a>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-table-cells-large"></i> Dashboard</a>
+            <a href="inventory.html" class="nav-item active"><i class="fas fa-boxes-stacked"></i> Inventory</a>
+            <a href="analytics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Analytics</a>
+            <a href="trace.html" class="nav-item"><i class="fas fa-route"></i> Traceability</a>
         </nav>
     </aside>
 
@@ -47,36 +47,38 @@
             <div style="flex: 1; position: relative;">
                 <i class="fas fa-search"
                     style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
-                <input type="text" placeholder="Search by batch ID, product, or zone..." class="glass-panel"
-                    style="width: 100%; padding: 12px 12px 12px 45px; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); color: white;">
+                <input type="text" placeholder="Search by batch ID, product, or zone..." class="filter-select"
+                    style="width: 100%; padding-left: 45px;">
             </div>
-            <select id="productFilter" class="glass-panel"
-                style="padding: 12px 20px; background: var(--bg-dark); color: white; border: 1px solid var(--card-border);">
+            <select id="productFilter" class="filter-select">
                 <option value="all">All Products</option>
                 <option value="tomato">Tomato</option>
                 <option value="onion">Onion</option>
                 <option value="potato">Potato</option>
             </select>
             <div style="display: flex; gap: 8px;">
-                <button class="glass-panel" style="padding: 10px 16px; color: var(--text-secondary);"><i
+                <button class="glass-panel"
+                    style="padding: 10px 16px; color: var(--text-secondary); cursor: pointer;"><i
                         class="fas fa-filter"></i> High Risk Only</button>
-                <button class="glass-panel" style="padding: 10px 16px; color: var(--text-secondary);"><i
+                <button class="glass-panel"
+                    style="padding: 10px 16px; color: var(--text-secondary); cursor: pointer;"><i
                         class="fas fa-sort-amount-down"></i> Sort by Expiry</button>
             </div>
         </div>
 
-        <div class="glass-panel" style="padding: 10px;">
-            <table class="premium-table">
+        <div class="glass-panel" style="padding: 20px; overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
                 <thead>
-                    <tr>
-                        <th>Batch ID</th>
-                        <th>Product</th>
-                        <th>Zone</th>
-                        <th>Quantity</th>
-                        <th>Harvest Date</th>
-                        <th>AI Risk Prediction</th>
-                        <th>Safe Shelf Life</th>
-                        <th>Actions</th>
+                    <tr
+                        style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid var(--card-border);">
+                        <th style="padding: 15px;">Batch ID</th>
+                        <th style="padding: 15px;">Product</th>
+                        <th style="padding: 15px;">Zone</th>
+                        <th style="padding: 15px;">Quantity</th>
+                        <th style="padding: 15px;">Harvest Date</th>
+                        <th style="padding: 15px;">AI Risk</th>
+                        <th style="padding: 15px;">Safe Life</th>
+                        <th style="padding: 15px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryBody">

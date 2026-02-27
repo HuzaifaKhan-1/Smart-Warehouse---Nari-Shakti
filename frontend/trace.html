@@ -15,63 +15,6 @@
             --pending: #94a3b8;
         }
 
-        /* Scanner Area Styles */
-        .scanner-cluster {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .search-glass {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-glass input {
-            width: 100%;
-            padding: 20px 30px;
-            padding-right: 140px;
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            color: white;
-            transition: var(--transition-smooth);
-        }
-
-        .search-glass input:focus {
-            border-color: var(--primary);
-            background: rgba(16, 185, 129, 0.05);
-            outline: none;
-        }
-
-        .search-glass .btn-premium {
-            position: absolute;
-            right: 10px;
-            padding: 12px 24px;
-        }
-
-        .qr-scanner-trigger {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px dashed var(--card-border);
-            border-radius: 18px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            color: var(--text-secondary);
-        }
-
-        .qr-scanner-trigger:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(16, 185, 129, 0.05);
-        }
-
         /* Timeline Enhancements */
         .timeline-container {
             position: relative;
@@ -92,10 +35,6 @@
             position: relative;
             padding-left: 60px;
             margin-bottom: 40px;
-        }
-
-        .timeline-stage:last-child {
-            margin-bottom: 0;
         }
 
         .stage-dot {
@@ -135,63 +74,6 @@
             transform: translateX(8px);
         }
 
-        .stage-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .stage-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .stage-meta {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            font-size: 0.85rem;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-        }
-
-        .meta-item i {
-            color: var(--primary);
-            width: 14px;
-        }
-
-        .ai-highlight {
-            border: 1px solid rgba(168, 85, 247, 0.3) !important;
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(59, 130, 246, 0.05)) !important;
-        }
-
-        .ai-highlight::after {
-            content: 'AI OPTIMISED';
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: var(--ai-purple);
-            color: white;
-            font-size: 0.6rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: 800;
-        }
-
-        /* Stats & Info Icons */
-        .info-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
         .info-row {
             display: flex;
             align-items: center;
@@ -199,6 +81,7 @@
             padding: 12px;
             background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
+            margin-bottom: 10px;
         }
 
         .info-icon {
@@ -213,59 +96,17 @@
             font-size: 1.1rem;
         }
 
-        .info-labels h5 {
-            font-size: 0.75rem;
+        .stage-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-bottom: 2px;
-            text-transform: uppercase;
         }
 
-        .info-labels p {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        /* History List */
-        .history-list {
-            margin-top: 15px;
-        }
-
-        .history-item {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--card-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .badge-status {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .status-low {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-        }
-
-        .status-med {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
+        .meta-item i {
+            color: var(--primary);
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -284,10 +125,10 @@
         </div>
 
         <nav>
-            <a href="dashboard.html" class="nav-item"><i class="fas fa-grid-2"></i> Dashboard</a>
-            <a href="inventory.html" class="nav-item"><i class="fas fa-box-archive"></i> Inventory</a>
-            <a href="analytics.html" class="nav-item"><i class="fas fa-analytics"></i> Analytics</a>
-            <a href="trace.html" class="nav-item active"><i class="fas fa-barcode-read"></i> Traceability</a>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-table-cells-large"></i> Dashboard</a>
+            <a href="inventory.html" class="nav-item"><i class="fas fa-boxes-stacked"></i> Inventory</a>
+            <a href="analytics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Analytics</a>
+            <a href="trace.html" class="nav-item active"><i class="fas fa-route"></i> Traceability</a>
         </nav>
     </aside>
 
@@ -297,347 +138,93 @@
                 <h1 style="font-size: 2.2rem; font-weight: 800;">Traceability Hub</h1>
                 <p style="color: var(--text-secondary);">Real-time farm-to-market transparency network</p>
             </div>
-            <div style="display: flex; gap: 12px;">
-                <button class="glass-panel" style="padding: 10px 20px; font-size: 0.8rem;"><i
-                        class="fas fa-download"></i> Export Audit</button>
-            </div>
+            <button class="glass-panel" style="padding: 10px 20px;"><i class="fas fa-download"></i> Export
+                Audit</button>
         </header>
 
-        <!-- Feature 1: Batch Input & Scanner -->
-        <div class="scanner-cluster">
-            <div class="search-glass">
-                <input type="text" placeholder="Enter Batch ID (e.g. AF-290)..." value="AF-290">
-                <button class="btn-premium">
-                    <i class="fas fa-search"></i> Trace Batch
-                </button>
+        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-bottom: 30px;">
+            <div style="position: relative; display: flex; align-items: center;">
+                <input type="text" placeholder="Enter Batch ID (e.g. AF-290)..." class="filter-select"
+                    style="width: 100%; padding-right: 140px;" value="AF-290">
+                <button class="btn-premium" style="position: absolute; right: 8px;">Trace Batch</button>
             </div>
-            <div class="qr-scanner-trigger">
-                <i class="fas fa-qrcode fa-lg"></i>
-                <span>Scan or Upload QR</span>
+            <div class="glass-panel"
+                style="display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border-style: dashed;">
+                <i class="fas fa-qrcode"></i> Scan QR
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: start;">
-
-            <!-- LEFT COLUMN -->
-            <div style="display: flex; flex-direction: column; gap: 24px;">
-
-                <!-- Batch Summary Card -->
-                <div class="glass-panel" style="padding: 24px;">
-                    <div style="text-align: center; margin-bottom: 24px;">
-                        <div
-                            style="background: white; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 16px;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=AF-290&color=06080f"
-                                alt="QR Code" style="width: 120px;">
-                        </div>
-                        <h2 style="font-weight: 800; font-size: 1.5rem; margin-bottom: 4px;">#AF-290</h2>
-                        <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: var(--primary);">Tomato
-                            Grade A+</span>
-                    </div>
-
-                    <div class="info-grid">
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--card-border);">
-                            <span style="color: var(--text-secondary); font-size: 0.85rem;">Status</span>
-                            <span style="color: var(--active); font-weight: 700; font-size: 0.85rem;">● In
-                                Storage</span>
-                        </div>
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--card-border);">
-                            <span style="color: var(--text-secondary); font-size: 0.85rem;">Location</span>
-                            <span style="font-weight: 600; font-size: 0.85rem;">Nashik Central Hub</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                            <span style="color: var(--text-secondary); font-size: 0.85rem;">Volume</span>
-                            <span style="font-weight: 600; font-size: 0.85rem;">450.00 Kg</span>
-                        </div>
-                    </div>
+        <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px;">
+            <div>
+                <div class="glass-panel" style="padding: 24px; text-align: center; margin-bottom: 24px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=AF-290&color=06080f"
+                        style="background: white; padding: 10px; border-radius: 12px; margin-bottom: 16px;">
+                    <h2 style="font-weight: 800; font-size: 1.5rem;">#AF-290</h2>
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: var(--primary);">Tomato Grade
+                        A+</span>
                 </div>
 
-                <!-- Feature 3: Farmer Information -->
                 <div class="glass-panel" style="padding: 24px;">
-                    <h3
-                        style="font-size: 1rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-user-tractor" style="color: var(--primary);"></i>
-                        Farmer Information
-                    </h3>
-                    <div class="info-grid">
-                        <div class="info-row">
-                            <div class="info-icon"><i class="fas fa-user"></i></div>
-                            <div class="info-labels">
-                                <h5>Farmer Name</h5>
-                                <p>Rahul Sharma</p>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-icon"><i class="fas fa-id-badge"></i></div>
-                            <div class="info-labels">
-                                <h5>Farm ID</h5>
-                                <p>MH-NSK-9281</p>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-icon"><i class="fas fa-location-dot"></i></div>
-                            <div class="info-labels">
-                                <h5>Location</h5>
-                                <p>Sangli, Maharashtra</p>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-icon"><i class="fas fa-phone"></i></div>
-                            <div class="info-labels">
-                                <h5>Contact</h5>
-                                <p>+91 98XXX X4210</p>
-                            </div>
+                    <h3 style="margin-bottom: 20px; font-size: 1rem;"><i class="fas fa-tractor"></i> Farmer Details</h3>
+                    <div class="info-row">
+                        <div class="info-icon"><i class="fas fa-user"></i></div>
+                        <div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">NAME</div>
+                            <div style="font-weight: 700;">Rahul Sharma</div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Feature 4: Storage History -->
-                <div class="glass-panel" style="padding: 24px;">
-                    <h3
-                        style="font-size: 1rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-clock-rotate-left" style="color: var(--primary);"></i>
-                        Storage History
-                    </h3>
-
-                    <div class="history-list">
-                        <div class="history-item">
-                            <div>
-                                <p style="font-size: 0.85rem; font-weight: 600;">Zone C-4 &rarr; Zone B-2</p>
-                                <span style="font-size: 0.7rem; color: var(--text-secondary);">Feb 20, 11:00 AM</span>
-                            </div>
-                            <span class="badge-status status-low">Low Risk</span>
-                        </div>
-                        <div class="history-item">
-                            <div>
-                                <p style="font-size: 0.85rem; font-weight: 600;">Temp: 14.5°C &rarr; 12.8°C</p>
-                                <span style="font-size: 0.7rem; color: var(--text-secondary);">Stability: 98.4%</span>
-                            </div>
-                            <i class="fas fa-thermometer-half" style="color: var(--secondary); font-size: 0.8rem;"></i>
-                        </div>
-                        <div class="history-item">
-                            <div>
-                                <p style="font-size: 0.85rem; font-weight: 600;">Humidity Log</p>
-                                <span style="font-size: 0.7rem; color: var(--text-secondary);">70% &rarr; 65%
-                                    (Avg)</span>
-                            </div>
-                            <i class="fas fa-droplet" style="color: var(--primary); font-size: 0.8rem;"></i>
-                        </div>
-                    </div>
-
-                    <!-- Small Sparkline Simulation -->
-                    <div style="margin-top: 20px; height: 40px; display: flex; align-items: flex-end; gap: 3px;">
-                        <div style="flex:1; height: 40%; background: var(--primary); border-radius: 2px; opacity:0.3">
-                        </div>
-                        <div style="flex:1; height: 60%; background: var(--primary); border-radius: 2px; opacity:0.4">
-                        </div>
-                        <div style="flex:1; height: 50%; background: var(--primary); border-radius: 2px; opacity:0.3">
-                        </div>
-                        <div style="flex:1; height: 80%; background: var(--primary); border-radius: 2px; opacity:0.6">
-                        </div>
-                        <div style="flex:1; height: 75%; background: var(--primary); border-radius: 2px; opacity:0.5">
-                        </div>
-                        <div style="flex:1; height: 90%; background: var(--primary); border-radius: 2px; opacity:0.8">
-                        </div>
-                        <div style="flex:1; height: 100%; background: var(--primary); border-radius: 2px;"></div>
-                    </div>
-                    <p style="font-size: 0.65rem; color: var(--text-secondary); text-align: center; margin-top: 8px;">
-                        Environmental Consistency Index</p>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: Lifecycle Timeline -->
             <div class="glass-panel" style="padding: 40px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                    <h3 style="font-weight: 700;">Complete Lifecycle Provenance</h3>
-                    <div class="ai-badge" style="padding: 6px 12px;"><i class="fas fa-shield-check"></i> Verified by
-                        AgriTrace</div>
-                </div>
-
+                <h3 style="margin-bottom: 30px;">Lifecycle Provenance</h3>
                 <div class="timeline-container">
-
-                    <!-- Stage 1: Harvested -->
+                    <!-- Stage 1 -->
                     <div class="timeline-stage">
                         <div class="stage-dot completed"></div>
                         <div class="stage-card">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--completed);">Feb 18, 2026 • 09:42 AM
-                                    </p>
-                                    <h4 class="stage-title">1. Harvested</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(16, 185, 129, 0.1); color: var(--completed);">COMPLETED</span>
-                            </div>
+                            <h4 style="margin-bottom: 10px;">1. Harvested</h4>
                             <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-location-dot"></i> Sangli, MH - Plot 4B</div>
-                                <div class="meta-item"><i class="fas fa-temperature-low"></i> 24.2°C (Field)</div>
-                                <div class="meta-item"><i class="fas fa-star"></i> Quality Score: 98/100</div>
-                                <div class="meta-item"><i class="fas fa-user-check"></i> Inspected by S. Kulkarni</div>
+                                <div class="meta-item"><i class="fas fa-map-pin"></i> Sangli, Plot 4B</div>
+                                <div class="meta-item"><i class="fas fa-calendar"></i> Feb 18, 2026</div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Stage 2: Transported -->
+                    <!-- Stage 2 -->
                     <div class="timeline-stage">
                         <div class="stage-dot completed"></div>
                         <div class="stage-card">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--completed);">Feb 19, 2026 • 02:15 PM
-                                    </p>
-                                    <h4 class="stage-title">2. Transported</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(16, 185, 129, 0.1); color: var(--completed);">COMPLETED</span>
-                            </div>
+                            <h4 style="margin-bottom: 10px;">2. Transported</h4>
                             <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-truck"></i> Vehicle ID: MH-15-AB-2091</div>
-                                <div class="meta-item"><i class="fas fa-thermometer-half"></i> Avg Temp: 14.5°C</div>
-                                <div class="meta-item"><i class="fas fa-route"></i> Distance: 142 Km</div>
-                                <div class="meta-item"><i class="fas fa-clock"></i> Duration: 4h 22m</div>
+                                <div class="meta-item"><i class="fas fa-truck-fast"></i> Truck MH-15-2091</div>
+                                <div class="meta-item"><i class="fas fa-temperature-half"></i> Avg 14.5°C</div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Stage 3: Warehouse Arrival -->
-                    <div class="timeline-stage">
-                        <div class="stage-dot completed"></div>
-                        <div class="stage-card">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--completed);">Feb 20, 2026 • 08:30 AM
-                                    </p>
-                                    <h4 class="stage-title">3. Warehouse Arrival</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(16, 185, 129, 0.1); color: var(--completed);">COMPLETED</span>
-                            </div>
-                            <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-warehouse"></i> Nashik Central Hub</div>
-                                <div class="meta-item"><i class="fas fa-weight-hanging"></i> Net Weight: 450.0 Kg</div>
-                                <div class="meta-item"><i class="fas fa-clipboard-check"></i> Ingestion Scan Success
-                                </div>
-                                <div class="meta-item"><i class="fas fa-barcode"></i> LUIS Token Signed</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stage 4: Assigned Zone -->
+                    <!-- Stage 3 -->
                     <div class="timeline-stage">
                         <div class="stage-dot active"></div>
-                        <div class="stage-card"
-                            style="border-color: var(--active); background: rgba(245, 158, 11, 0.05);">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--active);">Feb 20, 2026 • 11:00 AM</p>
-                                    <h4 class="stage-title">4. Assigned Zone</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(245, 158, 11, 0.1); color: var(--active);">IN
-                                    PROGRESS</span>
-                            </div>
-                            <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-box"></i> Storage Bin: B-209</div>
-                                <div class="meta-item"><i class="fas fa-map-location"></i> Zone: Cold Section C-4</div>
-                                <div class="meta-item"><i class="fas fa-temperature-arrow-down"></i> Current Temp:
-                                    12.8°C</div>
-                                <div class="meta-item"><i class="fas fa-droplet"></i> Humidity: 68%</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stage 5: AI Prediction (Highlighted) -->
-                    <div class="timeline-stage">
-                        <div class="stage-dot"></div>
-                        <div class="stage-card ai-highlight">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--ai-purple);">Projected Feb 24, 2026</p>
-                                    <h4 class="stage-title">5. AI Prediction & Spoilage Analysis</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(168, 85, 247, 0.1); color: var(--ai-purple);">PENDING</span>
-                            </div>
-                            <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-brain"></i> Model: SpoilageV2_RL</div>
-                                <div class="meta-item"><i class="fas fa-calendar-check"></i> Shelf Life: 12 Days (Est)
-                                </div>
-                                <div class="meta-item"><i class="fas fa-chart-line"></i> Confidence Score: 94.2%</div>
-                                <div class="meta-item"><i class="fas fa-bullseye"></i> Recommended Market: Retail</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stage 6: Dispatch -->
-                    <div class="timeline-stage">
-                        <div class="stage-dot"></div>
                         <div class="stage-card">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--text-secondary);">Awaiting Analysis</p>
-                                    <h4 class="stage-title">6. Dispatch</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(255, 255, 255, 0.05); color: var(--text-secondary);">PENDING</span>
-                            </div>
+                            <h4 style="margin-bottom: 10px;">3. In Storage</h4>
                             <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-truck-ramp-box"></i> Pending Assignment</div>
-                                <div class="meta-item"><i class="fas fa-file-invoice"></i> Transit Permit Required</div>
+                                <div class="meta-item"><i class="fas fa-warehouse"></i> Nashik Central</div>
+                                <div class="meta-item"><i class="fas fa-network-wired"></i> IoT Sync Active</div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Stage 7: Market Delivery -->
-                    <div class="timeline-stage">
-                        <div class="stage-dot"></div>
-                        <div class="stage-card">
-                            <div class="stage-header">
-                                <div>
-                                    <p class="timeline-date" style="color: var(--text-secondary);">Final Milestone</p>
-                                    <h4 class="stage-title">7. Market Delivery</h4>
-                                </div>
-                                <span class="badge"
-                                    style="background: rgba(255, 255, 255, 0.05); color: var(--text-secondary);">PENDING</span>
-                            </div>
-                            <div class="stage-meta">
-                                <div class="meta-item"><i class="fas fa-shop"></i> Destination: APMC Vashi</div>
-                                <div class="meta-item"><i class="fas fa-hand-holding-dollar"></i> Quality Surcharge Cert
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-
         </div>
     </main>
 
     <script>
-        // Simple UI simulations
-        const input = document.querySelector('.search-glass input');
-        const searchBtn = document.querySelector('.search-glass .btn-premium');
-
-        searchBtn.addEventListener('click', () => {
-            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tracing...';
-            setTimeout(() => {
-                searchBtn.innerHTML = '<i class="fas fa-search"></i> Trace Batch';
-            }, 1000);
-        });
-
-        // Add hover animations to timeline
+        // Simple UI listeners
         document.querySelectorAll('.timeline-stage').forEach(stage => {
             stage.addEventListener('mouseenter', () => {
-                const dot = stage.querySelector('.stage-dot');
-                if (!dot.classList.contains('completed')) {
-                    dot.style.transform = 'scale(1.3)';
-                }
+                stage.querySelector('.stage-dot').style.transform = 'scale(1.2)';
             });
             stage.addEventListener('mouseleave', () => {
-                const dot = stage.querySelector('.stage-dot');
-                dot.style.transform = 'scale(1)';
+                stage.querySelector('.stage-dot').style.transform = 'scale(1)';
             });
         });
     </script>
