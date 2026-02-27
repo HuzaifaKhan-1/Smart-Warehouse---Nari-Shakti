@@ -4,10 +4,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictive Analytics | AgriFresh Intelligence</title>
+    <title>Predictive Intelligence Dashboard | AgriFresh</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --blue-accent: #3b82f6;
+            --red-accent: #ef4444;
+            --gold-accent: #f59e0b;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .insight-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .insight-box.ai {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .insight-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .insight-tag.ai-tag {
+            background: var(--blue-accent);
+        }
+
+        .metric-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .mini-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .mini-card label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .mini-card span {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .confusion-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .matrix-cell {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+        }
+
+        .matrix-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .matrix-val {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .tp {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--primary);
+        }
+
+        .tn {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--primary);
+        }
+
+        .fp {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .fn {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .market-intelligence {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 300px;
+            z-index: 1001;
+        }
+
+        .gap-indicator {
+            position: absolute;
+            top: 60px;
+            right: 40px;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red-accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        select.glass-panel {
+            background: var(--card-bg);
+            color: white;
+            border: 1px solid var(--card-border);
+            padding: 10px 15px;
+            border-radius: 10px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        canvas {
+            max-width: 100% !important;
+        }
+
+        @media (max-width: 1100px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -24,176 +214,232 @@
         </div>
 
         <nav>
-            <a href="dashboard.html" class="nav-item"><i class="fas fa-grid-2"></i> Dashboard</a>
-            <a href="inventory.html" class="nav-item"><i class="fas fa-box-archive"></i> Inventory</a>
-            <a href="analytics.html" class="nav-item active"><i class="fas fa-analytics"></i> Analytics</a>
-            <a href="trace.html" class="nav-item"><i class="fas fa-barcode-read"></i> Traceability</a>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="inventory.html" class="nav-item"><i class="fas fa-boxes"></i> Inventory</a>
+            <a href="analytics.html" class="nav-item active"><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="trace.html" class="nav-item"><i class="fas fa-route"></i> Traceability</a>
         </nav>
     </aside>
 
     <main class="main-wrapper">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <div>
-                <h1 style="font-size: 2.2rem; font-weight: 800;">Predictive Intelligence</h1>
-                <p style="color: var(--text-secondary);">Market trends, demand forecasting, and resource optimization
-                </p>
+                <h1 style="font-size: 2.2rem; font-weight: 800;">Predictive Intelligence Dashboard</h1>
+                <p style="color: var(--text-secondary);">Historical trends, AI performance, and warehouse optimization
+                    insights</p>
             </div>
-            <div style="display: flex; gap: 16px;">
-                <button class="glass-panel"
-                    style="padding: 12px 24px; color: white; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-calendar"></i> Last 30 Days
-                </button>
-                <button class="btn-premium">
-                    <i class="fas fa-download"></i> Export Analytics
+            <div class="filter-bar">
+                <select class="glass-panel" id="warehouseFilter">
+                    <option value="all">All Warehouses</option>
+                    <option value="nashik">Nashik Hub</option>
+                    <option value="pune">Pune Hub</option>
+                    <option value="mumbai">Mumbai Hub</option>
+                </select>
+                <select class="glass-panel" id="dateFilter">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="180">Last 6 Months</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <button class="btn-premium" onclick="exportAnalytics()">
+                    <i class="fas fa-file-export"></i> Export
                 </button>
             </div>
         </header>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
-            <div class="glass-panel" style="padding: 30px;">
-                <h3 style="margin-bottom: 24px; font-weight: 700;">Demand vs. Supply Projection</h3>
-                <div class="chart-container">
+        <div class="dashboard-grid">
+            <!-- SECTION A: Demand vs Supply -->
+            <div class="glass-panel" style="padding: 30px; position: relative;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                    <h3 style="font-weight: 700;"><i class="fas fa-chart-area"
+                            style="color: var(--primary); margin-right: 10px;"></i>Demand vs Supply Forecast</h3>
+                </div>
+                <div id="gapIndicator" class="gap-indicator">Gap: 12%</div>
+                <div style="height: 300px;">
                     <canvas id="demandSupplyChart"></canvas>
                 </div>
-            </div>
-            <div class="glass-panel" style="padding: 30px;">
-                <h3 style="margin-bottom: 24px; font-weight: 700;">Capacity Utilization by Commodity</h3>
-                <div class="chart-container" style="display: flex; justify-content: center;">
-                    <canvas id="utilizationPieChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px;">
-            <div class="glass-panel" style="padding: 30px;">
-                <h3 style="margin-bottom: 24px; font-weight: 700;">AI Spoilage Risk Heatmap (7-Day Forecast)</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">Predicted probability
-                    of batch spoilage across the upcoming week based on current IoT trends.</p>
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px;">
-                    <div class="zone-tile zone-safe"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">MON</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">4%</span>
-                    </div>
-                    <div class="zone-tile zone-safe"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">TUE</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">6%</span>
-                    </div>
-                    <div class="zone-tile zone-warning"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">WED</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">18%</span>
-                    </div>
-                    <div class="zone-tile zone-warning"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">THU</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">22%</span>
-                    </div>
-                    <div class="zone-tile zone-danger"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">FRI</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">85%</span>
-                    </div>
-                    <div class="zone-tile zone-warning"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">SAT</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">30%</span>
-                    </div>
-                    <div class="zone-tile zone-safe"
-                        style="aspect-ratio: auto; height: 100px; justify-content: center; align-items: center;">
-                        <span style="font-size: 0.8rem; font-weight: 700;">SUN</span>
-                        <span style="font-size: 1.2rem; font-weight: 800;">12%</span>
-                    </div>
+                <div class="insight-box ai">
+                    <span class="insight-tag ai-tag">AI Prediction</span>
+                    <p id="demandSupplyInsight">Demand is projected to exceed supply by 12% in Week 4. AI recommends
+                        dispatch prioritization for Tomato batches.</p>
                 </div>
             </div>
 
+            <!-- SECTION B: Stock Utilization -->
             <div class="glass-panel" style="padding: 30px;">
-                <h3 style="margin-bottom: 24px; font-weight: 700;">Impact Summary</h3>
-                <div style="margin-top: 20px;">
-                    <div class="decision-card glass-panel"
-                        style="border-left-color: var(--primary); margin-bottom: 20px;">
-                        <p
-                            style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">
-                            Carbon Offset</p>
-                        <h2 style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">4.2 Tons</h2>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">CO2 reduction due to minimized
-                            waste</p>
+                <h3 style="margin-bottom: 24px; font-weight: 700;"><i class="fas fa-pie-chart"
+                        style="color: var(--secondary); margin-right: 10px;"></i>Stock Utilization</h3>
+                <div class="metric-mini-grid">
+                    <div class="mini-card">
+                        <label>Total Capacity</label>
+                        <span id="totalCap">5,000 Tons</span>
                     </div>
-                    <div class="decision-card glass-panel" style="border-left-color: var(--secondary);">
-                        <p
-                            style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">
-                            Market Revenue Preserved</p>
-                        <h2 style="font-size: 2.2rem; font-weight: 800; color: var(--secondary);">₹124,500</h2>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Prevented losses in this hub alone
-                        </p>
+                    <div class="mini-card">
+                        <label>Used</label>
+                        <span id="usedCap">4,200 Tons</span>
                     </div>
+                    <div class="mini-card">
+                        <label>Remaining</label>
+                        <span id="remainingCap">800 Tons</span>
+                    </div>
+                </div>
+                <div style="height: 220px; display: flex; justify-content: center;">
+                    <canvas id="utilizationChart"></canvas>
+                </div>
+                <div class="insight-box">
+                    <span class="insight-tag">Smart Insight</span>
+                    <p id="utilizationInsight">Tomato occupies 38% of total storage. Consider rebalancing if demand
+                        drops.</p>
+                </div>
+            </div>
+
+            <!-- SECTION C: Spoilage Risk Distribution -->
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 24px; font-weight: 700;"><i class="fas fa-shield-virus"
+                        style="color: var(--red-accent); margin-right: 10px;"></i>Spoilage Risk Distribution</h3>
+                <div style="display: flex; align-items: center; gap: 30px;">
+                    <div style="width: 200px; height: 200px;">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="mini-card" style="margin-bottom: 10px;">
+                            <label>Batches Analyzed</label>
+                            <span id="totalBatches">142 Batches</span>
+                        </div>
+                        <div class="mini-card">
+                            <label>Avg. Risk Score</label>
+                            <span id="avgRisk" style="color: var(--gold-accent);">24 / 100</span>
+                        </div>
+                        <div style="margin-top: 15px; font-size: 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span><i class="fas fa-circle" style="color: var(--primary); font-size: 0.6rem;"></i>
+                                    Safe</span>
+                                <span id="safePerc">72%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span><i class="fas fa-circle"
+                                        style="color: var(--gold-accent); font-size: 0.6rem;"></i> Warning</span>
+                                <span id="warningPerc">14%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span><i class="fas fa-circle" style="color: var(--red-accent); font-size: 0.6rem;"></i>
+                                    High Risk</span>
+                                <span id="highRiskPerc">14%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-box" style="border-left: 4px solid var(--red-accent);">
+                    <p id="riskInsight">14% of batches are in high-risk category. AI recommends dispatch within 48
+                        hours.</p>
+                </div>
+            </div>
+
+            <!-- SECTION D: AI Model Performance -->
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 24px; font-weight: 700;"><i class="fas fa-robot"
+                        style="color: var(--blue-accent); margin-right: 10px;"></i>AI Model Performance</h3>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 0.9rem; font-weight: 600;">Spoilage Detection Accuracy</span>
+                        <span style="color: var(--primary); font-weight: 700;">96%</span>
+                    </div>
+                    <div class="accuracy-bar">
+                        <div class="accuracy-fill" style="width: 96%;"></div>
+                    </div>
+                </div>
+
+                <div class="metric-mini-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="mini-card">
+                        <label>Optimization Accuracy</label>
+                        <span id="optAcc">92%</span>
+                    </div>
+                    <div class="mini-card">
+                        <label>Dispatch Efficiency</label>
+                        <span id="efficiency">89%</span>
+                    </div>
+                </div>
+
+                <div class="confusion-matrix">
+                    <div
+                        style="grid-column: span 3; font-size: 0.75rem; text-align: center; color: var(--text-secondary); margin-bottom: -5px;">
+                        Confusion Matrix (Spoilage Model)</div>
+                    <div class="matrix-cell tp" title="True Positive">
+                        <span class="matrix-label">Actual Safe</span>
+                        <span class="matrix-val" id="tpVal">85</span>
+                    </div>
+                    <div class="matrix-cell fp" title="False Positive">
+                        <span class="matrix-label">Predicted Risk</span>
+                        <span class="matrix-val" id="fpVal">5</span>
+                    </div>
+                    <div class="matrix-cell fn" title="False Negative">
+                        <span class="matrix-label">Actual Risk</span>
+                        <span class="matrix-val" id="fnVal">8</span>
+                    </div>
+                </div>
+                <p style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 15px; text-align: center;">
+                    Confusion matrix validates model reliability for real-world deployment.</p>
+            </div>
+
+            <!-- SECTION E: Loss Reduction Over Time -->
+            <div class="glass-panel full-width" style="padding: 30px;">
+                <h3 style="margin-bottom: 24px; font-weight: 700;"><i class="fas fa-money-bill-trend-up"
+                        style="color: var(--gold-accent); margin-right: 10px;"></i>Revenue Impact & Loss Reduction</h3>
+
+                <div class="metrics-grid" style="margin-bottom: 30px; grid-template-columns: repeat(4, 1fr);">
+                    <div class="mini-card"
+                        style="border-left: 3px solid var(--primary); background: rgba(16, 185, 129, 0.05);">
+                        <label>Total Loss Prevented</label>
+                        <span id="lossPrevented" style="color: var(--primary);">₹2,98,000</span>
+                    </div>
+                    <div class="mini-card"
+                        style="border-left: 3px solid var(--blue-accent); background: rgba(59, 130, 246, 0.05);">
+                        <label>% Reduction</label>
+                        <span id="reductionPerc">53.5%</span>
+                    </div>
+                    <div class="mini-card"
+                        style="border-left: 3px solid var(--gold-accent); background: rgba(245, 158, 11, 0.05);">
+                        <label>Tons Saved</label>
+                        <span id="tonsSaved">42.8 Tons</span>
+                    </div>
+                    <div class="mini-card"
+                        style="border-left: 3px solid #ae71fe; background: rgba(174, 113, 254, 0.05);">
+                        <label>CO₂ Offset</label>
+                        <span id="co2Offset">12.4 Tons</span>
+                    </div>
+                </div>
+
+                <div style="height: 350px;">
+                    <canvas id="lossReductionChart"></canvas>
                 </div>
             </div>
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const ctxDemand = document.getElementById('demandSupplyChart').getContext('2d');
-            new Chart(ctxDemand, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [
-                        {
-                            label: 'Market Demand',
-                            data: [650, 780, 720, 850, 920, 880],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Current Supply',
-                            data: [580, 620, 650, 600, 710, 680],
-                            borderColor: '#10b981',
-                            borderDash: [5, 5],
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8' } } },
-                    scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                    }
-                }
-            });
+    <!-- Market Intelligence Panel -->
+    <div class="market-intelligence glass-panel" style="padding: 20px; border-top: 3px solid var(--blue-accent);">
+        <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+            <i class="fas fa-globe" style="color: var(--blue-accent);"></i> Market Intelligence
+        </h4>
+        <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px;">
+                <span>Tomato Price Trend</span>
+                <span style="color: var(--primary);"><i class="fas fa-caret-up"></i> +4.2%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                <span>Demand Score</span>
+                <span style="font-weight: 700;">8.4/10</span>
+            </div>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.75rem;">
+            <span style="color: var(--blue-accent); font-weight: 700;">AI Recommendation:</span>
+            Hold Potato stock for 5 more days; price expected to peak following festival season.
+        </div>
+    </div>
 
-            const ctxUtil = document.getElementById('utilizationPieChart').getContext('2d');
-            new Chart(ctxUtil, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Tomato', 'Onion', 'Potato', 'Grapes', 'Available Space'],
-                    datasets: [{
-                        data: [35, 25, 20, 10, 10],
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', 'rgba(255,255,255,0.05)'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#94a3b8', padding: 20 }
-                        }
-                    },
-                    cutout: '75%'
-                }
-            });
-        });
-    </script>
+    <script src="js/analytics.js"></script>
 </body>
 
 </html>
