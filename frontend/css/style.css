@@ -6,23 +6,23 @@
     --primary-light: #4CAF50;
     --primary-accent: #2E7D32;
     --primary-glow: rgba(27, 94, 32, 0.4);
-    
+
     --bg-light: #F8FAF8;
     --bg-white: #FFFFFF;
     --bg-gradient: linear-gradient(135deg, #F8FAF8 0%, #F0F4F0 100%);
-    
+
     --card-bg: rgba(255, 255, 255, 0.85);
     --card-border: rgba(27, 94, 32, 0.1);
     --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
-    
+
     --text-primary: #1A2E1C;
     --text-secondary: #4A5D4C;
     --text-muted: #809683;
-    
+
     --warning: #F59E0B;
     --danger: #EF4444;
     --info: #3B82F6;
-    
+
     --success-bg: rgba(76, 175, 80, 0.1);
     --warning-bg: rgba(245, 158, 11, 0.1);
     --danger-bg: rgba(239, 68, 68, 0.1);
@@ -524,7 +524,8 @@ body {
     justify-content: space-between;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 180px 60px 100px;
+    padding: 140px 60px 80px;
+    /* Reduced top gap for tighter fit */
     position: relative;
     z-index: 1;
 }
@@ -536,7 +537,7 @@ body {
 }
 
 .hero-visual {
-    flex: 0.8;
+    flex: 0.9;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -546,17 +547,19 @@ body {
 /* UI Mockup Components */
 .mockup-container {
     position: relative;
-    width: 580px;
+    width: 100%;
+    max-width: 620px;
     height: 480px;
-    background: rgba(255, 255, 255, 0.6);
+    background: white;
     backdrop-filter: blur(30px) saturate(180%);
     border: 1px solid rgba(27, 94, 32, 0.1);
     border-radius: 40px;
-    box-shadow: 
-        0 30px 60px -12px rgba(0, 0, 0, 0.1), 
-        0 18px 36px -18px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 40px 100px -20px rgba(0, 0, 0, 0.15),
+        0 18px 36px -18px rgba(0, 0, 0, 0.05);
     animation: floating 8s ease-in-out infinite;
+    overflow: hidden;
+    /* Ensure image background doesn't bleed */
 }
 
 .floating-card {
@@ -755,7 +758,7 @@ body {
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    background: 
+    background:
         radial-gradient(at 0% 0%, rgba(76, 175, 80, 0.05) 0px, transparent 50%),
         radial-gradient(at 50% 0%, rgba(27, 94, 32, 0.02) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(76, 175, 80, 0.05) 0px, transparent 50%);
