@@ -360,7 +360,8 @@
                 <p style="color: var(--text-secondary); font-weight: 500;">End-to-end supply chain transparency verified
                     by Blockchain</p>
             </div>
-            <button class="btn-premium" style="padding: 14px 28px; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2);">
+            <button id="auditReportBtn" onclick="generateAuditReport()" class="btn-premium"
+                style="padding: 14px 28px; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2);">
                 <i class="fas fa-file-shield"></i> Generate Audit Report
             </button>
         </header>
@@ -768,19 +769,69 @@
             });
         }
 
+        function generateAuditReport() {
+            const batchId = document.getElementById('batchSelect').value;
+            const data = batchData[batchId];
+            if (!data) return;
+
+            const btn = document.getElementById('auditReportBtn');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing Audit...';
+            btn.disabled = true;
+
+            // Simulate PDF generation delay
+            setTimeout(() => {
+                const reportContent = `AGRIFRESH BLOCKCHAIN AUDIT REPORT\n` +
+                    `Timestamp: ${new Date().toLocaleString()}\n` +
+                    `Batch: #${data.batch_id}\n` +
+                    `Product: ${data.crop_name}\n` +
+                    `Provenance Tracking ID: ${data.tracking_id}\n` +
+                    `-----------------------------------\n` +
+                    `Farmer: ${data.farmer.name}\n` +
+                    `Location: ${data.farmer.location}\n` +
+                    `Status: ${data.status}\n` +
+                    `Verified Milestones: ${data.timeline.filter(t => t.status === 'completed').length}\n` +
+                    `Blockchain Hash: 0x${Math.random().toString(16).substring(2, 10)}${Math.random().toString(16).substring(2, 10)}\n`;
+
+                const blob = new Blob([reportContent], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Audit_Report_${data.batch_id}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Audit Downloaded';
+                btn.style.background = '#059669';
+
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 3000);
+            }, 2000);
+        }
+
         function simulateScan() {
             const keys = Object.keys(batchData);
             const randomBatch = keys[Math.floor(Math.random() * keys.length)];
             const btn = document.querySelector('.scanner-trigger');
 
+            // Simulate file input trigger if we were doing upload
             btn.style.borderColor = 'var(--primary)';
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin fa-xl"></i> <div>Scanning...</div>';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin fa-xl"></i> <div>Syncing Satellite Data...</div>';
 
             setTimeout(() => {
                 document.getElementById('batchSelect').value = randomBatch;
                 loadBatch(randomBatch);
-                btn.innerHTML = '<i class="fas fa-qrcode fa-xl"></i> <div><div style="font-size: 0.95rem;">Scan QR Code</div><div style="font-size: 0.65rem; font-weight: 500; opacity: 0.7;">Upload image or live scan</div></div>';
-            }, 1000);
+                btn.innerHTML = '<i class="fa-solid fa-circle-check fa-xl"></i> <div><div style="font-size: 0.95rem;">Batch Identified!</div><div style="font-size: 0.65rem; font-weight: 500; opacity: 0.7;">Verified at source</div></div>';
+
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-qrcode fa-xl"></i> <div><div style="font-size: 0.95rem;">Scan QR Code</div><div style="font-size: 0.65rem; font-weight: 500; opacity: 0.7;">Upload image or live scan</div></div>';
+                }, 2000);
+            }, 1200);
         }
 
         const traceBtn = document.getElementById('traceBtn');

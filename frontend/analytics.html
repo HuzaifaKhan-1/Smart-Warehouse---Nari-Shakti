@@ -268,17 +268,18 @@
                     metrics</p>
             </div>
             <div class="control-bar">
-                <select class="filter-select" style="min-width: 140px;">
-                    <option>Last 7 Days</option>
-                    <option selected>Last 30 Days</option>
-                    <option>Year to Date</option>
+                <select id="timeRangeSelect" class="filter-select" style="min-width: 140px;">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="365">Year to Date</option>
                 </select>
-                <select class="filter-select">
-                    <option>All Crops</option>
-                    <option>Tomatoes</option>
-                    <option>Onions</option>
+                <select id="cropTypeSelect" class="filter-select">
+                    <option value="all">All Crops</option>
+                    <option value="Tomato">Tomatoes</option>
+                    <option value="Onion">Onions</option>
+                    <option value="Potato">Potatoes</option>
                 </select>
-                <button class="btn-premium">
+                <button id="exportBtn" class="btn-premium">
                     <i class="fas fa-file-export"></i> Export Report
                 </button>
             </div>
@@ -301,19 +302,19 @@
                 <div class="insight-stats">
                     <div class="stat-box">
                         <div class="stat-label">Loss Prevented</div>
-                        <div class="stat-value">₹242,500</div>
+                        <div id="summaryLoss" class="stat-value">₹242,500</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Storage Efficiency</div>
-                        <div class="stat-value">94.2%</div>
+                        <div id="summaryEff" class="stat-value">94.2%</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Peak Perform Zone</div>
-                        <div class="stat-value">Zone B</div>
+                        <div id="summaryZone" class="stat-value">Zone B</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Model Confidence</div>
-                        <div class="stat-value">98.4%</div>
+                        <div id="summaryConf" class="stat-value">98.4%</div>
                     </div>
                 </div>
             </div>
@@ -321,41 +322,40 @@
 
         <!-- Impact Summary & Stats -->
         <section class="impact-grid">
-            <div class="impact-card glass-panel">
-                <div class="impact-icon" style="background: #E8F5E9; color: #2E7D32;"><i class="fas fa-leaf"></i></div>
+            <div class="impact-card glass-panel" style="border-bottom: 4px solid #10b981;">
+                <div class="impact-icon" style="background: #ecfdf5; color: #10b981;"><i class="fas fa-tree"></i></div>
                 <div>
                     <div class="stat-label" style="color: var(--text-secondary);">Carbon Offset</div>
-                    <div style="font-size: 1.4rem; font-weight: 800;">4.2T</div>
-                    <div style="font-size: 0.7rem; font-weight: 700;" class="trend-up"><i class="fas fa-arrow-up"></i>
-                        12.5%</div>
+                    <div id="valCarbon" style="font-size: 1.4rem; font-weight: 800;">4.2T</div>
+                    <div id="trendCarbon" style="font-size: 0.7rem; font-weight: 700; color: #10b981;"><i
+                            class="fas fa-arrow-up"></i> 12.5%</div>
                 </div>
             </div>
-            <div class="impact-card glass-panel">
-                <div class="impact-icon" style="background: #FFF8E1; color: #F9A825;"><i
-                        class="fas fa-shield-halved"></i></div>
+            <div class="impact-card glass-panel" style="border-bottom: 4px solid #7c3aed;">
+                <div class="impact-icon" style="background: #f5f3ff; color: #7c3aed;"><i class="fas fa-coins"></i></div>
                 <div>
                     <div class="stat-label" style="color: var(--text-secondary);">Market Preserve</div>
-                    <div style="font-size: 1.4rem; font-weight: 800;">₹1.84M</div>
-                    <div style="font-size: 0.7rem; font-weight: 700;" class="trend-up"><i class="fas fa-arrow-up"></i>
-                        8.2%</div>
+                    <div id="valMarket" style="font-size: 1.4rem; font-weight: 800;">₹1.84M</div>
+                    <div id="trendMarket" style="font-size: 0.7rem; font-weight: 700; color: #7c3aed;"><i
+                            class="fas fa-arrow-up"></i> 8.2%</div>
                 </div>
             </div>
-            <div class="impact-card glass-panel">
-                <div class="impact-icon" style="background: #FFEBEE; color: #D12F2F;"><i
-                        class="fas fa-chart-line-down"></i></div>
+            <div class="impact-card glass-panel" style="border-bottom: 4px solid #ef4444;">
+                <div class="impact-icon" style="background: #fef2f2; color: #ef4444;"><i class="fas fa-chart-pie"></i>
+                </div>
                 <div>
                     <div class="stat-label" style="color: var(--text-secondary);">Loss Reduction</div>
-                    <div style="font-size: 1.4rem; font-weight: 800;">64.5%</div>
-                    <div style="font-size: 0.7rem; font-weight: 700;" class="trend-up"><i class="fas fa-arrow-up"></i>
-                        24% YoY</div>
+                    <div id="valLoss" style="font-size: 1.4rem; font-weight: 800;">64.5%</div>
+                    <div id="trendLoss" style="font-size: 0.7rem; font-weight: 700; color: #ef4444;"><i
+                            class="fas fa-arrow-up"></i> 24% YoY</div>
                 </div>
             </div>
-            <div class="impact-card glass-panel">
-                <div class="impact-icon" style="background: #E3F2FD; color: #0288D1;"><i class="fas fa-truck-fast"></i>
+            <div class="impact-card glass-panel" style="border-bottom: 4px solid #0288d1;">
+                <div class="impact-icon" style="background: #e0f2fe; color: #0288d1;"><i class="fas fa-truck-fast"></i>
                 </div>
                 <div>
                     <div class="stat-label" style="color: var(--text-secondary);">Suggested Exit</div>
-                    <div style="font-size: 1.4rem; font-weight: 800;">Zone C-4</div>
+                    <div id="valExit" style="font-size: 1.4rem; font-weight: 800;">Zone C-4</div>
                     <p style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px;">Optimal ROI dispatch
                     </p>
                 </div>
@@ -408,42 +408,8 @@
                             week
                         </div>
                     </div>
-                    <div class="thermal-grid">
-                        <div class="day-card" title="Low risk. All crops stable.">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">MON</span>
-                            <div class="risk-indicator" style="background: #2E7D32;"></div>
-                            <div style="font-weight: 800;">4.2%</div>
-                        </div>
-                        <div class="day-card">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">TUE</span>
-                            <div class="risk-indicator" style="background: #2E7D32;"></div>
-                            <div style="font-weight: 800;">5.8%</div>
-                        </div>
-                        <div class="day-card">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">WED</span>
-                            <div class="risk-indicator" style="background: #F9A825;"></div>
-                            <div style="font-weight: 800;">18.2%</div>
-                        </div>
-                        <div class="day-card">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">THU</span>
-                            <div class="risk-indicator" style="background: #F9A825;"></div>
-                            <div style="font-weight: 800;">22.1%</div>
-                        </div>
-                        <div class="day-card" style="box-shadow: 0 0 20px rgba(211, 47, 47, 0.1);">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">FRI</span>
-                            <div class="risk-indicator" style="background: #D12F2F;"></div>
-                            <div style="font-weight: 800; color: #D12F2F;">82.5%</div>
-                        </div>
-                        <div class="day-card">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">SAT</span>
-                            <div class="risk-indicator" style="background: #F9A825;"></div>
-                            <div style="font-weight: 800;">34.0%</div>
-                        </div>
-                        <div class="day-card">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);">SUN</span>
-                            <div class="risk-indicator" style="background: #2E7D32;"></div>
-                            <div style="font-weight: 800;">12.4%</div>
-                        </div>
+                    <div class="thermal-grid" id="spoilageForecast">
+                        <!-- Dynamic Day Cards -->
                     </div>
                 </div>
             </div>
@@ -510,7 +476,8 @@
                             style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem; padding-bottom: 12px; border-bottom: 1px dashed var(--card-border);">
                             <div
                                 style="width: 32px; height: 32px; background: rgba(209, 47, 47, 0.1); color: #D12F2F; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-triangle-exclamation"></i></div>
+                                <i class="fas fa-triangle-exclamation"></i>
+                            </div>
                             <div style="flex: 1;">
                                 <div style="font-weight: 800;">Highest Risk</div>
                                 <div style="color: var(--text-secondary); font-size: 0.75rem;">Tomatoes (Lot #EF-21)
@@ -521,7 +488,8 @@
                             style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem; padding-bottom: 12px; border-bottom: 1px dashed var(--card-border);">
                             <div
                                 style="width: 32px; height: 32px; background: rgba(46, 125, 50, 0.1); color: #2E7D32; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-lock"></i></div>
+                                <i class="fas fa-lock"></i>
+                            </div>
                             <div style="flex: 1;">
                                 <div style="font-weight: 800;">Best Stability</div>
                                 <div style="color: var(--text-secondary); font-size: 0.75rem;">Onions (45 Days avg)
@@ -531,7 +499,8 @@
                         <div style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem;">
                             <div
                                 style="width: 32px; height: 32px; background: rgba(2, 136, 209, 0.1); color: #0288D1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-hourglass-half"></i></div>
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
                             <div style="flex: 1;">
                                 <div style="font-weight: 800;">Avg. Duration</div>
                                 <div style="color: var(--text-secondary); font-size: 0.75rem;">18.4 Days across
