@@ -149,7 +149,7 @@ window.dispatchAI = async (batchId) => {
     };
 
     try {
-        const response = await fetch('http://localhost:8000/analyze', {
+        const response = await fetch('http://localhost:5000/api/ai/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -396,8 +396,8 @@ window.runDispatchSimulator = async () => {
         const payload2 = { ...payload1, batchId: id, temperature: payload1.temperature + 2.5, storage_days: payload1.storage_days + 3 };
 
         const [r1, r2] = await Promise.all([
-            fetch('http://localhost:8000/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload1) }),
-            fetch('http://localhost:8000/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload2) })
+            fetch('http://localhost:5000/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload1) }),
+            fetch('http://localhost:5000/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload2) })
         ]);
 
         const d1 = await r1.json();
