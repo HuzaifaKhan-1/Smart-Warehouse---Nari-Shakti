@@ -4,9 +4,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management | AgriFresh AI</title>
+    <title>📦 Inventory - Batch Management System | AgriFresh AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific enhancements for Inventory Page */
+        .alert-banner {
+            background: linear-gradient(90deg, #FFF5F5 0%, #FED7D7 100%);
+            border-left: 5px solid var(--danger);
+            color: #C53030;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideDown 0.5s ease-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .inventory-hero {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .optimization-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .optimization-card::after {
+            content: 'AI OPTIMIZED';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            transform: rotate(45deg);
+        }
+
+        .sensor-stream {
+            background: #1a1a1a;
+            color: #00ff00;
+            border-radius: 20px;
+            padding: 25px;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+        }
+
+        .sensor-stream .dot {
+            width: 10px;
+            height: 10px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .value-up {
+            color: #48BB78;
+        }
+
+        .value-down {
+            color: #F56565;
+        }
+
+        .pulse {
+            animation: pulseAnim 0.5s ease-in-out;
+        }
+
+        @keyframes pulseAnim {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .premium-hover {
+            transition: var(--transition-smooth);
+        }
+
+        .premium-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(46, 125, 50, 0.1) !important;
+        }
+
+        .live-tag {
+            background: rgba(220, 38, 38, 0.2);
+            color: #ef4444;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .batch-detail-panel {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+        }
+
+        .detail-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .simulator-box {
+            background: #f8fafc;
+            border: 1px dashed var(--primary);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 15px;
+        }
+
+        .dispatch-pill {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .priority-high {
+            background: #FED7D7;
+            color: #C53030;
+        }
+
+        .priority-medium {
+            background: #FEEBC8;
+            color: #975A16;
+        }
+
+        .priority-low {
+            background: #C6F6D5;
+            color: #276749;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,71 +217,390 @@
     </aside>
 
     <main class="main-wrapper">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-            <div>
-                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-primary);">Stock Inventory</h1>
-                <p style="color: var(--text-secondary); font-weight: 500;">Manage and track crop batches across the hub
-                </p>
+        <!-- AI Alert System -->
+        <div id="alertSystem" class="alert-banner">
+            <i class="fas fa-triangle-exclamation" style="font-size: 1.5rem;"></i>
+            <div style="flex: 1;">
+                <strong style="display: block; margin-bottom: 2px;">AI Early Spoilage Warning</strong>
+                <span id="alertText">Loading AI prediction models...</span>
             </div>
-            <button class="btn-premium">
-                <i class="fas fa-plus"></i> Add New Batch
+            <button onclick="document.getElementById('alertSystem').style.display='none'"
+                style="background:none; border:none; cursor:pointer;"><i class="fas fa-times"></i></button>
+        </div>
+
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-primary);">📦 Inventory Management
+                </h1>
+                <p style="color: var(--text-secondary); font-weight: 500;">Batch Control & AI Optimization Center</p>
+            </div>
+            <button class="btn-premium" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> Register New Batch
             </button>
         </header>
 
-        <!-- Filters -->
-        <div style="display: flex; gap: 16px; margin-bottom: 30px; align-items: center;">
-            <div style="flex: 1; position: relative;">
-                <i class="fas fa-search"
-                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
-                <input type="text" placeholder="Search by batch ID, product, or zone..." class="filter-select"
-                    style="width: 100%; padding-left: 45px;">
+        <!-- Feature E: Smart Inventory Optimization -->
+        <div class="inventory-hero">
+            <div class="optimization-card glass-panel premium-hover">
+                <h4
+                    style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; margin-bottom: 20px; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-wand-magic-sparkles" style="color:var(--primary);"></i> Smart Dispatch
+                    Recommendations
+                </h4>
+                <div id="dispatchRecs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <!-- JS Injected Optimization Cards -->
+                </div>
             </div>
-            <select id="productFilter" class="filter-select">
-                <option value="all">All Products</option>
-                <option value="tomato">Tomato</option>
-                <option value="onion">Onion</option>
-                <option value="potato">Potato</option>
-            </select>
-            <div style="display: flex; gap: 8px;">
-                <button class="filter-select" style="font-weight: 700;">High Risk Only</button>
-                <button class="filter-select"><i class="fas fa-sort-amount-down"></i> Sort by Expiry</button>
+
+            <!-- Feature: Live Sensor Streaming -->
+            <div class="sensor-stream glass-panel premium-hover" style="background: #0f172a; border-color: #1e293b;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <span
+                        style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Live
+                        Warehouse Feed</span>
+                    <div class="live-tag"><span class="dot" style="margin:0;"></span> LIVE</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div
+                        style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.6rem; color: #64748b; margin-bottom: 5px; font-weight: 700;">
+                            TEMPERATURE</div>
+                        <div id="liveTemp"
+                            style="font-size: 2rem; font-weight: 900; color: #10b981; font-family: 'Inter', sans-serif;">
+                            14.2°C</div>
+                    </div>
+                    <div
+                        style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.6rem; color: #64748b; margin-bottom: 5px; font-weight: 700;">HUMIDITY
+                        </div>
+                        <div id="liveHum"
+                            style="font-size: 2rem; font-weight: 900; color: #3b82f6; font-family: 'Inter', sans-serif;">
+                            63.4%</div>
+                    </div>
+                </div>
+                <div
+                    style="margin-top: 20px; font-size: 0.6rem; color: #475569; border-top: 1px solid #1e293b; padding-top: 12px; display: flex; justify-content: space-between;">
+                    <span>PACKET_RECEIVE: <span style="color:#10b981">CRC_OK</span></span>
+                    <span>LATENCY: 24ms</span>
+                </div>
             </div>
         </div>
 
-        <!-- Table -->
-        <div class="glass-panel" style="padding: 0; overflow: hidden;">
+        <!-- Feature B: Filters & Search -->
+        <div class="glass-panel" style="padding: 20px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 15px; align-items: end;">
+                <div>
+                    <label
+                        style="display:block; font-size:0.7rem; font-weight:800; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase;">Search
+                        Batches</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-search"
+                            style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                        <input type="text" id="searchInput" placeholder="Search ID, Produce, or Zone..."
+                            class="filter-select" style="width: 100%; padding-left: 40px; height: 45px;">
+                    </div>
+                </div>
+                <div>
+                    <label
+                        style="display:block; font-size:0.7rem; font-weight:800; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase;">Risk
+                        Level</label>
+                    <select id="riskFilter" class="filter-select" style="width: 100%; height: 45px;">
+                        <option value="all">All Levels</option>
+                        <option value="high">High Risk (>70%)</option>
+                        <option value="medium">Medium Risk (30-70%)</option>
+                        <option value="low">Low Risk (<30%)< /option>
+                    </select>
+                </div>
+                <div>
+                    <label
+                        style="display:block; font-size:0.7rem; font-weight:800; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase;">Zone</label>
+                    <select id="zoneFilter" class="filter-select" style="width: 100%; height: 45px;">
+                        <option value="all">All Zones</option>
+                        <option value="A">Zone A</option>
+                        <option value="B">Zone B</option>
+                        <option value="C">Zone C</option>
+                        <option value="D">Zone D</option>
+                    </select>
+                </div>
+                <div>
+                    <label
+                        style="display:block; font-size:0.7rem; font-weight:800; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase;">Produce
+                        Type</label>
+                    <select id="typeFilter" class="filter-select" style="width: 100%; height: 45px;">
+                        <option value="all">All Types</option>
+                        <option value="Tomato">Tomato</option>
+                        <option value="Onion">Onion</option>
+                        <option value="Potato">Potato</option>
+                        <option value="Grapes">Grapes</option>
+                    </select>
+                </div>
+                <div>
+                    <label
+                        style="display:block; font-size:0.7rem; font-weight:800; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase;">Sort
+                        By</label>
+                    <select id="sortOption" class="filter-select" style="width: 100%; height: 45px;">
+                        <option value="risk-desc">Highest Risk</option>
+                        <option value="expiry-asc">Earliest Expiry</option>
+                        <option value="qty-desc">Highest Quantity</option>
+                        <option value="id-asc">Batch ID</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature A: Batch Table (Core) -->
+        <div class="glass-panel" style="padding: 0; overflow: hidden; border-radius: 20px;">
             <table class="premium-table">
                 <thead>
                     <tr>
-                        <th>Batch ID <i class="fas fa-info-circle" title="Unique identification code for each lot"></i>
-                        </th>
-                        <th>Product</th>
+                        <th>Batch ID</th>
+                        <th>Produce Type</th>
                         <th>Zone</th>
                         <th>Quantity</th>
                         <th>Harvest Date</th>
-                        <th>AI Risk Prediction <i class="fas fa-info-circle"
-                                title="Calculated risk of produce getting spoiled"></i></th>
-                        <th>Safe Life</th>
+                        <th>Expiry Date</th>
+                        <th>Risk %</th>
+                        <th>Status</th>
                         <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryBody">
-                    <!-- JS Injected Rows -->
+                    <!-- Dynamic Rows -->
                 </tbody>
             </table>
         </div>
     </main>
 
+    <!-- Feature C: Batch Detail View Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <button onclick="closeModal('detailModal')"
+                style="position:absolute; right:20px; top:20px; background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:20px;">
+                <div>
+                    <h2 id="detBatchID" style="color:var(--text-primary); font-size:1.8rem; font-weight:800;">#AF-290
+                    </h2>
+                    <span id="detStatus" class="badge">In Storage</span>
+                </div>
+                <div style="text-align:right">
+                    <div
+                        style="font-size:0.7rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">
+                        Health Score</div>
+                    <div id="detHealthScore" style="font-size:2.4rem; font-weight:900; color:var(--primary);">92</div>
+                </div>
+            </div>
+
+            <div class="batch-detail-panel">
+                <div class="left-col">
+                    <div class="detail-card">
+                        <h4 style="margin-bottom:15px; display:flex; align-items:center; gap:10px;"><i
+                                class="fas fa-info-circle"></i> Batch Overview</h4>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                            <div>
+                                <label
+                                    style="display:block; font-size:0.65rem; color:var(--text-secondary);">FARMER</label>
+                                <div id="detFarmer" style="font-weight:700;">Ramesh Kumar</div>
+                            </div>
+                            <div>
+                                <label
+                                    style="display:block; font-size:0.65rem; color:var(--text-secondary);">PRODUCE</label>
+                                <div id="detProduce" style="font-weight:700;">Tomato (Hybrid)</div>
+                            </div>
+                            <div>
+                                <label style="display:block; font-size:0.65rem; color:var(--text-secondary);">STORAGE
+                                    ZONE</label>
+                                <div id="detZone" style="font-weight:700;">Zone C4</div>
+                            </div>
+                            <div>
+                                <label
+                                    style="display:block; font-size:0.65rem; color:var(--text-secondary);">QUANTITY</label>
+                                <div id="detQty" style="font-weight:700;">450 Kg</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <h4 style="margin-bottom:15px; display:flex; align-items:center; gap:10px;"><i
+                                class="fas fa-history"></i> Storage Timeline</h4>
+                        <div id="storageTimeline">
+                            <!-- Timeline Items -->
+                        </div>
+                    </div>
+
+                    <div class="detail-card" style="border-left: 4px solid var(--warning);">
+                        <h4
+                            style="margin-bottom:10px; display:flex; align-items:center; gap:10px; color:var(--warning);">
+                            <i class="fas fa-brain"></i> AI Spoilage Prediction
+                        </h4>
+                        <p id="detAIPredict" style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:15px;">
+                        </p>
+
+                        <!-- Feature: AI Explainability -->
+                        <div style="background:var(--warning-bg); padding:12px; border-radius:8px;">
+                            <strong style="font-size:0.75rem; display:block; margin-bottom:5px;">WHY HIGH RISK?</strong>
+                            <ul id="detRiskReasons"
+                                style="font-size:0.8rem; padding-left:20px; color:var(--text-primary);">
+                                <!-- Reasons -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <!-- Top Impact Feature 2: Dispatch Simulator -->
+                    <div class="detail-card" style="background:var(--success-bg);">
+                        <h4
+                            style="margin-bottom:15px; display:flex; align-items:center; gap:10px; color:var(--primary);">
+                            <i class="fas fa-truck-fast"></i> AI Dispatch Simulator
+                        </h4>
+                        <button class="btn-premium" onclick="runDispatchSimulator()"
+                            style="width:100%; justify-content:center; margin-bottom:15px;">
+                            <i class="fas fa-play"></i> Simulate Dispatch
+                        </button>
+                        <div id="simulatorResults" style="display:none;">
+                            <div class="simulator-box" style="border-style:solid; background:white;">
+                                <div style="font-size:0.75rem; font-weight:800; margin-bottom:10px;">OPTION 1: DISPATCH
+                                    TODAY</div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <span style="font-size:0.8rem;">Risk Level:</span>
+                                    <span style="font-weight:700; color:var(--primary);">4% (LOW)</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span style="font-size:0.8rem;">Expected Revenue:</span>
+                                    <span style="font-weight:800;">₹45,000</span>
+                                </div>
+                            </div>
+                            <div class="simulator-box" style="border-color:var(--danger);">
+                                <div style="font-size:0.75rem; font-weight:800; margin-bottom:10px;">OPTION 2: DELAY 3
+                                    DAYS</div>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <span style="font-size:0.8rem;">Risk Level:</span>
+                                    <span style="font-weight:700; color:var(--danger);">28% (MEDIUM)</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span style="font-size:0.8rem;">Expected Revenue:</span>
+                                    <span style="font-weight:800; color:var(--danger);">₹31,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Revenue Optimizer -->
+                    <div class="detail-card">
+                        <h4 style="margin-bottom:15px; display:flex; align-items:center; gap:10px;"><i
+                                class="fas fa-coins"></i> AI Revenue Optimizer</h4>
+                        <div id="revenueOptions">
+                            <!-- Revenue Options -->
+                        </div>
+                    </div>
+
+                    <div style="text-align:center; padding:10px;">
+                        <button class="btn-premium"
+                            style="width:100%; justify-content:center; background:var(--primary-accent);">
+                            <i class="fas fa-paper-plane"></i> Execute Dispatch Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature D: Add / Edit Batch Modal -->
+    <div class="modal-overlay" id="addBatchModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button onclick="closeModal('addBatchModal')"
+                style="position:absolute; right:20px; top:20px; background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            <h2 id="addModalTitle" style="margin-bottom:30px; font-weight:800; color:var(--text-primary);">Register New
+                Batch</h2>
+
+            <form id="batchForm">
+                <div class="form-grid">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">PRODUCE
+                            TYPE</label>
+                        <select id="formProduce" class="filter-select" style="width:100%; height:45px;" required>
+                            <option value="Tomato">Tomato</option>
+                            <option value="Onion">Onion</option>
+                            <option value="Potato">Potato</option>
+                            <option value="Grapes">Grapes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">QUANTITY
+                            (KG)</label>
+                        <input type="number" id="formQty" class="filter-select" style="width:100%; height:45px;"
+                            placeholder="e.g. 500" required>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">HARVEST
+                            DATE</label>
+                        <input type="date" id="formHarvestDate" class="filter-select" style="width:100%; height:45px;"
+                            required>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">STORAGE
+                            ZONE</label>
+                        <select id="formZone" class="filter-select" style="width:100%; height:45px;" required>
+                            <option value="A1">Zone A1 (Deep Cool)</option>
+                            <option value="B2">Zone B2 (Regular)</option>
+                            <option value="C4" selected>Zone C4 (High Humidity)</option>
+                            <option value="D1">Zone D1 (Ambient)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- AI Recommendation Placeholder -->
+                <div
+                    style="background:var(--success-bg); padding:15px; border-radius:12px; margin:20px 0; border:1px dashed var(--primary);">
+                    <div
+                        style="display:flex; align-items:center; gap:10px; color:var(--primary); font-size:0.85rem; font-weight:700;">
+                        <i class="fas fa-wand-magic-sparkles"></i> AI Zone Recommendation
+                    </div>
+                    <p id="zoneRecText" style="font-size:0.8rem; color:var(--text-secondary); margin-top:5px;">
+                        Based on produce type and current capacity, **Zone A1** is recommended for maximum shelf life.
+                    </p>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
+                    <div>
+                        <label style="display:block; font-size:0.65rem; color:var(--text-secondary);">ESTIMATED
+                            EXPIRY</label>
+                        <div id="formAutoExpiry" style="font-weight:700; padding:10px 0; border-bottom:1px solid #eee;">
+                            March 15, 2026</div>
+                    </div>
+                    <div style="text-align:right">
+                        <label style="display:block; font-size:0.65rem; color:var(--text-secondary);">GENERATED
+                            ID</label>
+                        <div style="font-weight:800; color:var(--primary); font-size:1.1rem; padding:10px 0;">#AF-NEW
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-premium" style="width:100%; justify-content:center; padding:15px;">
+                    <i class="fas fa-save"></i> Save & Generate QR Code
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- QR Modal -->
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <button onclick="document.getElementById('qrModal').style.display='none'"
+            <button onclick="closeModal('qrModal')"
                 style="position:absolute; right:20px; top:20px; background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
-            <h3 id="qrTitle" style="margin-bottom: 20px;">Batch ID QR</h3>
-            <div id="qrContainer" style="background:#eee; padding:20px; border-radius:12px; display:inline-block;">
+            <h3 id="qrTitle" style="margin-bottom: 20px; font-weight:800;">Batch Identity Code</h3>
+            <div id="qrContainer"
+                style="background:#f4f4f4; padding:25px; border-radius:20px; display:inline-block; border:1px solid #eee;">
             </div>
-            <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary);">Scan this code for full
-                traceability link</p>
+            <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary); font-weight:500;">
+                <i class="fas fa-print"></i> Scan or Print label for container
+            </p>
         </div>
     </div>
 
