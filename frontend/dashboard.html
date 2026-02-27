@@ -5,172 +5,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | AgriFresh Intelligence</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <div class="dashboard-layout">
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                AgriFresh
-            </div>
+    <!-- Background Blobs -->
+    <div class="blob"></div>
+    <div class="blob-2"></div>
 
-            <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-link active">
-                    <i class="fas fa-th-large"></i> Dashboard
-                </a>
-                <a href="inventory.html" class="nav-link">
-                    <i class="fas fa-boxes-stacked"></i> Inventory
-                </a>
-                <a href="analytics.html" class="nav-link">
-                    <i class="fas fa-chart-pie"></i> Analytics
-                </a>
-                <a href="trace.html" class="nav-link">
-                    <i class="fas fa-qrcode"></i> Traceability
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-bullseye"></i> Market IQ
-                </a>
-                <a href="#" class="nav-link" style="margin-top: auto;">
-                    <i class="fas fa-cog"></i> Settings
-                </a>
-            </nav>
-
-            <div class="glass" style="margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 0.8rem;">
-                <p style="color: var(--text-dim);">Storage Health</p>
-                <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 8px 0;">
-                    <div style="width: 85%; height: 100%; background: var(--primary); border-radius: 3px;"></div>
-                </div>
-                <p>Optimal Performance</p>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-                <div>
-                    <h1 style="font-size: 1.8rem;">Warehouse Overview</h1>
-                    <p style="color: var(--text-dim);">Nashik Central Hub • Zone A-F active</p>
-                </div>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <button class="btn btn-outline" id="demoModeBtn" style="border-color: #f59e0b; color: #f59e0b;">
-                        <i class="fas fa-bolt"></i> Demo Simulation
-                    </button>
-                    <div
-                        style="width: 40px; height: 40px; background: var(--glass-border); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-user"></i>
-                    </div>
-                </div>
-            </header>
-
-            <div class="stats-grid">
-                <div class="glass stat-card">
-                    <div class="stat-label">Total Batches</div>
-                    <div class="stat-value">124</div>
-                    <div style="color: var(--primary); font-size: 0.8rem;"><i class="fas fa-arrow-up"></i> 12% vs last
-                        month</div>
-                </div>
-                <div class="glass stat-card">
-                    <div class="stat-label">Avg Warehouse Temp</div>
-                    <div class="stat-value" id="avgTemp">14.2°C</div>
-                    <div style="color: var(--text-dim); font-size: 0.8rem;">Target: 12°C - 16°C</div>
-                </div>
-                <div class="glass stat-card">
-                    <div class="stat-label">Spoilage Risk</div>
-                    <div class="stat-value" style="color: #10b981;">Low</div>
-                    <div style="color: var(--text-dim); font-size: 0.8rem;">98.2% Safe Inventory</div>
-                </div>
-                <div class="glass stat-card">
-                    <div class="stat-label">Market Value</div>
-                    <div class="stat-value">₹4.2M</div>
-                    <div style="color: var(--secondary); font-size: 0.8rem;">Projected: +₹200k</div>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
-                <div class="glass" style="padding: 30px;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3>Warehouse Heatmap (Zone Activity)</h3>
-                        <div style="display: flex; gap: 10px; font-size: 0.7rem;">
-                            <span><i class="fas fa-square" style="color: rgba(16, 185, 129, 0.4);"></i> Safe</span>
-                            <span><i class="fas fa-square" style="color: rgba(245, 158, 11, 0.4);"></i> Warning</span>
-                            <span><i class="fas fa-square" style="color: rgba(239, 68, 68, 0.4);"></i> Critical</span>
-                        </div>
-                    </div>
-                    <div class="heatmap" id="warehouseHeatmap">
-                        <!-- JS inserted -->
-                    </div>
-                </div>
-                <div class="glass" style="padding: 30px;">
-                    <h3>Real-time Sensors</h3>
-                    <canvas id="sensorChart" height="200"></canvas>
-                    <div style="margin-top: 20px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span style="color: var(--text-dim);">Humidity</span>
-                            <span>64%</span>
-                        </div>
-                        <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
-                            <div style="width: 64%; height: 100%; background: var(--secondary); border-radius: 3px;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="margin-top: 30px;" class="glass">
-                <div
-                    style="padding: 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                    <h3>AI Recommendations</h3>
-                    <span class="btn btn-outline" style="font-size: 0.7rem; padding: 5px 10px;">Updated 2m ago</span>
-                </div>
-                <div id="aiRecs" style="padding: 20px;">
-                    <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px;">
-                        <div
-                            style="background: rgba(16, 185, 129, 0.1); color: var(--primary); padding: 10px; border-radius: 8px;">
-                            <i class="fas fa-truck-fast"></i>
-                        </div>
-                        <div>
-                            <p style="font-weight: 600;">Dispatch Batch #290 (Tomato - Lot 23)</p>
-                            <p style="font-size: 0.85rem; color: var(--text-dim);">High spoilage risk detected in Zone
-                                C. Recommended dispatch within 24 hours.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- AI Chat Agent Floating Panel -->
-    <div class="glass ai-agent" id="aiAgent">
-        <div class="ai-header">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-robot"></i>
-                <span style="font-weight: 700;">Warehouse Intelligence</span>
-            </div>
-            <i class="fas fa-chevron-down" style="cursor: pointer;"
-                onclick="document.getElementById('aiAgent').style.height='50px'"></i>
-        </div>
-        <div class="ai-chat" id="chatWindow">
+    <aside class="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding: 0 10px;">
             <div
-                style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-bottom: 15px; font-size: 0.9rem;">
-                Hello! I am your AI assistant. I'm monitoring Nashik Zone A-F. You can ask me about stock status or risk
-                alerts.
+                style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; transform: rotate(45deg); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-leaf" style="transform: rotate(-45deg); color: white;"></i>
+            </div>
+            <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;">AgriFresh</span>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" class="nav-item active"><i class="fas fa-grid-2"></i> Dashboard</a>
+            <a href="inventory.html" class="nav-item"><i class="fas fa-box-archive"></i> Inventory</a>
+            <a href="analytics.html" class="nav-item"><i class="fas fa-analytics"></i> Analytics</a>
+            <a href="trace.html" class="nav-item"><i class="fas fa-barcode-read"></i> Traceability</a>
+        </nav>
+
+        <div class="glass-panel" style="margin-top: auto; padding: 20px;">
+            <p style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 10px;">SYSTEM STATUS</p>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; background: #2ecc71; border-radius: 50%;"></div>
+                <span style="font-size: 0.8rem; font-weight: 600;">AI Models Online</span>
             </div>
         </div>
-        <div class="ai-input">
-            <input type="text" placeholder="Ask anything..." id="chatInput">
-            <button class="btn btn-primary" style="padding: 8px 15px;"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
+    </aside>
 
-    <script src="js/dashboard.js"></script>
-    <script src="js/ai.js"></script>
+    <main class="main-wrapper">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <div>
+                <h1 style="font-size: 2.2rem; font-weight: 800;">Warehouse Intelligence</h1>
+                <p style="color: var(--text-secondary);">Real-time monitoring & AI predictive optimization</p>
+            </div>
+            <div style="display: flex; gap: 16px;">
+                <button class="btn-premium" id="demoModeBtn"
+                    style="background: linear-gradient(135deg, #f59e0b, #d97706); font-size: 0.9rem;">
+                    <i class="fas fa-bolt"></i> Run Simulation
+                </button>
+                <div class="glass-panel"
+                    style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="metrics-grid">
+            <div class="glass-panel metric-card">
+                <p class="metric-label">Loss Prevented (MT)</p>
+                <div class="metric-value" id="lossPrevented">₹1.2M</div>
+                <div
+                    style="display: flex; align-items: center; gap: 8px; color: var(--primary); font-size: 0.85rem; font-weight: 700;">
+                    <i class="fas fa-trending-up"></i> +14.2% vs baseline
+                </div>
+            </div>
+            <div class="glass-panel metric-card">
+                <p class="metric-label">Spoilage Predictions</p>
+                <div class="metric-value">4.2%</div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem;">96% Model Accuracy</div>
+                <div class="accuracy-bar">
+                    <div class="accuracy-fill" id="spoilageAccuracy" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="glass-panel metric-card">
+                <p class="metric-label">Utilization Rate</p>
+                <div class="metric-value">78.5%</div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem;">420/560 MT utilized</div>
+            </div>
+            <div class="glass-panel metric-card">
+                <p class="metric-label">Average Temperature</p>
+                <div class="metric-value" id="avgTemp">14.2°C</div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem;">Optimal Range: 12-16°C</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 24px; margin-bottom: 40px;">
+            <div class="glass-panel heatmap-container">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-weight: 700;">Interactive Warehouse Heatmap</h3>
+                    <div style="display: flex; gap: 15px; font-size: 0.75rem;">
+                        <span style="display:flex; align-items:center; gap:5px"><i class="fas fa-circle"
+                                style="color: var(--primary)"></i> Safe</span>
+                        <span style="display:flex; align-items:center; gap:5px"><i class="fas fa-circle"
+                                style="color: var(--accent)"></i> Warning</span>
+                        <span style="display:flex; align-items:center; gap:5px"><i class="fas fa-circle"
+                                style="color: var(--danger)"></i> Critical</span>
+                    </div>
+                </div>
+                <div class="heatmap-grid" id="heatmapGrid">
+                    <!-- JS Injected Tiles -->
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 24px; font-weight: 700;">Optimization Insights</h3>
+                <div style="height: 200px; position: relative;">
+                    <canvas id="riskDistChart"></canvas>
+                    <div
+                        style="position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <span style="font-size: 1.5rem; font-weight: 800;">82%</span><br />
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">SAFE STOCK</span>
+                    </div>
+                </div>
+                <div style="margin-top: 30px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">Optimization Confidence</span>
+                        <span style="font-weight: 700;">92%</span>
+                    </div>
+                    <div class="accuracy-bar">
+                        <div class="accuracy-fill" id="optAccuracy" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 24px; font-weight: 700;">AI Decision Center</h3>
+                <div id="aiDecisionCenter">
+                    <!-- AI recommendation cards -->
+                </div>
+            </div>
+            <div class="glass-panel" style="padding: 30px;">
+                <h3 style="margin-bottom: 24px; font-weight: 700;">Environmental Trend (24h)</h3>
+                <div class="chart-container">
+                    <canvas id="tempTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/dashboard.js"></script>
 </body>
 
 </html>

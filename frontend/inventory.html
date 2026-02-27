@@ -4,173 +4,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory | AgriFresh</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Inventory | AgriFresh Intelligence</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            text-align: left;
-            padding: 15px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        th {
-            color: var(--text-dim);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-safe {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--primary);
-        }
-
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--accent);
-        }
-    </style>
 </head>
 
 <body>
-    <div class="dashboard-layout">
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                AgriFresh
+    <div class="blob"></div>
+    <div class="blob-2"></div>
+
+    <aside class="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding: 0 10px;">
+            <div
+                style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; transform: rotate(45deg); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-leaf" style="transform: rotate(-45deg); color: white;"></i>
             </div>
-            <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-link">
-                    <i class="fas fa-th-large"></i> Dashboard
-                </a>
-                <a href="inventory.html" class="nav-link active">
-                    <i class="fas fa-boxes-stacked"></i> Inventory
-                </a>
-                <a href="analytics.html" class="nav-link">
-                    <i class="fas fa-chart-pie"></i> Analytics
-                </a>
-                <a href="trace.html" class="nav-link">
-                    <i class="fas fa-qrcode"></i> Traceability
-                </a>
-            </nav>
-        </aside>
+            <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;">AgriFresh</span>
+        </div>
 
-        <main class="main-content">
-            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-                <div>
-                    <h1>Inventory Management</h1>
-                    <p style="color: var(--text-dim);">Manage batches, lots, and storage assignment.</p>
-                </div>
-                <button class="btn btn-primary" onclick="openModal()">
-                    <i class="fas fa-plus"></i> New Batch
-                </button>
-            </header>
+        <nav>
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-grid-2"></i> Dashboard</a>
+            <a href="inventory.html" class="nav-item active"><i class="fas fa-box-archive"></i> Inventory</a>
+            <a href="analytics.html" class="nav-item"><i class="fas fa-analytics"></i> Analytics</a>
+            <a href="trace.html" class="nav-item"><i class="fas fa-barcode-read"></i> Traceability</a>
+        </nav>
+    </aside>
 
-            <div class="glass" style="padding: 24px;">
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <input type="text" placeholder="Search batches..." class="glass"
-                        style="flex: 1; padding: 10px 15px; border-radius: 8px; color: white;">
-                    <select class="glass" style="padding: 10px; border-radius: 8px; color: white;">
-                        <option>All Produce</option>
-                        <option>Tomato</option>
-                        <option>Potato</option>
-                        <option>Onion</option>
-                    </select>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Batch ID</th>
-                            <th>Produce Type</th>
-                            <th>Zone</th>
-                            <th>Quantity</th>
-                            <th>Harvest Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#AF-290</td>
-                            <td>Tomato</td>
-                            <td>Zone C-1</td>
-                            <td>450 kg</td>
-                            <td>2026-02-20</td>
-                            <td><span class="badge badge-warning">High Risk</span></td>
-                            <td>
-                                <i class="fas fa-qrcode" style="cursor: pointer; color: var(--primary);"></i>
-                                <i class="fas fa-ellipsis-v"
-                                    style="margin-left: 15px; cursor: pointer; color: var(--text-dim);"></i>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#AF-291</td>
-                            <td>Onion</td>
-                            <td>Zone A-4</td>
-                            <td>1200 kg</td>
-                            <td>2026-02-22</td>
-                            <td><span class="badge badge-safe">Stored</span></td>
-                            <td>
-                                <i class="fas fa-qrcode" style="cursor: pointer; color: var(--primary);"></i>
-                                <i class="fas fa-ellipsis-v"
-                                    style="margin-left: 15px; cursor: pointer; color: var(--text-dim);"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+    <main class="main-wrapper">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <div>
+                <h1 style="font-size: 2.2rem; font-weight: 800;">Inventory Registry</h1>
+                <p style="color: var(--text-secondary);">Managed batches tracked by ML Spoilage Models (96% accuracy)
+                </p>
             </div>
+            <button class="btn-premium">
+                <i class="fas fa-plus"></i> Ingest New Batch
+            </button>
+        </header>
 
-            <div id="qrModal" class="glass"
-                style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 30px; z-index: 2000; width: 300px; text-align: center;">
-                <h3>Batch QR Code</h3>
-                <div id="qrcode" style="display: flex; justify-content: center; padding: 20px;"></div>
-                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px;">Lot #AF-290 • Scan for
-                    traceability</p>
-                <button class="btn btn-outline" onclick="closeModal()">Close</button>
+        <div class="glass-panel"
+            style="padding: 24px; margin-bottom: 30px; display: flex; gap: 20px; align-items: center;">
+            <div style="flex: 1; position: relative;">
+                <i class="fas fa-search"
+                    style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                <input type="text" placeholder="Search by batch ID, product, or zone..." class="glass-panel"
+                    style="width: 100%; padding: 12px 12px 12px 45px; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); color: white;">
             </div>
-        </main>
-    </div>
-    <script>
-        function openModal() {
-            document.getElementById('qrModal').style.display = 'block';
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: "https://agrifresh.app/trace/AF-290",
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-        function closeModal() {
-            document.getElementById('qrModal').style.display = 'none';
-        }
-    </script>
+            <select id="productFilter" class="glass-panel"
+                style="padding: 12px 20px; background: var(--bg-dark); color: white; border: 1px solid var(--card-border);">
+                <option value="all">All Products</option>
+                <option value="tomato">Tomato</option>
+                <option value="onion">Onion</option>
+                <option value="potato">Potato</option>
+            </select>
+            <div style="display: flex; gap: 8px;">
+                <button class="glass-panel" style="padding: 10px 16px; color: var(--text-secondary);"><i
+                        class="fas fa-filter"></i> High Risk Only</button>
+                <button class="glass-panel" style="padding: 10px 16px; color: var(--text-secondary);"><i
+                        class="fas fa-sort-amount-down"></i> Sort by Expiry</button>
+            </div>
+        </div>
+
+        <div class="glass-panel" style="padding: 10px;">
+            <table class="premium-table">
+                <thead>
+                    <tr>
+                        <th>Batch ID</th>
+                        <th>Product</th>
+                        <th>Zone</th>
+                        <th>Quantity</th>
+                        <th>Harvest Date</th>
+                        <th>AI Risk Prediction</th>
+                        <th>Safe Shelf Life</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryBody">
+                    <!-- JS Injected Rows -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module" src="js/inventory.js"></script>
 </body>
 
 </html>

@@ -1,100 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriFresh | AI Powered Smart Warehouse Intelligence</title>
-    <meta name="description" content="Reduce post-harvest losses with AgriFresh - the next generation of AI-driven agricultural warehouse management.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>AgriFresh | The AI Operating System for Agriculture</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 60px;
-        }
-        .hero-stat-item {
+        .hero-section {
+            padding: 120px 0 80px;
             text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .hero-stat-item h3 {
-            font-size: 2.5rem;
-            color: var(--primary);
+
+        .gradient-main {
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 80px;
+        }
+
+        .hero-bg-accent {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            z-index: -1;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <nav data-aos="fade-down">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                AgriFresh
+    <div class="blob"></div>
+    <div class="blob-2"></div>
+    <div class="hero-bg-accent"></div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <nav style="display: flex; justify-content: space-between; align-items: center; padding: 40px 0;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div
+                    style="width: 35px; height: 35px; background: var(--primary); border-radius: 8px; transform: rotate(45deg); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-leaf" style="transform: rotate(-45deg); color: white; font-size: 0.9rem;"></i>
+                </div>
+                <span style="font-size: 1.4rem; font-weight: 800; letter-spacing: -1px;">AgriFresh</span>
             </div>
-            <div style="display: flex; gap: 30px; align-items: center;">
-                <a href="#features" style="color: var(--text-dim); text-decoration: none;">Features</a>
-                <a href="#impact" style="color: var(--text-dim); text-decoration: none;">Impact</a>
-                <a href="login.html" class="btn btn-outline">Sign In</a>
-                <a href="dashboard.html" class="btn btn-primary">Try Demo</a>
+            <div style="display: flex; gap: 40px; align-items: center;">
+                <a href="#solutions"
+                    style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;">Solutions</a>
+                <a href="#technology"
+                    style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;">Technology</a>
+                <a href="login.html" class="btn-premium" style="padding: 10px 24px; font-size: 0.85rem;">Platform
+                    Login</a>
             </div>
         </nav>
 
-        <section class="hero">
-            <h1 data-aos="zoom-in" data-aos-delay="200">
-                Revolutionizing <span class="gradient-text">Agricultural Intelligence</span>
+        <section class="hero-section">
+            <div class="badge" style="background: rgba(16, 185, 129, 0.1); color: var(--primary); margin-bottom: 24px;">
+                AI-Driven Post-Harvest Intelligence</div>
+            <h1 style="font-size: 5rem; font-weight: 800; letter-spacing: -3px; line-height: 1; margin-bottom: 30px;"
+                data-aos="fade-up">
+                Stop Spoilage Before <br /> <span class="gradient-main">It Happens.</span>
             </h1>
-            <p data-aos="fade-up" data-aos-delay="400">
-                AgriFresh leverages cutting-edge AI and IoT sensors to monitor, predict, and optimize warehouse conditions. Reduce post-harvest losses by up to 35% with smart insights.
+            <p style="font-size: 1.4rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 40px; line-height: 1.6;"
+                data-aos="fade-up" data-aos-delay="100">
+                The world's most advanced smart warehouse platform using real-time IoT and 96% accurate ML models to
+                protect the agricultural supply chain.
             </p>
-            <div class="hero-actions" data-aos="fade-up" data-aos-delay="600">
-                <a href="login.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 15px 35px;">Launch Platform</a>
-                <a href="#demo" class="btn btn-outline" style="margin-left: 15px; font-size: 1.1rem; padding: 15px 35px;">Watch Breakdown</a>
+            <div style="display: flex; justify-content: center; gap: 20px;" data-aos="fade-up" data-aos-delay="200">
+                <a href="dashboard.html" class="btn-premium" style="font-size: 1.1rem; padding: 18px 40px;">Launch AI
+                    Command Center</a>
+                <a href="#" class="glass-panel"
+                    style="padding: 18px 40px; text-decoration: none; color: white; display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                    <i class="fas fa-play-circle"></i> View Data Demo
+                </a>
             </div>
 
-            <div class="hero-stats" data-aos="fade-up" data-aos-delay="800">
-                <div class="hero-stat-item">
-                    <h3 class="counter">35%</h3>
-                    <p>Loss Reduction</p>
+            <div class="metrics-grid" style="margin-top: 100px;" data-aos="fade-up" data-aos-delay="300">
+                <div class="glass-panel" style="padding: 30px;">
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--primary);">96.4%</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Prediction Accuracy
+                    </div>
                 </div>
-                <div class="hero-stat-item" style="border-left: 1px solid var(--glass-border); padding-left: 40px;">
-                    <h3 class="counter">12k</h3>
-                    <p>Metric Tons Saved</p>
+                <div class="glass-panel" style="padding: 30px;">
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--secondary);">35%</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Average Waste
+                        Reduction</div>
                 </div>
-                <div class="hero-stat-item" style="border-left: 1px solid var(--glass-border); padding-left: 40px;">
-                    <h3 class="counter">92%</h3>
-                    <p>Model Accuracy</p>
+                <div class="glass-panel" style="padding: 30px;">
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--accent);">₹1.2M</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Revenue Preserved /
+                        Hub</div>
                 </div>
             </div>
         </section>
 
-        <section id="features" style="padding: 100px 0;">
+        <section style="padding: 100px 0;">
             <div style="text-align: center; margin-bottom: 60px;">
-                <h2 style="font-size: 2.5rem;" data-aos="fade-up">Platform Capabilities</h2>
-                <p style="color: var(--text-dim);" data-aos="fade-up">Everything you need to run a high-efficiency warehouse</p>
+                <h2 style="font-size: 2.5rem; font-weight: 800;">Enterprise Intelligence</h2>
+                <p style="color: var(--text-secondary);">Powered by dual-engine AI models</p>
             </div>
-            <div class="stats-grid">
-                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="100">
-                    <i class="fas fa-microchip" style="font-size: 2rem; color: var(--primary); margin-bottom: 15px;"></i>
-                    <h3>IoT Monitoring</h3>
-                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Real-time temperature and humidity tracking across all warehouse zones.</p>
+            <div class="feature-grid">
+                <div class="glass-panel" style="padding: 40px;" data-aos="fade-up">
+                    <i class="fas fa-brain-circuit"
+                        style="font-size: 2.5rem; color: var(--primary); margin-bottom: 24px;"></i>
+                    <h3 style="margin-bottom: 16px;">Spoilage Predictor</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">Advanced classification model that
+                        analyzes temperature history and humidity spikes to predict exact safe shelf-life days.</p>
                 </div>
-                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fas fa-brain" style="font-size: 2rem; color: var(--secondary); margin-bottom: 15px;"></i>
-                    <h3>AI Prediction</h3>
-                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Advanced ML models predict spoilage risks before they happen.</p>
+                <div class="glass-panel" style="padding: 40px;" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-robot"
+                        style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 24px;"></i>
+                    <h3 style="margin-bottom: 16px;">Inventory Optimizer</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">Dynamic dispatch engine that prioritizes
+                        stock movement based on risk and real-time market price integration.</p>
                 </div>
-                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="300">
-                    <i class="fas fa-qrcode" style="font-size: 2rem; color: var(--accent); margin-bottom: 15px;"></i>
-                    <h3>QR Traceability</h3>
-                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">End-to-end tracking from farm to market using unique lot IDs.</p>
-                </div>
-                <div class="glass glass-hover stat-card" data-aos="fade-up" data-aos-delay="400">
-                    <i class="fas fa-chart-line" style="font-size: 2rem; color: #10B981; margin-bottom: 15px;"></i>
-                    <h3>Inventory Optimization</h3>
-                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Smart dispatch recommendations based on expiry and market trends.</p>
+                <div class="glass-panel" style="padding: 40px;" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-tower-broadcast"
+                        style="font-size: 2.5rem; color: var(--accent); margin-bottom: 24px;"></i>
+                    <h3 style="margin-bottom: 16px;">IoT Mesh Network</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">End-to-end sensor integration syncing
+                        every 30 seconds to provide a total warehouse condition heatmap.</p>
                 </div>
             </div>
         </section>
@@ -102,28 +141,8 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS.init({
-            duration: 1000,
-            once: true,
-            easing: 'ease-in-out'
-        });
-
-        // Simple counter animation
-        document.querySelectorAll('.counter').forEach(counter => {
-            const target = parseInt(counter.innerText);
-            let count = 0;
-            const updateCount = () => {
-                const speed = target / 50;
-                if(count < target) {
-                    count += speed;
-                    counter.innerText = Math.ceil(count) + (counter.innerText.includes('%') ? '%' : '');
-                    setTimeout(updateCount, 20);
-                } else {
-                    counter.innerText = target + (counter.innerText.includes('%') ? '%' : '');
-                }
-            }
-            // updateCount(); 
-        });
+        AOS.init({ duration: 1000, once: true });
     </script>
 </body>
+
 </html>
