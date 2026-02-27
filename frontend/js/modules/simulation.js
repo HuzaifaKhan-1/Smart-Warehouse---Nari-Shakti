@@ -1,78 +1,87 @@
 /**
  * AgriFresh Simulation Module
- * Triggers dramatic demo scenarios
+ * Triggers dramatic demo scenarios connected to central state
  */
 import { WarehouseHeatmap } from './heatmap.js';
 import { AIEngine } from './ai_engine.js';
+import { AppState } from './state.js';
 
 export const Simulation = {
     isActive: false,
 
     triggerTemperatureSpike() {
+        if (this.isActive) return;
         this.isActive = true;
-        console.log("🔥 Simulation: Triggering Temperature Spike in Zone C-4...");
 
-        // 1. Update Heatmap
-        WarehouseHeatmap.updateZone('C4', {
-            temp: 21.4,
-            risk: 89.5,
+        console.log("🔥 Simulation: Critical Breach Scenario Initiated...");
+
+        // 1. Update State
+        AppState.metrics.avgTemp = 18.2;
+        AppState.metrics.atRiskBatches += 1;
+        AppState.metrics.status = 'Critical Anomaly';
+
+        // 2. Add New Emergency Recommendation
+        const emergencyRec = {
+            id: 'SIM-' + Date.now(),
+            target: 'Batch #AF-295 (Grapes)',
+            reason: 'Critical Temp Breach (>18°C) in Zone D-1. Rapid spoilage expected within 36 hours.',
+            action: 'Emergency Dispatch',
+            priority: 'P1',
+            confidence: 98,
+            predictedLoss: 68000,
+            zoneId: 'D1',
+            status: 'pending'
+        };
+        AppState.recommendations.unshift(emergencyRec);
+
+        // 3. Update Heatmap Zone D1
+        WarehouseHeatmap.updateZone('D1', {
+            temp: 22.8,
+            risk: 94.2,
             status: 'critical'
         });
 
-        // 2. Play Alert Sound (optional/visual)
-        this.showPopupAlert('Temperature Breach: Zone C-4', 'Critical spike detected (21.4°C). Spoilage risk increased to 89%.');
-
-        // 3. Update Dashboard Stats
-        const avgTempEl = document.getElementById('avgTemp');
-        if (avgTempEl) {
-            avgTempEl.innerText = "18.2°C";
-            avgTempEl.style.color = "#ef4444";
-        }
-
-        // 4. Update AI Recommendations
+        // 4. Force AI Re-render
         AIEngine.renderDecisionCards('aiDecisionCenter');
 
-        // 5. Update Impact Metrics
-        this.animateValue('lossPrevented', 42500, 43800, 2000);
+        // 5. Update Metrics UI
+        AppState.updateMetrics();
+
+        // 6. Visual Alert & Notification
+        this.dramaticAlert();
+        AIEngine.showNotification(
+            "CRITICAL AREA DETECTED",
+            "Zone D-1 has exceeded 22°C. AI Spoilage Model (96% Acc) recommends immediate dispatch of Grapes Lot #AF-295.",
+            "critical"
+        );
     },
 
-    showPopupAlert(title, message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'glass-panel';
-        alertDiv.style.position = 'fixed';
-        alertDiv.style.top = '40px';
-        alertDiv.style.right = '40px';
-        alertDiv.style.padding = '20px';
-        alertDiv.style.borderColor = '#ef4444';
-        alertDiv.style.zIndex = '5000';
-        alertDiv.style.width = '350px';
-        alertDiv.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.3)';
+    dramaticAlert() {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(239, 68, 68, 0.1)';
+        overlay.style.border = '20px solid rgba(239, 68, 68, 0.3)';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.zIndex = '99999';
+        overlay.style.animation = 'pulseRed 1s infinite alternate';
 
-        alertDiv.innerHTML = `
-            <div style="display:flex; align-items:center; gap:15px; color:#ef4444">
-                <i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i>
-                <h4 style="margin:0">${title}</h4>
-            </div>
-            <p style="margin-top:10px; font-size:0.9rem">${message}</p>
-        `;
-
-        document.body.appendChild(alertDiv);
-        setTimeout(() => alertDiv.remove(), 5000);
-    },
-
-    animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        if (!obj) return;
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            const current = Math.floor(progress * (end - start) + start);
-            obj.innerHTML = `₹${current.toLocaleString()}`;
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes pulseRed {
+                from { opacity: 0.2; }
+                to { opacity: 0.8; }
             }
-        };
-        window.requestAnimationFrame(step);
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.remove();
+            this.isActive = false;
+        }, 5000);
     }
 };

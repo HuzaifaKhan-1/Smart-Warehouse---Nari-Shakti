@@ -1,21 +1,21 @@
 /**
  * AgriFresh Main Dashboard Module
+ * Coordinates State, Heatmap, AI, and Simulation
  */
 import { WarehouseHeatmap } from './modules/heatmap.js';
 import { AIEngine } from './modules/ai_engine.js';
 import { Simulation } from './modules/simulation.js';
+import { AppState } from './modules/state.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Heatmap
+    // 1. Initial State Load
+    AppState.updateMetrics();
+
+    // 2. Initialize Operational Modules
     WarehouseHeatmap.init('heatmapGrid');
+    AIEngine.init();
 
-    // 2. Initialize AI Engine
-    AIEngine.renderDecisionCards('aiDecisionCenter');
-
-    // 3. Initialize Charts
-    initDashboardCharts();
-
-    // 4. Setup Simulation
+    // 3. Setup Simulation Trigger
     const demoBtn = document.getElementById('demoModeBtn');
     if (demoBtn) {
         demoBtn.addEventListener('click', () => {
@@ -23,56 +23,78 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. Animate accuracy bars on load
+    // 4. Initialize Analytics
+    initDashboardCharts();
+
+    // 5. Hero Accuracy Animation
     setTimeout(() => {
-        document.getElementById('spoilageAccuracy').style.width = '96%';
-        document.getElementById('optAccuracy').style.width = '92%';
-    }, 500);
+        const spoilageAcc = document.getElementById('spoilageAccuracy');
+        const optAcc = document.getElementById('optAccuracy');
+        if (spoilageAcc) spoilageAcc.style.width = '96%';
+        if (optAcc) optAcc.style.width = '92%';
+    }, 800);
+
+    // 6. Live Heartbeat
+    setInterval(() => {
+        simulateLiveTelemetry();
+    }, 5000);
 });
 
-function initDashboardCharts() {
-    const ctxRisk = document.getElementById('riskDistChart');
-    if (ctxRisk) {
-        new Chart(ctxRisk, {
-            type: 'doughnut',
-            data: {
-                labels: ['Stable', 'Monitoring', 'Action Required'],
-                datasets: [{
-                    data: [82, 12, 6],
-                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                plugins: { legend: { display: false } },
-                cutout: '70%'
-            }
-        });
-    }
+function simulateLiveTelemetry() {
+    // Minor flux in avg values
+    AppState.metrics.avgTemp = parseFloat((14 + Math.random() * 0.5).toFixed(1));
+    AppState.updateMetrics();
+}
 
-    const ctxTrend = document.getElementById('tempTrendChart');
+function initDashboardCharts() {
+    const ctxTrend = document.getElementById('envTrendChart');
     if (ctxTrend) {
-        new Chart(ctxTrend, {
+        window.envTrendChart = new Chart(ctxTrend, {
             type: 'line',
             data: {
-                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Now'],
                 datasets: [{
-                    label: 'Avg Warehouse Temp',
-                    data: [13.2, 13.5, 14.1, 14.8, 14.2, 13.9],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    label: 'Temperature Trend',
+                    data: [13.1, 13.4, 14.2, 14.8, 14.2, 13.8, 14.2],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
                     fill: true,
-                    tension: 0.4
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#10b981'
+                }, {
+                    label: 'Safe Threshold',
+                    data: [16, 16, 16, 16, 16, 16, 16],
+                    borderColor: 'rgba(239, 68, 68, 0.3)',
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: '#06080f',
+                        titleColor: '#94a3b8',
+                        padding: 12,
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1
+                    }
+                },
                 scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.03)' },
+                        ticks: { color: '#94a3b8', font: { size: 10 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { size: 10 } }
+                    }
                 }
             }
         });

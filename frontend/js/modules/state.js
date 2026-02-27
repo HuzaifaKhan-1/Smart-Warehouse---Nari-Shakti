@@ -1,0 +1,96 @@
+/**
+ * AgriFresh Central State Management
+ * Handles real-time updates across the dashboard
+ */
+
+export const AppState = {
+    metrics: {
+        lossPrevented: 124500,
+        atRiskBatches: 3,
+        totalBatches: 124,
+        utilization: 78.5,
+        avgTemp: 14.2,
+        avgHumidity: 64,
+        status: 'Optimal'
+    },
+
+    zones: [], // populated by heatmap.js
+
+    recommendations: [
+        {
+            id: 'REC-001',
+            target: 'Batch #AF-290 (Tomato)',
+            reason: '87% Spoilage Risk predicted in Zone C-4',
+            action: 'Dispatch Immediately',
+            priority: 'P1',
+            confidence: 96,
+            predictedLoss: 42500,
+            zoneId: 'C4',
+            status: 'pending'
+        },
+        {
+            id: 'REC-002',
+            target: 'Zone A-2',
+            reason: 'Humidity anomaly detected (78%)',
+            action: 'Reduce Temp by 2°C',
+            priority: 'P2',
+            confidence: 92,
+            predictedLoss: 12000,
+            zoneId: 'A2',
+            status: 'pending'
+        }
+    ],
+
+    updateMetrics() {
+        const lossEl = document.getElementById('lossPrevented');
+        const riskEl = document.getElementById('atRiskCount');
+        const utilEl = document.getElementById('utilizationVal');
+        const healthEl = document.getElementById('healthStatus');
+        const insightBar = document.getElementById('aiInsightBar');
+
+        if (lossEl) lossEl.innerText = `₹${this.metrics.lossPrevented.toLocaleString()}`;
+        if (riskEl) riskEl.innerText = `${this.metrics.atRiskBatches}`;
+        if (utilEl) utilEl.innerText = `${this.metrics.utilization}%`;
+
+        if (healthEl) {
+            healthEl.innerText = this.metrics.status;
+            healthEl.style.color = this.metrics.status === 'Optimal' ? 'var(--primary)' : 'var(--danger)';
+        }
+
+        if (insightBar) {
+            const highRiskCount = this.zones.filter(z => z.risk > 80).length;
+            const criticalDispatches = this.recommendations.filter(r => r.priority === 'P1' && r.status === 'pending').length;
+
+            insightBar.innerHTML = `
+                <div class="insight-item" style="color:${highRiskCount > 0 ? '#ef4444' : 'var(--primary)'}">
+                    ${highRiskCount > 0 ? '⚠️' : '✅'} ${highRiskCount} High Risk Zones
+                </div>
+                <div class="insight-separator"></div>
+                <div class="insight-item">📦 ${criticalDispatches} Critical Dispatches</div>
+                <div class="insight-separator"></div>
+                <div class="insight-item">💰 ₹${this.metrics.lossPrevented.toLocaleString()} Saved</div>
+                <div class="insight-separator"></div>
+                <div class="insight-item">🧠 AI Model: 96% Acc</div>
+            `;
+        }
+    },
+
+    approveRecommendation(id) {
+        const rec = this.recommendations.find(r => r.id === id);
+        if (rec) {
+            rec.status = 'approved';
+            this.metrics.lossPrevented += rec.predictedLoss;
+            this.metrics.atRiskBatches = Math.max(0, this.metrics.atRiskBatches - 1);
+
+            // If it was a dispatch, reduce utilization slightly
+            if (rec.action.includes('Dispatch')) {
+                this.metrics.utilization = parseFloat((this.metrics.utilization - 1.5).toFixed(1));
+            }
+
+            this.updateMetrics();
+            console.log(`Action Approved: ${rec.action} for ${rec.target}`);
+            return true;
+        }
+        return false;
+    }
+};
