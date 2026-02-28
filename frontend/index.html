@@ -285,6 +285,7 @@
 
 
     <section class="hero-section" style="position: relative; overflow: hidden; background: white;">
+        <div class="hero-gradient-animate"></div>
         <div class="bg-subtle-overlay"></div>
         <div class="bg-dot-pattern"></div>
 
@@ -545,7 +546,8 @@
                             <span style="color: var(--primary);">+98%</span>
                         </div>
                         <div style="height: 10px; background: #eee; border-radius: 5px; overflow: hidden;">
-                            <div style="width: 98%; height: 100%; background: var(--primary); border-radius: 5px;">
+                            <div class="progress-bar-fill" data-target="98"
+                                style="height: 100%; background: var(--primary); border-radius: 5px;">
                             </div>
                         </div>
                     </div>
@@ -557,8 +559,8 @@
                             <span style="color: var(--primary);">+18% AVG</span>
                         </div>
                         <div style="height: 10px; background: #eee; border-radius: 5px; overflow: hidden;">
-                            <div
-                                style="width: 75%; height: 100%; background: var(--primary-light); border-radius: 5px;">
+                            <div class="progress-bar-fill" data-target="75"
+                                style="height: 100%; background: var(--primary-light); border-radius: 5px;">
                             </div>
                         </div>
                     </div>
@@ -634,21 +636,24 @@
             <div style="flex: 2; display: flex; gap: 30px;">
                 <div
                     style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); flex: 1;">
-                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary-light);">₹12.4Cr+</div>
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary-light);">₹<span
+                            class="counter" data-count="12.4">0</span>Cr+</div>
                     <div
                         style="font-size: 0.8rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-top: 10px;">
                         Total Income Generated</div>
                 </div>
                 <div
                     style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); flex: 1;">
-                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary-light);">500+</div>
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary-light);"><span class="counter"
+                            data-count="500">0</span>+</div>
                     <div
                         style="font-size: 0.8rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-top: 10px;">
                         Partner Warehouses</div>
                 </div>
                 <div
                     style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); flex: 1;">
-                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary-light);">04 Hrs</div>
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary-light);"><span class="counter"
+                            data-count="04">0</span> Hrs</div>
                     <div
                         style="font-size: 0.8rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-top: 10px;">
                         AI Payout Settlement</div>
@@ -734,7 +739,62 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+
+        // Intersection Observer for Progress Bars and Counters
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const animationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('progress-bar-fill')) {
+                        const target = entry.target.getAttribute('data-target');
+                        entry.target.style.width = target + '%';
+                    } else if (entry.target.classList.contains('counter')) {
+                        animateCounter(entry.target);
+                    }
+                    animationObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.progress-bar-fill, .counter').forEach(el => {
+            animationObserver.observe(el);
+        });
+
+        function animateCounter(el) {
+            const target = parseFloat(el.getAttribute('data-count'));
+            const duration = 2000;
+            const startTime = performance.now();
+            const startValue = 0;
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Ease out expo
+                const easedProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+                let currentValue = startValue + (target - startValue) * easedProgress;
+
+                if (target % 1 !== 0) {
+                    el.textContent = currentValue.toFixed(1);
+                } else {
+                    el.textContent = Math.floor(currentValue).toString().padStart(target < 10 ? 2 : 1, '0');
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            requestAnimationFrame(update);
+        }
 
         // Chatbot Logic
         const bubble = document.getElementById('chatbot-bubble');
