@@ -41,6 +41,24 @@
             box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
         }
 
+        .demo-box {
+            background: #f1f8e9;
+            border: 1px dashed #2e7d32;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            font-size: 0.9rem;
+            color: #1b5e20;
+            text-align: center;
+        }
+
+        .demo-box small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.75rem;
+            color: #558b2f;
+        }
+
         @media (max-width: 480px) {
             .login-card {
                 padding: 30px 20px;
@@ -64,6 +82,15 @@
         </div>
 
         <form onsubmit="event.preventDefault(); window.location.href='dashboard.html'">
+
+            <!-- Demo Credentials Display -->
+            <div class="demo-box">
+                <strong>Demo Login Credentials</strong><br>
+                Email: <b>manager@gmail.com</b><br>
+                Password: <b>manager123</b>
+                <small>(Any credentials will work in demo mode)</small>
+            </div>
+
             <div class="input-group">
                 <label>Registered Email</label>
                 <input type="email" placeholder="farmer@agrifresh.in" required>
@@ -72,6 +99,7 @@
                 <label>Password</label>
                 <input type="password" placeholder="••••••••" required>
             </div>
+
             <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 0.85rem;">
                 <label
                     style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary);">
@@ -79,6 +107,7 @@
                 </label>
                 <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;">Forgot Password?</a>
             </div>
+
             <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; padding: 16px;">
                 Secure Sign In <i class="fas fa-sign-in-alt"></i>
             </button>
