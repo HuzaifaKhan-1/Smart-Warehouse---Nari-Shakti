@@ -39,6 +39,10 @@
     font-family: 'Outfit', sans-serif;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background: var(--bg-gradient);
     color: var(--text-primary);
@@ -46,6 +50,76 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     line-height: 1.6;
+}
+
+/* --- Premium Interactive Enhancements --- */
+
+.feature-card {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease,
+        border-color 0.4s ease !important;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(27, 94, 32, 0.08);
+    border-color: var(--primary-light) !important;
+}
+
+.cta-button {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.cta-button:hover::after {
+    opacity: 1;
+}
+
+.cta-button:hover {
+    box-shadow: 0 0 20px var(--primary-glow), 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-3px);
+}
+
+/* Animated Progress Bars */
+.progress-bar-fill {
+    width: 0;
+    transition: width 1.5s cubic-bezier(0.1, 0, 0.2, 1);
+}
+
+/* Hero Gradient Backdrop */
+.hero-gradient-animate {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(76, 175, 80, 0.03) 0%, transparent 50%);
+    animation: slowRotate 20s linear infinite;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes slowRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Background Accents - Subtler for Light Theme */
@@ -254,20 +328,24 @@ body {
 .btn-premium {
     background: var(--primary);
     color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
+    padding: 16px 28px;
+    /* Slightly larger for premium feel */
+    border-radius: 15px;
     border: none;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
     transition: var(--transition-smooth);
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-premium:hover {
     background: var(--primary-accent);
-    box-shadow: 0 6px 15px rgba(46, 125, 50, 0.3);
+    box-shadow: 0 0 20px var(--primary-glow), 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
 }
 
 /* Tooltips */
@@ -903,7 +981,8 @@ body {
     .inventory-hero,
     .inventory-filter-grid {
         grid-template-columns: 1fr !important;
-        gap: 15px;
+        gap: 20px;
+        /* Increased slightly for better separation */
     }
 
     .ai-assistant-panel {
@@ -951,7 +1030,8 @@ body {
     }
 
     section[style*="padding: 120px 60px"] {
-        padding: 60px 20px !important;
+        padding: 50px 20px !important;
+        /* Slightly more compact for mobile */
     }
 
     section[style*="display: flex"] {
