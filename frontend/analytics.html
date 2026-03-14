@@ -750,60 +750,7 @@
 
     <script src="js/analytics.js"></script>
     <script src="js/i18n.js"></script>
-    <script>
-        // Chatbot Logic
-        const bubble = document.getElementById('chatbot-bubble');
-        const windowChat = document.getElementById('chatbot-window');
-        const closeChat = document.getElementById('close-chat');
-        const sendBtn = document.getElementById('send-chat');
-        const input = document.getElementById('chat-input');
-        const messagesContainer = document.getElementById('chat-messages');
-
-        if (bubble) {
-            bubble.addEventListener('click', () => {
-                windowChat.style.display = windowChat.style.display === 'flex' ? 'none' : 'flex';
-            });
-        }
-
-        if (closeChat) {
-            closeChat.addEventListener('click', () => {
-                windowChat.style.display = 'none';
-            });
-        }
-
-        const addMessage = (text, isUser = false) => {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            msgDiv.innerText = text;
-            messagesContainer.appendChild(msgDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        };
-
-        const handleChat = async () => {
-            const text = input.value.trim();
-            if (!text) return;
-
-            addMessage(text, true);
-            input.value = '';
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-                const data = await response.json();
-                addMessage(data.response || "I'm having trouble connecting to the brain. Please try again.");
-            } catch (err) {
-                addMessage("I'm offline right now. Make sure the backend server is running!");
-            }
-        };
-
-        if (sendBtn) sendBtn.addEventListener('click', handleChat);
-        if (input) input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleChat();
-        });
-    </script>
+    <script src="js/chatbot.js"></script>
 </body>
 
 </html>
