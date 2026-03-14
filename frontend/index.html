@@ -1435,7 +1435,8 @@
                 <option value="hi">हिंदी</option>
                 <option value="mr">मराठी</option>
             </select>
-            <a href="login.html" class="btn-primary">Partner Login <i class="fas fa-arrow-right"></i></a>
+            <a href="login.html" class="btn-primary" data-i18n="nav-login">Partner Login <i
+                    class="fas fa-arrow-right"></i></a>
         </div>
         <button class="mobile-menu-btn" onclick="document.getElementById('mobile-nav').classList.toggle('active')">
             <i class="fas fa-bars"></i>
@@ -1457,17 +1458,17 @@
     <section class="hero">
         <div class="hero-bg-pattern"></div>
 
-        <div class="hero-badge" data-aos="fade-down">
+        <div class="hero-badge" data-aos="fade-down" data-i18n="home-hero-badge">
             <i class="fas fa-satellite-dish"></i> AI-Powered Smart Agricultural Ecosystem
         </div>
 
-        <h1 data-aos="fade-up" data-aos-delay="50">
+        <h1 data-aos="fade-up" data-aos-delay="50" data-i18n="home-hero-title">
             Connecting <span class="hl">Farmers</span> to<br>
             <span class="hl">Warehouses</span> to <span class="hl">Markets</span>
         </h1>
 
-        <p class="hero-sub" data-aos="fade-up" data-aos-delay="120">
-            Optimizing farm-to-market supply chains with smart AI technology — reducing post-harvest losses and
+        <p class="hero-sub" data-aos="fade-up" data-aos-delay="120" data-i18n="home-hero-sub">
+            Optimizing farm-to-market supply chains with smart AI technology &mdash; reducing post-harvest losses and
             maximizing every farmer's income.
         </p>
 
@@ -1478,14 +1479,15 @@
             <div class="flow-node">
                 <div class="flow-circle">
                     <div class="flow-badge badge-farmer">
-                        <i class="fas fa-drone" style="color:#1B5E20"></i> IoT Active
+                        <i class="fas fa-drone" style="color:#1B5E20"></i> <span data-i18n="home-flow-farmers-badge">IoT
+                            Active</span>
                     </div>
                     <div class="flow-icon">🌾</div>
-                    <span class="flow-label-main">Farmers</span>
-                    <span class="flow-label-sub">Fresh Produce</span>
+                    <span class="flow-label-main" data-i18n="home-flow-farmers">Farmers</span>
+                    <span class="flow-label-sub" data-i18n="home-flow-farmers-sub">Fresh Produce</span>
                 </div>
                 <span class="flow-pill pill-green">
-                    <i class="fas fa-users"></i> FPO & Farmers
+                    <i class="fas fa-users"></i> <span data-i18n="home-flow-farmers-pill">FPO &amp; Farmers</span>
                 </span>
             </div>
 
@@ -1500,14 +1502,16 @@
             <div class="flow-node">
                 <div class="flow-circle">
                     <div class="flow-badge badge-warehouse">
-                        <i class="fas fa-brain" style="color:#1565C0"></i> AI Guard
+                        <i class="fas fa-brain" style="color:#1565C0"></i> <span
+                            data-i18n="home-flow-warehouse-badge">AI Guard</span>
                     </div>
                     <div class="flow-icon">🏭</div>
-                    <span class="flow-label-main">Warehouse</span>
-                    <span class="flow-label-sub">Smart Storage</span>
+                    <span class="flow-label-main" data-i18n="home-flow-warehouse">Warehouse</span>
+                    <span class="flow-label-sub" data-i18n="home-flow-warehouse-sub">Smart Storage</span>
                 </div>
                 <span class="flow-pill pill-blue">
-                    <i class="fas fa-microchip"></i> AI + IoT Monitoring
+                    <i class="fas fa-microchip"></i> <span data-i18n="home-flow-warehouse-pill">AI + IoT
+                        Monitoring</span>
                 </span>
             </div>
 
@@ -1522,24 +1526,25 @@
             <div class="flow-node">
                 <div class="flow-circle">
                     <div class="flow-badge badge-market">
-                        <i class="fas fa-chart-line" style="color:#E65100"></i> Best Price
+                        <i class="fas fa-chart-line" style="color:#E65100"></i> <span
+                            data-i18n="home-flow-market-badge">Best Price</span>
                     </div>
                     <div class="flow-icon">🏪</div>
-                    <span class="flow-label-main">Market</span>
-                    <span class="flow-label-sub">Best Price</span>
+                    <span class="flow-label-main" data-i18n="home-flow-market">Market</span>
+                    <span class="flow-label-sub" data-i18n="home-flow-market-sub">Best Price</span>
                 </div>
                 <span class="flow-pill pill-orange">
-                    <i class="fas fa-tags"></i> Peak Price Signal
+                    <i class="fas fa-tags"></i> <span data-i18n="home-flow-market-pill">Peak Price Signal</span>
                 </span>
             </div>
         </div>
 
         <!-- CTA BUTTONS -->
         <div class="hero-cta" data-aos="fade-up" data-aos-delay="320">
-            <a href="dashboard.html" class="btn-hero-primary">
+            <a href="dashboard.html" class="btn-hero-primary" data-i18n="home-cta-launch">
                 Launch Dashboard <i class="fas fa-arrow-right"></i>
             </a>
-            <a href="javascript:void(0)" class="btn-hero-ghost" id="watch-video-btn">
+            <a href="javascript:void(0)" class="btn-hero-ghost" id="watch-video-btn" data-i18n="home-cta-watch">
                 <i class="fas fa-play-circle"></i> Watch Video
             </a>
         </div>
@@ -1549,28 +1554,28 @@
     <div class="stats-strip" id="credibility">
         <div class="stats-inner">
             <div class="stat-block" data-aos="fade-up">
-                <span class="stat-num">96%</span>
-                <span class="stat-lbl">Prediction Accuracy</span>
+                <span class="stat-num" data-i18n="home-stat-acc">96%</span>
+                <span class="stat-lbl" data-i18n="home-stat-acc-lbl">Prediction Accuracy</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-block" data-aos="fade-up" data-aos-delay="80">
-                <span class="stat-num">10K+</span>
-                <span class="stat-lbl">Harvest Cycles Analyzed</span>
+                <span class="stat-num" data-i18n="home-stat-cycles">10K+</span>
+                <span class="stat-lbl" data-i18n="home-stat-cycles-lbl">Harvest Cycles Analyzed</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-block" data-aos="fade-up" data-aos-delay="160">
-                <span class="stat-num">₹4.2L</span>
-                <span class="stat-lbl">Avg. Income Per Season</span>
+                <span class="stat-num" data-i18n="home-stat-income">₹4.2L</span>
+                <span class="stat-lbl" data-i18n="home-stat-income-lbl">Avg. Income Per Season</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-block" data-aos="fade-up" data-aos-delay="240">
-                <span class="stat-num">500+</span>
-                <span class="stat-lbl">Partner Warehouses</span>
+                <span class="stat-num" data-i18n="home-stat-partners">500+</span>
+                <span class="stat-lbl" data-i18n="home-stat-partners-lbl">Partner Warehouses</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-block" data-aos="fade-up" data-aos-delay="320">
-                <span class="stat-num">Nari Shakti</span>
-                <span class="stat-lbl">Women Empowerment</span>
+                <span class="stat-num" data-i18n="home-stat-ns">Nari Shakti</span>
+                <span class="stat-lbl" data-i18n="home-stat-ns-lbl">Women Empowerment</span>
             </div>
         </div>
     </div>
@@ -1578,33 +1583,38 @@
     <!-- HOW IT WORKS -->
     <section class="section section-center" id="how-it-works">
         <div style="max-width:1100px; margin:0 auto;">
-            <span class="section-tag" data-aos="fade-up">The Journey</span>
-            <h2 class="section-title" data-aos="fade-up" data-aos-delay="60">From Field to Final Sale — <br>Three Simple
+            <span class="section-tag" data-aos="fade-up" data-i18n="home-how-tag">The Journey</span>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="60" data-i18n="home-how-title">From Field to
+                Final Sale &mdash; <br>Three Simple
                 Steps</h2>
-            <p class="section-desc" data-aos="fade-up" data-aos-delay="120">AgriFresh bridges the gap between farmers,
-                smart cold storage, and buyers — making every harvest more profitable and less wasteful.</p>
+            <p class="section-desc" data-aos="fade-up" data-aos-delay="120" data-i18n="home-how-desc">AgriFresh bridges
+                the gap between farmers,
+                smart cold storage, and buyers &mdash; making every harvest more profitable and less wasteful.</p>
 
             <div class="steps-grid">
                 <div class="step-card" data-aos="fade-up">
                     <span class="step-num">01</span>
                     <div class="step-icon-wrap"><i class="fas fa-tractor"></i></div>
-                    <h3 class="step-title">Farmer Deposits Produce</h3>
-                    <p class="step-desc">Farmers bring their harvest to an AI-certified cold warehouse. Each batch is
+                    <h3 class="step-title" data-i18n="home-step1-title">Farmer Deposits Produce</h3>
+                    <p class="step-desc" data-i18n="home-step1-desc">Farmers bring their harvest to an AI-certified cold
+                        warehouse. Each batch is
                         scanned, graded, and registered on the digital ledger instantly.</p>
                 </div>
                 <div class="step-card" data-aos="fade-up" data-aos-delay="100">
                     <span class="step-num">02</span>
                     <div class="step-icon-wrap"><i class="fas fa-warehouse"></i></div>
-                    <h3 class="step-title">Smart Warehouse Protects</h3>
-                    <p class="step-desc">IoT sensors monitor temperature, moisture & spoilage risk 24/7. AI alerts
+                    <h3 class="step-title" data-i18n="home-step2-title">Smart Warehouse Protects</h3>
+                    <p class="step-desc" data-i18n="home-step2-desc">IoT sensors monitor temperature, moisture &amp;
+                        spoilage risk 24/7. AI alerts
                         managers before losses happen and optimizes storage conditions automatically.</p>
                 </div>
                 <div class="step-card" data-aos="fade-up" data-aos-delay="200">
                     <span class="step-num">03</span>
                     <div class="step-icon-wrap"><i class="fas fa-store"></i></div>
-                    <h3 class="step-title">Sell at Peak Market Price</h3>
-                    <p class="step-desc">AI monitors mandi prices and signals the perfect time to sell. Farmers earn
-                        25–40% more by dispatching at peak demand instead of distress selling.</p>
+                    <h3 class="step-title" data-i18n="home-step3-title">Sell at Peak Market Price</h3>
+                    <p class="step-desc" data-i18n="home-step3-desc">AI monitors mandi prices and signals the perfect
+                        time to sell. Farmers earn
+                        25&ndash;40% more by dispatching at peak demand instead of distress selling.</p>
                 </div>
             </div>
         </div>
@@ -1613,47 +1623,55 @@
     <!-- FEATURES -->
     <section class="section section-center features-bg" id="features">
         <div style="max-width:1100px; margin:0 auto;">
-            <span class="section-tag" data-aos="fade-up">Platform Capabilities</span>
-            <h2 class="section-title" data-aos="fade-up" data-aos-delay="60">Smart Infrastructure for Higher Profits
+            <span class="section-tag" data-aos="fade-up" data-i18n="home-feat-tag">Platform Capabilities</span>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="60" data-i18n="home-feat-title">Smart
+                Infrastructure for Higher Profits
             </h2>
-            <p class="section-desc" data-aos="fade-up" data-aos-delay="120">Every tool in AgriFresh is designed to give
+            <p class="section-desc" data-aos="fade-up" data-aos-delay="120" data-i18n="home-feat-desc">Every tool in
+                AgriFresh is designed to give
                 farmers, warehouse operators, and market buyers an unfair advantage.</p>
 
             <div class="features-grid">
                 <div class="feat-card" data-aos="fade-up">
                     <div class="feat-ico"><i class="fas fa-brain"></i></div>
-                    <h3 class="feat-title">AI Spoilage Prediction</h3>
-                    <p class="feat-desc">Machine learning models predict spoilage risk days in advance, giving you time
+                    <h3 class="feat-title" data-i18n="home-feat1-title">AI Spoilage Prediction</h3>
+                    <p class="feat-desc" data-i18n="home-feat1-desc">Machine learning models predict spoilage risk days
+                        in advance, giving you time
                         to act before losses occur.</p>
                 </div>
                 <div class="feat-card" data-aos="fade-up" data-aos-delay="80">
                     <div class="feat-ico"><i class="fas fa-temperature-half"></i></div>
-                    <h3 class="feat-title">Real-Time IoT Monitoring</h3>
-                    <p class="feat-desc">124+ sensors track temperature, humidity, and gas levels continuously across
+                    <h3 class="feat-title" data-i18n="home-feat2-title">Real-Time IoT Monitoring</h3>
+                    <p class="feat-desc" data-i18n="home-feat2-desc">124+ sensors track temperature, humidity, and gas
+                        levels continuously across
                         every warehouse zone.</p>
                 </div>
                 <div class="feat-card" data-aos="fade-up" data-aos-delay="160">
                     <div class="feat-ico"><i class="fas fa-chart-line"></i></div>
-                    <h3 class="feat-title">Live Market Price Feed</h3>
-                    <p class="feat-desc">Real-time mandi price data from 200+ markets. AI signals the exact moment to
+                    <h3 class="feat-title" data-i18n="home-feat3-title">Live Market Price Feed</h3>
+                    <p class="feat-desc" data-i18n="home-feat3-desc">Real-time mandi price data from 200+ markets. AI
+                        signals the exact moment to
                         dispatch for maximum returns.</p>
                 </div>
                 <div class="feat-card" data-aos="fade-up" data-aos-delay="60">
                     <div class="feat-ico"><i class="fas fa-file-invoice-dollar"></i></div>
-                    <h3 class="feat-title">Digital Storage Receipts</h3>
-                    <p class="feat-desc">Tamper-proof digital receipts enable faster bank loans at lower interest rates,
+                    <h3 class="feat-title" data-i18n="home-feat4-title">Digital Storage Receipts</h3>
+                    <p class="feat-desc" data-i18n="home-feat4-desc">Tamper-proof digital receipts enable faster bank
+                        loans at lower interest rates,
                         backed by certified AI quality reports.</p>
                 </div>
                 <div class="feat-card" data-aos="fade-up" data-aos-delay="140">
                     <div class="feat-ico"><i class="fas fa-route"></i></div>
-                    <h3 class="feat-title">End-to-End Traceability</h3>
-                    <p class="feat-desc">Track every batch from farm to buyer with a full audit trail — building trust
+                    <h3 class="feat-title" data-i18n="home-feat5-title">End-to-End Traceability</h3>
+                    <p class="feat-desc" data-i18n="home-feat5-desc">Track every batch from farm to buyer with a full
+                        audit trail &mdash; building trust
                         with premium market buyers.</p>
                 </div>
                 <div class="feat-card" data-aos="fade-up" data-aos-delay="220">
                     <div class="feat-ico"><i class="fas fa-venus"></i></div>
-                    <h3 class="feat-title">Nari Shakti Empowerment</h3>
-                    <p class="feat-desc">Designed to uplift women-led FPOs with multilingual support (Hindi, Marathi)
+                    <h3 class="feat-title" data-i18n="home-feat6-title">Nari Shakti Empowerment</h3>
+                    <p class="feat-desc" data-i18n="home-feat6-desc">Designed to uplift women-led FPOs with multilingual
+                        support (Hindi, Marathi)
                         and simplified dashboards.</p>
                 </div>
             </div>
@@ -1664,69 +1682,78 @@
     <section class="roi-section" id="roi">
         <div class="roi-inner">
             <div data-aos="fade-right">
-                <span class="section-tag">The Economic Advantage</span>
-                <h2 class="section-title" style="margin: 14px 0 20px; text-align:left;">Turning Harvest Waste into <span
-                        style="color:#1B5E20;">Wealth</span></h2>
-                <p style="color:#4A5D4C; font-size:1rem; line-height:1.75; margin-bottom:32px;">Traditional storage
+                <span class="section-tag" data-i18n="home-roi-tag">The Economic Advantage</span>
+                <h2 class="section-title" style="margin: 14px 0 20px; text-align:left;" data-i18n="home-roi-title">
+                    Turning Harvest Waste into <span style="color:#1B5E20;">Wealth</span></h2>
+                <p style="color:#4A5D4C; font-size:1rem; line-height:1.75; margin-bottom:32px;"
+                    data-i18n="home-roi-desc">Traditional storage
                     loses up to 30% of harvest value. AgriFresh's smart model redistributes that lost value back to
                     farmers and operators.</p>
 
                 <div class="roi-benefit">
                     <div class="roi-ben-ico ico-green"><i class="fas fa-users"></i></div>
                     <div>
-                        <div class="roi-ben-title">For FPOs & Farmers</div>
-                        <div class="roi-ben-desc">Direct access to premium markets when prices are at their peak, backed
+                        <div class="roi-ben-title" data-i18n="home-roi-ben1-title">For FPOs &amp; Farmers</div>
+                        <div class="roi-ben-desc" data-i18n="home-roi-ben1-desc">Direct access to premium markets when
+                            prices are at their peak, backed
                             by AI quality certification and digital records.</div>
                     </div>
                 </div>
                 <div class="roi-benefit">
                     <div class="roi-ben-ico ico-blue"><i class="fas fa-building"></i></div>
                     <div>
-                        <div class="roi-ben-title">For Storage Operators</div>
-                        <div class="roi-ben-desc">Run your facility with zero stress. AI manages monitoring, alerts, and
-                            dispatch logs — reducing manual overhead by 70%.</div>
+                        <div class="roi-ben-title" data-i18n="home-roi-ben2-title">For Storage Operators</div>
+                        <div class="roi-ben-desc" data-i18n="home-roi-ben2-desc">Run your facility with zero stress. AI
+                            manages monitoring, alerts, and
+                            dispatch logs &mdash; reducing manual overhead by 70%.</div>
                     </div>
                 </div>
             </div>
 
             <div data-aos="fade-left">
                 <div class="roi-card">
-                    <h3>Profitability Roadmap <span
+                    <h3 data-i18n="home-roi-card-title">Profitability Roadmap <span
                             style="background:#1B5E20;color:white;font-size:0.7rem;padding:3px 10px;border-radius:50px;margin-left:8px;vertical-align:middle;">2026</span>
                     </h3>
 
                     <div class="progress-row">
-                        <div class="progress-row-top"><span>Harvest Value Retention</span><span
-                                style="color:#1B5E20;font-weight:800;">+98%</span></div>
+                        <div class="progress-row-top"><span data-i18n="home-roi-ret-lbl">Harvest Value
+                                Retention</span><span style="color:#1B5E20;font-weight:800;"
+                                data-i18n="home-roi-ret-val">+98%</span></div>
                         <div class="progress-track">
                             <div class="progress-fill fill-green progress-bar-fill" data-target="98"></div>
                         </div>
                     </div>
                     <div class="progress-row">
-                        <div class="progress-row-top"><span>Market Timing Gains</span><span
-                                style="color:#0D9488;font-weight:800;">+18% AVG</span></div>
+                        <div class="progress-row-top"><span data-i18n="home-roi-timing-lbl">Market Timing
+                                Gains</span><span style="color:#0D9488;font-weight:800;"
+                                data-i18n="home-roi-timing-val">+18% AVG</span></div>
                         <div class="progress-track">
                             <div class="progress-fill fill-teal progress-bar-fill" data-target="75"></div>
                         </div>
                     </div>
                     <div class="progress-row">
-                        <div class="progress-row-top"><span>Spoilage Reduction</span><span
-                                style="color:#1565C0;font-weight:800;">-85%</span></div>
+                        <div class="progress-row-top"><span data-i18n="home-roi-spoilage-lbl">Spoilage
+                                Reduction</span><span style="color:#1565C0;font-weight:800;"
+                                data-i18n="home-roi-spoilage-val">-85%</span></div>
                         <div class="progress-track">
                             <div class="progress-fill fill-blue progress-bar-fill" data-target="85"></div>
                         </div>
                     </div>
 
                     <div class="roi-highlight">
-                        <div class="roi-hl-label">Estimated ROI per Participant</div>
-                        <div class="roi-hl-value">₹4.2 Lakh <span
-                                style="font-size:1rem;color:#809683;font-weight:600;">/ Season</span></div>
-                        <div class="roi-hl-note">*Based on average 50-ton batch optimization using AI spoilage models.
+                        <div class="roi-hl-label" data-i18n="home-roi-est-lbl">Estimated ROI per Participant</div>
+                        <div class="roi-hl-value"><span data-i18n="home-roi-est-val">₹4.2 Lakh</span> <span
+                                style="font-size:1rem;color:#809683;font-weight:600;" data-i18n="home-roi-est-season">/
+                                Season</span></div>
+                        <div class="roi-hl-note" data-i18n="home-roi-disclaimer">*Based on average 50-ton batch
+                            optimization using AI spoilage models.
                         </div>
                     </div>
 
                     <a href="dashboard.html" class="btn-primary"
-                        style="width:100%;justify-content:center;margin-top:24px;padding:16px;border-radius:14px;font-size:1rem;">
+                        style="width:100%;justify-content:center;margin-top:24px;padding:16px;border-radius:14px;font-size:1rem;"
+                        data-i18n="home-roi-btn">
                         Launch Dashboard <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -1738,22 +1765,24 @@
     <section class="market-section">
         <div class="market-inner">
             <div class="market-text" data-aos="fade-right">
-                <h2>Built for Scalable <span>Agricultural Wealth</span></h2>
-                <p>Our platform connects local warehouses to national and global markets, ensuring Indian produce
-                    fetches the price it deserves — from farm to final sale.</p>
+                <h2 data-i18n="home-market-title">Built for Scalable <span>Agricultural Wealth</span></h2>
+                <p data-i18n="home-market-desc">Our platform connects local warehouses to national and global markets,
+                    ensuring Indian produce
+                    fetches the price it deserves &mdash; from farm to final sale.</p>
             </div>
             <div class="market-stats" data-aos="fade-left">
                 <div class="mstat">
                     <div class="mstat-val">₹<span class="counter" data-count="12.4">0</span>Cr+</div>
-                    <div class="mstat-lbl">Total Income Generated</div>
+                    <div class="mstat-lbl" data-i18n="home-market-stat1-lbl">Total Income Generated</div>
                 </div>
                 <div class="mstat">
                     <div class="mstat-val"><span class="counter" data-count="500">0</span>+</div>
-                    <div class="mstat-lbl">Partner Warehouses</div>
+                    <div class="mstat-lbl" data-i18n="home-market-stat2-lbl">Partner Warehouses</div>
                 </div>
                 <div class="mstat">
-                    <div class="mstat-val"><span class="counter" data-count="4">0</span> Hrs</div>
-                    <div class="mstat-lbl">AI Payout Settlement</div>
+                    <div class="mstat-val"><span class="counter" data-count="4">0</span> <span
+                            data-i18n="home-market-hrs">Hrs</span></div>
+                    <div class="mstat-lbl" data-i18n="home-market-stat3-lbl">AI Payout Settlement</div>
                 </div>
             </div>
         </div>
@@ -1781,7 +1810,8 @@
             <div class="brand-icon"><i class="fas fa-leaf"></i></div>
             <span style="font-size:1.3rem;font-weight:800;color:#1B5E20;">AgriFresh</span>
         </div>
-        <p class="footer-copy">© 2026 AgriFresh AI Intelligence — Nari Shakti Smart Warehouse. Built for Sustainable
+        <p class="footer-copy" data-i18n="home-footer-copy">&copy; 2026 AgriFresh AI Intelligence &mdash; Nari Shakti
+            Smart Warehouse. Built for Sustainable
             Agriculture in India.</p>
     </footer>
 
