@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather & Soil | AgriFresh Farmer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gp:#1D9E75;--gd:#27500A;--gl:#EAF3DE;--gm:#3B6D11;--pbg:#F0F7F0;--cb:#FFF;--tp:#1A1A1A;--ts:#5F5E5A;--tm:#888780;--amber:#BA7517;--al:#FAEEDA;--rp:#E24B4A;--rl:#FCEBEB;--blue:#3B82F6;--bl:#EBF2FF;--bdr:rgba(0,0,0,0.08);--shd:0 1px 3px rgba(0,0,0,0.06);--rad:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans','Noto Sans Devanagari','Segoe UI',sans-serif;background:var(--pbg);color:var(--tp);line-height:1.5;overflow:hidden;height:100vh}
+.app{display:grid;grid-template:"header header" 60px "sidebar main" 1fr/240px 1fr;height:100vh}
+.header{grid-area:header;background:#fff;border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100}.hl{display:flex;align-items:center;gap:10px;flex-shrink:0}.lb{width:32px;height:32px;background:var(--gd);border-radius:8px;display:flex;align-items:center;justify-content:center}.lb svg{width:18px;height:18px;fill:#fff}.an{font-size:16px;font-weight:700;color:var(--gd)}.as{font-size:11px;color:var(--tm)}.hc{display:flex;gap:8px;flex:1;justify-content:center;overflow-x:auto;white-space:nowrap;scrollbar-width:none}.hc::-webkit-scrollbar{display:none}.ap{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;flex-shrink:0}.pg{background:var(--gl);color:var(--gd)}.pa{background:var(--al);color:#633806}.pp{background:#F5E6FF;color:#6B21A8}.hr{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.lp{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:#fff;color:var(--ts);transition:.15s}.lp.active{background:var(--gd);color:#fff;border-color:var(--gd)}
+.hb{display:none;width:36px;height:36px;border-radius:8px;border:none;background:var(--gd);color:#fff;font-size:16px;cursor:pointer;align-items:center;justify-content:center}
+.sidebar{grid-area:sidebar;background:#fff;border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow-y:auto;padding:16px 12px;transition:width .3s}.sl{font-size:10px;font-weight:600;color:var(--tm);letter-spacing:.08em;text-transform:uppercase;padding:0 12px;margin-bottom:4px}.ss{font-size:10px;color:var(--gp);padding:0 12px;margin-bottom:2px;display:flex;align-items:center;gap:5px}.ss .dot{width:6px;height:6px;border-radius:50%;background:var(--gp)}.sc{font-size:11px;font-weight:600;padding:0 12px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.ni{display:flex;flex-direction:column;gap:2px;margin-bottom:auto}.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--ts);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:.15s}.nav-item svg{width:18px;height:18px;fill:currentColor;flex-shrink:0}.nav-item:hover{background:#F5F5F5}.nav-item.active{background:var(--gl);color:var(--gd);font-weight:600;border-left-color:var(--gp)}.nt{white-space:nowrap;overflow:hidden}
+.slg{padding:0 12px;margin-bottom:12px}.slg select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--bdr);font-size:12px;font-weight:500;background:#fff;cursor:pointer;outline:none}
+.sf{background:var(--pbg);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin:0 4px}.sf .fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--tm);margin-bottom:10px}.fr{display:flex;justify-content:space-between;font-size:12px;padding:4px 0}.fr .v{font-weight:600}.fr .v.red{color:var(--rp)}
+.hbn{margin-top:12px;width:100%;padding:8px;background:var(--gd);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:.2s}.hbn:hover{background:var(--gp)}
+.main{grid-area:main;overflow-y:auto;padding:20px 24px 40px;display:flex;flex-direction:column;gap:18px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}.ph h1{font-size:24px;font-weight:600}.ph .sub{font-size:13px;color:var(--tm);margin-top:2px}
+.loc-pill{padding:6px 14px;border-radius:8px;border:1px solid var(--bdr);background:#fff;font-size:12px;font-weight:500;cursor:pointer;position:relative}.loc-dd{display:none;position:absolute;top:100%;right:0;background:#fff;border:1px solid var(--bdr);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:10;min-width:180px;margin-top:4px}.loc-dd.open{display:block}.loc-dd div{padding:8px 14px;font-size:12px;cursor:pointer;transition:.1s}.loc-dd div:hover{background:var(--gl)}
+/* AI card */
+.ais{background:var(--gd);border-radius:var(--rad);padding:20px 24px;color:#fff}.ais .at{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}.ais .al{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}.ais .au{font-size:11px;opacity:.7}.aip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.aip .p{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 14px;min-width:100px}.aip .pl{font-size:9px;text-transform:uppercase;letter-spacing:.06em;opacity:.7;margin-bottom:2px}.aip .pv{font-size:18px;font-weight:700}.ait{font-size:13px;line-height:1.6;opacity:.92}
+/* Today+Forecast */
+.wrow{display:grid;grid-template-columns:2fr 3fr;gap:14px}
+.card{background:var(--cb);border:.5px solid var(--bdr);border-radius:var(--rad);box-shadow:var(--shd);padding:20px}
+.today-card .td{font-size:13px;color:var(--ts);margin-bottom:12px}.today-card .wi{text-align:center;margin:8px 0}.today-card .temp{font-size:48px;font-weight:700;text-align:center}.today-card .cond{font-size:16px;text-align:center;color:var(--ts);margin-bottom:16px}.today-card .mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.today-card .mi{display:flex;align-items:center;gap:6px;font-size:12px;padding:8px;border-radius:8px;background:var(--pbg)}.today-card .fl{font-size:12px;color:var(--tm);text-align:center;margin-top:12px}
+.fc-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.fc-card{min-width:110px;border:1.5px solid var(--bdr);border-radius:10px;padding:12px;text-align:center;flex-shrink:0;cursor:pointer;transition:.15s;position:relative}.fc-card:hover{border-color:var(--gp);background:var(--gl)}.fc-card.best{border-color:var(--gp);animation:bestPulse 2s infinite}@keyframes bestPulse{0%,100%{border-color:var(--gp)}50%{border-color:var(--gd)}}.fc-card .fd{font-size:12px;font-weight:600;margin-bottom:4px}.fc-card .ficon{font-size:28px;margin:4px 0}.fc-card .ft{font-size:14px;font-weight:700}.fc-card .fl{font-size:11px;color:var(--tm)}.harv-pill{font-size:9px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:6px;display:inline-block}.h-good{background:var(--gl);color:var(--gd)}.h-caution{background:var(--al);color:#633806}.h-avoid{background:var(--rl);color:#791F1F}.best-badge{position:absolute;top:-8px;right:-5px;background:var(--gp);color:#fff;font-size:8px;font-weight:600;padding:2px 6px;border-radius:4px}
+/* Advisory */
+.adv-card{background:var(--cb);border:.5px solid var(--bdr);border-radius:var(--rad);box-shadow:var(--shd);padding:20px;border-left:4px solid var(--amber)}.adv-title{font-size:16px;font-weight:600;margin-bottom:14px}.adv-item{display:flex;gap:10px;padding:10px;border-radius:8px;margin-bottom:8px;cursor:pointer;transition:.15s}.adv-item:hover{background:var(--pbg)}.adv-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:700}.adv-icon.g{background:var(--gl);color:var(--gd)}.adv-icon.a{background:var(--al);color:#633806}.adv-icon.r{background:var(--rl);color:#791F1F}.adv-text{font-size:13px;line-height:1.5;color:var(--ts)}
+/* Lower 2-col */
+.lower{display:grid;grid-template-columns:55fr 45fr;gap:14px}
+.soil-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.soil-card{border:1px solid var(--bdr);border-radius:10px;padding:14px;text-align:center}.soil-card .sv{font-size:24px;font-weight:700;margin:6px 0}.soil-card .slab{font-size:11px;color:var(--tm);margin-bottom:6px}.soil-card .sbdg{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;display:inline-block}.sbdg.g{background:var(--gl);color:var(--gd)}.sbdg.a{background:var(--al);color:#633806}
+.gauge-wrap{width:80px;height:40px;margin:0 auto;position:relative;overflow:hidden}
+.ph-bar{width:100%;height:8px;background:#eee;border-radius:4px;margin:6px 0;position:relative}.ph-bar .mark{position:absolute;top:-4px;width:3px;height:16px;background:var(--gd);border-radius:2px}.ph-label{display:flex;justify-content:space-between;font-size:9px;color:var(--tm)}
+.n-bar{display:flex;gap:2px;margin:6px 0}.n-seg{flex:1;height:8px;border-radius:4px;background:#eee}.n-seg.active{background:var(--amber)}
+.est-note{font-size:10px;color:var(--tm);font-style:italic;margin-top:10px}
+.outline-btn{width:100%;padding:8px;border:1.5px solid var(--gd);color:var(--gd);background:transparent;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:.2s;margin-top:12px}.outline-btn:hover{background:var(--gd);color:#fff}
+.soil-form{display:none;border:1px solid var(--bdr);border-radius:8px;padding:14px;margin-top:10px;background:var(--pbg)}.soil-form.open{display:block}.soil-form label{font-size:11px;font-weight:500;color:var(--ts);display:block;margin-bottom:4px;margin-top:8px}.soil-form input,.soil-form textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--bdr);font-size:12px;outline:none;font-family:inherit}.soil-form button{margin-top:10px;padding:8px 20px;background:var(--gd);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer}
+/* Rain chart */
+.rain-chart{display:flex;align-items:flex-end;gap:8px;height:120px;margin:14px 0;padding:0 4px}.rain-bar{flex:1;border-radius:4px 4px 0 0;transition:height 1s ease-out;position:relative;cursor:default}.rain-bar .rv{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;white-space:nowrap}.rain-bar .rm{text-align:center;font-size:9px;color:var(--tm);margin-top:4px;position:absolute;bottom:-16px;width:100%;left:0}
+.rain-stats{display:flex;flex-direction:column;gap:4px;font-size:12px;margin-top:20px}.rain-stats span{display:flex;justify-content:space-between}
+.irr-card{background:var(--al);border:1px solid rgba(186,117,23,.15);border-radius:8px;padding:12px;margin-top:12px;font-size:12px;color:#633806;line-height:1.5}
+/* Crop cards */
+.crop-imp{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.cr-card{border:1px solid var(--bdr);border-radius:10px;padding:14px}.cr-card.your{border-color:var(--gp);border-width:2px}.cr-card .cr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.cr-card .cr-name{font-size:14px;font-weight:600}.cr-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--gl);color:var(--gd)}.cr-row{font-size:12px;color:var(--ts);margin-bottom:4px;display:flex;align-items:center;gap:4px}.cr-adv{font-size:11px;padding:8px;border-radius:6px;margin-top:8px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gd);color:#fff;padding:14px 28px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:.3s;pointer-events:none}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:150}.overlay.show{display:block}
+@media(max-width:1023px){.app{grid-template:"header header" 60px "sidebar main" 1fr/64px 1fr}.sidebar .nt,.sl,.ss,.sc,.slg,.sf{display:none!important}.sidebar{padding:16px 6px;align-items:center}.nav-item{justify-content:center;padding:10px;border-left:none!important}.wrow,.lower{grid-template-columns:1fr}.crop-imp{grid-template-columns:1fr 1fr}}
+@media(max-width:767px){.app{grid-template:"header" 60px "main" 1fr/1fr}.sidebar{position:fixed;left:0;top:60px;bottom:0;width:260px;z-index:200;transform:translateX(-100%);transition:transform .3s;padding:16px 12px;box-shadow:4px 0 20px rgba(0,0,0,.1)}.sidebar.open{transform:translateX(0)}.sidebar .nt,.sl,.ss,.sc,.slg,.sf{display:block!important}.hb{display:flex}.hc{display:none}.wrow,.lower{grid-template-columns:1fr}.crop-imp{grid-template-columns:1fr}.aip{flex-direction:column}.soil-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="overlay" id="ov" onclick="closeSB()"></div>
+<div class="toast" id="toast"></div>
+<div class="app">
+<header class="header">
+<button class="hb" onclick="toggleSB()">☰</button>
+<div class="hl"><div class="lb"><svg viewBox="0 0 24 24"><path d="M17.8 2.8C16 2.09 13.86 2.36 12.1 3.66 10.34 2.36 8.2 2.09 6.4 2.8 4.09 3.72 2.73 6.08 3.05 8.58c.52 4.02 4.16 7.61 9.05 11.42 4.89-3.81 8.53-7.4 9.05-11.42.32-2.5-1.04-4.86-3.35-5.78z"/></svg></div><span class="an" data-t="appName">AgriFresh</span><span class="as" data-t="appSub">Farmer Intelligence</span></div>
+<div class="hc"><span class="ap pg">🌾 <span data-t="pillCrop">Crop Advisory Ready</span></span><span class="ap pa">⚠ <span data-t="pillRisk">1 Batch at Risk</span></span><span class="ap pg">✓ <span data-t="pillPrice">₹180 Best Price</span></span><span class="ap pp">🤖 <span data-t="pillAI">AI: 94% Acc</span></span></div>
+<div class="hr"><button class="lp active" onclick="setLang('en')">EN</button><button class="lp" onclick="setLang('mr')">मराठी</button><button class="lp" onclick="setLang('hi')">हिंदी</button></div>
+</header>
+<aside class="sidebar" id="sb">
+<div class="sl" data-t="sidebarLabel">FARMER COMMAND CENTER</div><div class="ss"><span class="dot"></span><span data-t="sidebarConn">Connected to AgriFresh Network</span></div><div class="sc" id="clk">--:--:--</div>
+<nav class="ni">
+<a href="farmer-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span class="nt" data-t="nav1">Dashboard</span></a>
+<a href="farmer-warehouse-finder.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4z"/></svg><span class="nt" data-t="nav2">Warehouse Finder</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0 1.38 1.12 2.5 2.5 2.5.53 0 1.01-.16 1.42-.44l-.02.19c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5l-.02-.19c.4.28.89.44 1.42.44 1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.25 1.43-2.25 0-1.38-1.12-2.5-2.5-2.5-.53 0-1.01.16-1.42.44l.02-.19C14.5 2.12 13.38 1 12 1S9.5 2.12 9.5 3.5l.02.19c-.4-.28-.89-.44-1.42-.44-1.38 0-2.5 1.12-2.5 2.5 0 1 .59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25z"/></svg><span class="nt" data-t="nav3">Crop Planner</span></a>
+<a href="farmer-harvest-tracker.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H4V5h16v14z"/></svg><span class="nt" data-t="nav4">Harvest Tracker</span></a>
+<a href="#" class="nav-item active"><svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg><span class="nt" data-t="nav5">Weather & Soil</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1 0-2 1-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/></svg><span class="nt" data-t="nav6">My Produce</span></a>
+</nav>
+<div class="slg"><select onchange="setLang(this.value)" id="slSel"><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिंदी</option></select></div>
+<div class="sf"><div class="fl" data-t="myFarmLabel">MY FARM</div><div class="fr"><span data-t="farmCrops">Active Crops</span><span class="v">1</span></div><div class="fr"><span data-t="farmBatches">Stored Batches</span><span class="v">2</span></div><div class="fr"><span data-t="farmAttn">Needs Attention</span><span class="v red">01</span></div><button class="hbn" data-t="helpBtn">Get Help</button></div>
+</aside>
+
+<div class="main">
+<!-- Page Header -->
+<div class="ph"><div><h1 data-t="weatherTitle">Weather & Soil</h1><div class="sub" data-t="weatherSub">Real-time field conditions · Harvest advisory · Powered by IMD forecast</div></div>
+<div class="loc-pill" id="locPill" onclick="toggleLocDD(event)">📍 <span id="locText">Sangli North, MH</span> ▼<div class="loc-dd" id="locDD"><div onclick="selectLoc('Sangli North, MH',event)">📍 Sangli North, MH</div><div onclick="selectLoc('Pune East, MH',event)">📍 Pune East, MH</div><div onclick="selectLoc('Nashik Central, MH',event)">📍 Nashik Central, MH</div></div></div></div>
+
+<!-- AI Summary -->
+<div class="ais">
+<div class="at"><div class="al">🤖 <span data-t="aiWeatherLabel">AI Weather Intelligence</span></div><div class="au" data-t="updatedAgo">Updated 12 mins ago</div></div>
+<div class="aip"><div class="p"><div class="pl" data-t="todayTemp">TODAY TEMP</div><div class="pv">28°C</div></div><div class="p"><div class="pl" data-t="humidity">HUMIDITY</div><div class="pv">68%</div></div><div class="p"><div class="pl" data-t="rainRisk">RAIN RISK</div><div class="pv">12%</div></div><div class="p"><div class="pl" data-t="harvestWindow">HARVEST WINDOW</div><div class="pv">Tue–Wed ✓</div></div></div>
+<div class="ait" data-t="aiWeatherText">Optimal harvest window: Tuesday March 17 and Wednesday March 18. Avoid Friday — IMD forecasts 72% rain probability. Your tomatoes are at peak ripeness this week.</div>
+</div>
+
+<!-- Today + Forecast -->
+<div class="wrow">
+<div class="card today-card">
+<div class="td" data-t="todayLabel">Today · Monday, March 14</div>
+<div class="wi" style="font-size:72px">⛅</div>
+<div class="temp">28°C</div>
+<div class="cond" data-t="todayCond">Partly Cloudy</div>
+<div class="mg">
+<div class="mi">💧 <span data-t="humLabel">Humidity</span>: 68%</div>
+<div class="mi">💨 <span data-t="windLabel">Wind</span>: 12 km/h</div>
+<div class="mi">🌧 <span data-t="rainLabel">Rain</span>: 0 mm</div>
+<div class="mi">👁 <span data-t="visLabel">Visibility</span>: 8 km</div>
+</div>
+<div class="fl" data-t="feelsLike">Feels like 31°C</div>
+</div>
+<div class="card"><h2 style="font-size:14px;font-weight:600;margin-bottom:12px" data-t="forecastTitle">7-Day Forecast</h2><div class="fc-scroll" id="fcScroll"></div></div>
+</div>
+
+<!-- Harvest Advisory -->
+<div class="adv-card">
+<div class="adv-title" data-t="harvestAdvisoryTitle">🌾 AI Harvest Advisory</div>
+<div class="adv-item" onclick="this.classList.toggle('expanded')"><div class="adv-icon g">✓</div><div class="adv-text" data-t="adv1">Harvest tomatoes Tuesday–Wednesday morning. Cool temperatures (27°C) and low humidity (58%) are ideal for post-harvest shelf life.</div></div>
+<div class="adv-item" onclick="this.classList.toggle('expanded')"><div class="adv-icon a">⚠</div><div class="adv-text" data-t="adv2">Thursday humidity rises to 78%. If harvest is delayed, ensure warehouse booking is confirmed before Thursday noon.</div></div>
+<div class="adv-item" onclick="this.classList.toggle('expanded')"><div class="adv-icon r">✗</div><div class="adv-text" data-t="adv3">Do NOT harvest Friday. Heavy rain forecast (72% probability) will damage tomato quality and make transport difficult.</div></div>
+</div>
+
+<!-- Lower 2-col -->
+<div class="lower">
+<!-- Soil Conditions -->
+<div class="card">
+<h2 style="font-size:16px;font-weight:600" data-t="soilTitle">Soil Conditions</h2>
+<div style="font-size:12px;color:var(--tm)" data-t="soilSub">Field data · Sangli North, MH</div>
+<div class="soil-grid">
+<div class="soil-card"><div class="slab" data-t="moistureLabel">Soil Moisture</div>
+<svg width="80" height="48" viewBox="0 0 80 48" style="margin:0 auto;display:block"><path d="M10 44 A30 30 0 0 1 70 44" fill="none" stroke="#eee" stroke-width="6" stroke-linecap="round"/><path d="M10 44 A30 30 0 0 1 70 44" fill="none" stroke="var(--gp)" stroke-width="6" stroke-linecap="round" stroke-dasharray="94.25" stroke-dashoffset="51.8" class="gauge-arc" data-target="51.8"/></svg>
+<div class="sv" id="moistVal">45%</div><span class="sbdg g" data-t="optimalBadge">Optimal</span></div>
+<div class="soil-card"><div class="slab" data-t="phLabel">Soil pH</div><div class="sv">6.8</div>
+<div class="ph-bar"><div class="mark" style="left:48.5%"></div></div><div class="ph-label"><span>0</span><span>7</span><span>14</span></div>
+<span class="sbdg g" data-t="normalBadge">Normal</span><div style="font-size:9px;color:var(--tm);margin-top:2px">Ideal: 6.0–7.0</div></div>
+<div class="soil-card"><div class="slab" data-t="nitrogenLabel">Nitrogen (N)</div><div class="sv" data-t="mediumVal">Medium</div>
+<div class="n-bar"><div class="n-seg"></div><div class="n-seg active"></div><div class="n-seg"></div></div>
+<span class="sbdg a" data-t="adequateBadge">Adequate</span></div>
+<div class="soil-card"><div class="slab" data-t="soilTempLabel">Soil Temp</div><div class="sv">22°C</div>
+<div style="width:6px;height:32px;background:#eee;border-radius:3px;margin:4px auto;position:relative"><div style="position:absolute;bottom:0;width:100%;height:68%;background:var(--gp);border-radius:3px"></div></div>
+<span class="sbdg g" data-t="goodSowing">Good for sowing</span></div>
+</div>
+<div class="est-note" data-t="estimatedDataNote">Estimated from satellite + IMD data</div>
+<button class="outline-btn" onclick="document.getElementById('soilForm').classList.toggle('open')" data-t="updateSoilBtn">+ Update Soil Reading</button>
+<div class="soil-form" id="soilForm"><label>Moisture %</label><input type="number" id="sfMoist" value="45"><label>pH</label><input type="number" step="0.1" id="sfPh" value="6.8"><label>Notes</label><textarea rows="2"></textarea><button onclick="updateSoil()">Save</button></div>
+</div>
+<!-- Rainfall -->
+<div class="card">
+<h2 style="font-size:16px;font-weight:600;margin-bottom:4px" data-t="rainfallTitle">Rainfall & Water</h2>
+<div class="rain-chart" id="rainChart"></div>
+<div class="rain-stats">
+<span><span data-t="thisWeek">This week rainfall</span><strong>6mm</strong></span>
+<span><span data-t="monthAvg">Monthly average</span><strong>22mm</strong></span>
+<span style="color:var(--amber)" data-t="belowAvg">Below average this month</span>
+</div>
+<div class="irr-card" data-t="irrigationText">💧 Soil moisture is slightly low (45%). Consider light irrigation before harvest if no rain by Wednesday.</div>
+</div>
+</div>
+
+<!-- Crop Impact -->
+<div class="card">
+<h2 style="font-size:16px;font-weight:600;margin-bottom:4px" data-t="cropImpactTitle">Crop-Specific Weather Impact</h2>
+<div class="crop-imp">
+<div class="cr-card your"><div class="cr-top"><span class="cr-name">🍅 Tomato</span><span class="cr-badge" data-t="yourCropBadge">YOUR CROP</span></div><div class="cr-row">Ideal: 18–24°C | Current: 28°C <span style="color:var(--amber)">⚠</span></div><div class="cr-row">Ideal humidity: 60–70% | Current: 68% <span style="color:var(--gd)">✓</span></div><div class="cr-adv" style="background:var(--gl);color:var(--gd)" data-t="tomatoAdv">Low risk — harvest on time</div></div>
+<div class="cr-card"><div class="cr-top"><span class="cr-name">🧅 Onion</span></div><div class="cr-row">Ideal: 20–25°C | Current: 28°C <span style="color:var(--amber)">⚠</span></div><div class="cr-row">Ideal humidity: 50–60% | Current: 68% <span style="color:var(--amber)">⚠</span></div><div class="cr-adv" style="background:var(--al);color:#633806" data-t="onionAdv">Delay onion planting by 2 weeks</div></div>
+<div class="cr-card"><div class="cr-top"><span class="cr-name">🍇 Grapes</span></div><div class="cr-row">Ideal: 15–20°C | Current: 28°C <span style="color:var(--rp)">✗</span></div><div class="cr-adv" style="background:var(--rl);color:#791F1F" data-t="grapesAdv">Not suitable this week for harvesting</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const T={
+en:{appName:'AgriFresh',appSub:'Farmer Intelligence',weatherTitle:'Weather & Soil',weatherSub:'Real-time field conditions · Harvest advisory · Powered by IMD forecast',aiWeatherLabel:'AI Weather Intelligence',updatedAgo:'Updated 12 mins ago',todayTemp:'TODAY TEMP',humidity:'HUMIDITY',rainRisk:'RAIN RISK',harvestWindow:'HARVEST WINDOW',aiWeatherText:'Optimal harvest window: Tuesday March 17 and Wednesday March 18. Avoid Friday — IMD forecasts 72% rain probability. Your tomatoes are at peak ripeness this week.',todayLabel:'Today · Monday, March 14',todayCond:'Partly Cloudy',humLabel:'Humidity',windLabel:'Wind',rainLabel:'Rain',visLabel:'Visibility',feelsLike:'Feels like 31°C',forecastTitle:'7-Day Forecast',harvestAdvisoryTitle:'🌾 AI Harvest Advisory',adv1:'Harvest tomatoes Tuesday–Wednesday morning. Cool temperatures (27°C) and low humidity (58%) are ideal for post-harvest shelf life.',adv2:'Thursday humidity rises to 78%. If harvest is delayed, ensure warehouse booking is confirmed before Thursday noon.',adv3:'Do NOT harvest Friday. Heavy rain forecast (72% probability) will damage tomato quality and make transport difficult.',soilTitle:'Soil Conditions',soilSub:'Field data · Sangli North, MH',moistureLabel:'Soil Moisture',phLabel:'Soil pH',nitrogenLabel:'Nitrogen (N)',soilTempLabel:'Soil Temp',optimalBadge:'Optimal',normalBadge:'Normal',adequateBadge:'Adequate',mediumVal:'Medium',goodSowing:'Good for sowing',estimatedDataNote:'Estimated from satellite + IMD data',updateSoilBtn:'+ Update Soil Reading',rainfallTitle:'Rainfall & Water',thisWeek:'This week rainfall',monthAvg:'Monthly average',belowAvg:'Below average this month',irrigationText:'💧 Soil moisture is slightly low (45%). Consider light irrigation before harvest if no rain by Wednesday.',cropImpactTitle:'Crop-Specific Weather Impact',yourCropBadge:'YOUR CROP',tomatoAdv:'Low risk — harvest on time',onionAdv:'Delay onion planting by 2 weeks',grapesAdv:'Not suitable this week for harvesting',goodDay:'Good',cautionDay:'Caution',avoidDay:'Avoid',bestDay:'BEST',nav1:'Dashboard',nav2:'Warehouse Finder',nav3:'Crop Planner',nav4:'Harvest Tracker',nav5:'Weather & Soil',nav6:'My Produce',myFarmLabel:'MY FARM',farmCrops:'Active Crops',farmBatches:'Stored Batches',farmAttn:'Needs Attention',helpBtn:'Get Help',sidebarLabel:'FARMER COMMAND CENTER',sidebarConn:'Connected to AgriFresh Network',pillCrop:'Crop Advisory Ready',pillRisk:'1 Batch at Risk',pillPrice:'₹180 Best Price',pillAI:'AI: 94% Acc',farmLoc:'Sangli North, MH'},
+mr:{appName:'एग्रीफ्रेश',appSub:'शेतकरी बुद्धिमत्ता',weatherTitle:'हवामान आणि माती',weatherSub:'शेतातील परिस्थिती · कापणी सल्ला · IMD अंदाजावर आधारित',aiWeatherLabel:'AI हवामान बुद्धिमत्ता',updatedAgo:'१२ मिनिटांपूर्वी अपडेट',todayTemp:'आजचे तापमान',humidity:'आर्द्रता',rainRisk:'पावसाचा धोका',harvestWindow:'कापणी विंडो',aiWeatherText:'कापणीसाठी सर्वोत्तम वेळ: मंगळवार मार्च १७ आणि बुधवार मार्च १८. शुक्रवार टाळा — IMD ७२% पावसाचा अंदाज. तुमचे टोमॅटो या आठवड्यात पूर्ण पिकलेले आहेत.',todayLabel:'आज · सोमवार, मार्च १४',todayCond:'अंशतः ढगाळ',humLabel:'आर्द्रता',windLabel:'वारा',rainLabel:'पाऊस',visLabel:'दृश्यमानता',feelsLike:'३१°C सारखे वाटते',forecastTitle:'७ दिवसांचा अंदाज',harvestAdvisoryTitle:'🌾 AI कापणी सल्ला',adv1:'मंगळवार-बुधवार सकाळी टोमॅटो काढा. थंड तापमान (२७°C) आणि कमी आर्द्रता (५८%) टिकाऊपणासाठी योग्य.',adv2:'गुरुवारी आर्द्रता ७८% पर्यंत वाढेल. कापणीला उशीर झाल्यास गुरुवार दुपारपूर्वी गोदाम बुकिंग निश्चित करा.',adv3:'शुक्रवारी कापणी करू नका. जोरदार पावसाचा अंदाज (७२%) टोमॅटो गुणवत्ता खराब करेल.',soilTitle:'मातीची स्थिती',soilSub:'शेत डेटा · सांगली उत्तर, महाराष्ट्र',moistureLabel:'मातीतील ओलावा',phLabel:'माती pH',nitrogenLabel:'नायट्रोजन (N)',soilTempLabel:'मातीचे तापमान',optimalBadge:'उत्तम',normalBadge:'सामान्य',adequateBadge:'पुरेसे',mediumVal:'मध्यम',goodSowing:'पेरणीसाठी योग्य',estimatedDataNote:'उपग्रह + IMD डेटावरून अंदाजित',updateSoilBtn:'+ माती वाचन अपडेट करा',rainfallTitle:'पाऊस आणि पाणी',thisWeek:'या आठवड्यातील पाऊस',monthAvg:'मासिक सरासरी',belowAvg:'या महिन्यात सरासरीपेक्षा कमी',irrigationText:'💧 मातीतील ओलावा किंचित कमी (४५%). बुधवारपर्यंत पाऊस नसल्यास हलके सिंचन करा.',cropImpactTitle:'पीक-विशिष्ट हवामान प्रभाव',yourCropBadge:'तुमचे पीक',tomatoAdv:'कमी धोका — वेळेवर काढा',onionAdv:'कांदा लागवड २ आठवडे लांबणीवर टाका',grapesAdv:'या आठवड्यात कापणीसाठी योग्य नाही',goodDay:'चांगले',cautionDay:'सावधान',avoidDay:'टाळा',bestDay:'सर्वोत्तम',nav1:'डॅशबोर्ड',nav2:'गोदाम शोधा',nav3:'पीक नियोजक',nav4:'कापणी ट्रॅकर',nav5:'हवामान आणि माती',nav6:'माझा माल',myFarmLabel:'माझी शेती',farmCrops:'सक्रिय पिके',farmBatches:'साठवलेले बॅचेस',farmAttn:'लक्ष आवश्यक',helpBtn:'मदत मिळवा',sidebarLabel:'शेतकरी कमांड सेंटर',sidebarConn:'एग्रीफ्रेश नेटवर्कशी जोडलेले',pillCrop:'पीक सल्ला तयार',pillRisk:'१ बॅच धोक्यात',pillPrice:'₹१८० सर्वोत्तम किंमत',pillAI:'AI: ९४% अचूक',farmLoc:'सांगली उत्तर, महाराष्ट्र'},
+hi:{appName:'एग्रीफ्रेश',appSub:'किसान बुद्धिमत्ता',weatherTitle:'मौसम और मिट्टी',weatherSub:'खेत की स्थिति · कटाई सलाह · IMD पूर्वानुमान पर आधारित',aiWeatherLabel:'AI मौसम बुद्धिमत्ता',updatedAgo:'12 मिनट पहले अपडेट',todayTemp:'आज का तापमान',humidity:'आर्द्रता',rainRisk:'बारिश का जोखिम',harvestWindow:'कटाई विंडो',aiWeatherText:'कटाई के लिए सबसे अच्छा समय: मंगलवार मार्च 17 और बुधवार मार्च 18। शुक्रवार से बचें — IMD 72% बारिश की संभावना। आपके टमाटर इस सप्ताह पूरी तरह पके हैं।',todayLabel:'आज · सोमवार, मार्च 14',todayCond:'आंशिक बादल',humLabel:'आर्द्रता',windLabel:'हवा',rainLabel:'बारिश',visLabel:'दृश्यता',feelsLike:'31°C जैसा लगता है',forecastTitle:'7 दिन का पूर्वानुमान',harvestAdvisoryTitle:'🌾 AI कटाई सलाह',adv1:'मंगलवार-बुधवार सुबह टमाटर काटें। ठंडा तापमान (27°C) और कम आर्द्रता (58%) शेल्फ लाइफ के लिए आदर्श।',adv2:'गुरुवार को आर्द्रता 78% तक बढ़ेगी। कटाई में देरी हो तो गुरुवार दोपहर से पहले गोदाम बुकिंग पक्की करें।',adv3:'शुक्रवार को कटाई न करें। भारी बारिश का पूर्वानुमान (72%) टमाटर की गुणवत्ता खराब करेगा।',soilTitle:'मिट्टी की स्थिति',soilSub:'खेत डेटा · सांगली उत्तर, महाराष्ट्र',moistureLabel:'मिट्टी की नमी',phLabel:'मिट्टी pH',nitrogenLabel:'नाइट्रोजन (N)',soilTempLabel:'मिट्टी का तापमान',optimalBadge:'उत्तम',normalBadge:'सामान्य',adequateBadge:'पर्याप्त',mediumVal:'मध्यम',goodSowing:'बुवाई के लिए अच्छा',estimatedDataNote:'उपग्रह + IMD डेटा से अनुमानित',updateSoilBtn:'+ मिट्टी रीडिंग अपडेट करें',rainfallTitle:'वर्षा और पानी',thisWeek:'इस सप्ताह की वर्षा',monthAvg:'मासिक औसत',belowAvg:'इस महीने औसत से कम',irrigationText:'💧 मिट्टी की नमी थोड़ी कम (45%)। बुधवार तक बारिश न हो तो हल्की सिंचाई करें।',cropImpactTitle:'फसल-विशिष्ट मौसम प्रभाव',yourCropBadge:'आपकी फसल',tomatoAdv:'कम जोखिम — समय पर काटें',onionAdv:'प्याज रोपण 2 सप्ताह टालें',grapesAdv:'इस सप्ताह कटाई के लिए उपयुक्त नहीं',goodDay:'अच्छा',cautionDay:'सावधानी',avoidDay:'बचें',bestDay:'सबसे अच्छा',nav1:'डैशबोर्ड',nav2:'गोदाम खोजें',nav3:'फसल योजनाकार',nav4:'कटाई ट्रैकर',nav5:'मौसम और मिट्टी',nav6:'मेरा माल',myFarmLabel:'मेरी खेती',farmCrops:'सक्रिय फसलें',farmBatches:'संग्रहीत बैच',farmAttn:'ध्यान चाहिए',helpBtn:'मदद लें',sidebarLabel:'किसान कमांड सेंटर',sidebarConn:'एग्रीफ्रेश नेटवर्क से जुड़ा',pillCrop:'फसल सलाह तैयार',pillRisk:'1 बैच जोखिम में',pillPrice:'₹180 सबसे अच्छी कीमत',pillAI:'AI: 94% सटीक',farmLoc:'सांगली उत्तर, महाराष्ट्र'}
+};
+let lang='en';
+function t(k){return T[lang][k]||T.en[k]||k;}
+function setLang(l){lang=l;document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));document.querySelectorAll('.lp').forEach(p=>p.classList.toggle('active',p.textContent.trim()===(l==='en'?'EN':l==='mr'?'मराठी':'हिंदी')));document.getElementById('slSel').value=l;document.documentElement.lang=l;renderFC();renderRain();}
+setInterval(()=>{document.getElementById('clk').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+function toggleSB(){document.getElementById('sb').classList.toggle('open');document.getElementById('ov').classList.toggle('show');}
+function closeSB(){document.getElementById('sb').classList.remove('open');document.getElementById('ov').classList.remove('show');}
+
+/* Forecast */
+const FC=[{day:'Mon',icon:'⛅',hi:28,lo:19,cond:'Partly Cloudy',harv:'good',best:false},{day:'Tue',icon:'☀️',hi:27,lo:18,cond:'Sunny',harv:'good',best:true},{day:'Wed',icon:'🌤',hi:28,lo:20,cond:'Mostly Clear',harv:'good',best:false},{day:'Thu',icon:'⛅',hi:29,lo:22,cond:'Humid',harv:'caution',best:false},{day:'Fri',icon:'🌧',hi:24,lo:19,cond:'Heavy Rain 72%',harv:'avoid',best:false},{day:'Sat',icon:'⛅',hi:26,lo:18,cond:'Partly Cloudy',harv:'good',best:false},{day:'Sun',icon:'☀️',hi:26,lo:17,cond:'Sunny',harv:'good',best:false}];
+function renderFC(){const c=document.getElementById('fcScroll');c.innerHTML='';FC.forEach(f=>{const hcls=f.harv==='good'?'h-good':f.harv==='caution'?'h-caution':'h-avoid';const htxt=t(f.harv==='good'?'goodDay':f.harv==='caution'?'cautionDay':'avoidDay');c.innerHTML+=`<div class="fc-card${f.best?' best':''}"><div class="fd">${f.day}</div><div class="ficon">${f.icon}</div><div class="ft">${f.hi}°/${f.lo}°</div><div class="fl">${f.cond}</div><span class="harv-pill ${hcls}">${f.harv==='good'?'✓':f.harv==='caution'?'⚠':'✗'} ${htxt}</span>${f.best?`<span class="best-badge">${t('bestDay')}</span>`:''}</div>`;});}
+
+/* Rain chart */
+const RAIN=[{m:'Jan',v:12},{m:'Feb',v:8},{m:'Mar',v:18},{m:'Apr',v:45},{m:'May',v:120},{m:'Jun',v:180}];
+function renderRain(){const c=document.getElementById('rainChart');c.innerHTML='';const mx=180;RAIN.forEach((r,i)=>{const h=Math.round(r.v/mx*100);const clr=r.m==='Mar'?'var(--gp)':'#ccc';c.innerHTML+=`<div class="rain-bar" style="height:0;background:${clr}" data-h="${h}%"><span class="rv">${r.v}mm</span><span class="rm">${r.m}</span></div>`;});setTimeout(()=>{c.querySelectorAll('.rain-bar').forEach(b=>{b.style.height=b.dataset.h;});},200);}
+
+function updateSoil(){const m=document.getElementById('sfMoist').value;document.getElementById('moistVal').textContent=m+'%';document.getElementById('soilForm').classList.remove('open');const t=document.getElementById('toast');t.textContent='✓ Soil reading updated';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+/* Location dropdown */
+function toggleLocDD(e){e.stopPropagation();document.getElementById('locDD').classList.toggle('open');}
+function selectLoc(loc,e){e.stopPropagation();document.getElementById('locText').textContent=loc;document.getElementById('locDD').classList.remove('open');const toast=document.getElementById('toast');toast.textContent='📍 Location updated to '+loc;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2500);}
+document.addEventListener('click',()=>{const dd=document.getElementById('locDD');if(dd)dd.classList.remove('open');});
+
+document.addEventListener('DOMContentLoaded',()=>{renderFC();renderRain();});
+</script>
+</body>
+</html>

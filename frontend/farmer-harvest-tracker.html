@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harvest Tracker | AgriFresh Farmer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--green-primary:#1D9E75;--green-dark:#27500A;--green-light:#EAF3DE;--green-mid:#3B6D11;--page-bg:#F0F7F0;--sidebar-bg:#FFF;--card-bg:#FFF;--text-primary:#1A1A1A;--text-secondary:#5F5E5A;--text-muted:#888780;--amber:#BA7517;--amber-light:#FAEEDA;--red-primary:#E24B4A;--red-light:#FCEBEB;--blue:#3B82F6;--blue-light:#EBF2FF;--border:rgba(0,0,0,0.08);--shadow-card:0 1px 3px rgba(0,0,0,0.06);--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans','Noto Sans Devanagari','Segoe UI',sans-serif;background:var(--page-bg);color:var(--text-primary);line-height:1.5;overflow:hidden;height:100vh}
+.app{display:grid;grid-template:"header header" 60px "sidebar main" 1fr / 240px 1fr;height:100vh}
+.header{grid-area:header;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-box{width:32px;height:32px;background:var(--green-dark);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-box svg{width:18px;height:18px;fill:#fff}
+.app-name{font-size:16px;font-weight:700;color:var(--green-dark)}
+.app-sub{font-size:11px;color:var(--text-muted)}
+.header-center{display:flex;gap:8px;flex:1;justify-content:center;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.header-center::-webkit-scrollbar{display:none}
+.alert-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;flex-shrink:0}
+.pill-green{background:var(--green-light);color:var(--green-dark)}.pill-amber{background:var(--amber-light);color:#633806}.pill-pink{background:#F5E6FF;color:#6B21A8}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.lang-pill{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-secondary);transition:.15s}
+.lang-pill.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.hamburger{display:none;width:36px;height:36px;border-radius:8px;border:none;background:var(--green-dark);color:#fff;font-size:16px;cursor:pointer;align-items:center;justify-content:center}
+.sidebar{grid-area:sidebar;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:16px 12px;transition:width .3s}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;padding:0 12px;margin-bottom:4px}
+.sidebar-sub{font-size:10px;color:var(--green-primary);padding:0 12px;margin-bottom:2px;display:flex;align-items:center;gap:5px}
+.sidebar-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--green-primary)}
+.sidebar-clock{font-size:11px;font-weight:600;padding:0 12px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.nav-items{display:flex;flex-direction:column;gap:2px;margin-bottom:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--text-secondary);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:.15s}
+.nav-item svg{width:18px;height:18px;fill:currentColor;flex-shrink:0}
+.nav-item:hover{background:#F5F5F5}.nav-item.active{background:var(--green-light);color:var(--green-dark);font-weight:600;border-left-color:var(--green-primary)}
+.nav-item .nt{white-space:nowrap;overflow:hidden}
+.sidebar-lang{padding:0 12px;margin-bottom:12px}
+.sidebar-lang select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-weight:500;background:#fff;cursor:pointer;outline:none}
+.sidebar-farm{background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin:0 4px}
+.sidebar-farm .fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:10px}
+.fr{display:flex;justify-content:space-between;font-size:12px;padding:4px 0}.fr .v{font-weight:600}.fr .v.red{color:var(--red-primary)}
+.help-btn{margin-top:12px;width:100%;padding:8px;background:var(--green-dark);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:.2s}
+.help-btn:hover{background:var(--green-primary)}
+.main{grid-area:main;overflow-y:auto;padding:20px 24px 40px;display:flex;flex-direction:column;gap:18px}
+.pg-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.pg-head h1{font-size:24px;font-weight:600}.pg-head .sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.btn-dark{padding:8px 20px;background:var(--green-dark);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+.btn-dark:hover{background:var(--green-primary)}
+/* AI Summary */
+.ai-summary{background:var(--green-dark);border-radius:var(--radius);padding:20px 24px;color:#fff}
+.ai-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.ai-top .label{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ai-top .upd{font-size:11px;opacity:.7}
+.ai-pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ai-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 14px;min-width:100px}
+.ai-pill .pl{font-size:9px;text-transform:uppercase;letter-spacing:.06em;opacity:.7;margin-bottom:2px}
+.ai-pill .pv{font-size:18px;font-weight:700}
+.ai-text{font-size:13px;line-height:1.6;opacity:.92}
+/* Form */
+.form-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:20px 24px}
+.form-title{font-size:16px;font-weight:600;margin-bottom:2px}.form-sub{font-size:12px;color:var(--text-muted);margin-bottom:16px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.f-label{font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;display:block}
+.f-group{margin-bottom:14px}
+.crop-sel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.crop-btn{border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;transition:.15s;background:#fff}
+.crop-btn:hover{border-color:var(--green-primary)}.crop-btn.sel{background:var(--green-light);border-color:var(--green-primary);color:var(--green-dark)}
+.crop-btn .ci{font-size:22px;display:block;margin-bottom:4px}
+.f-input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;outline:none;transition:.15s;font-family:inherit}
+.f-input:focus{border-color:var(--green-primary)}
+textarea.f-input{min-height:80px;resize:vertical}
+.unit-toggle{display:flex;gap:0;margin-top:6px}
+.unit-btn{flex:1;padding:6px;border:1px solid var(--border);background:#fff;font-size:11px;font-weight:500;cursor:pointer;transition:.15s;text-align:center}
+.unit-btn:first-child{border-radius:6px 0 0 6px}.unit-btn:last-child{border-radius:0 6px 6px 0}
+.unit-btn.sel{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.ai-sug{font-size:11px;color:var(--green-dark);margin-top:4px;display:flex;align-items:center;gap:4px}
+.ai-sug.warn{color:var(--amber)}
+.grade-sel{display:flex;gap:8px}
+.grade-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;transition:.15s;background:#fff}
+.grade-btn.sel{background:var(--green-light);border-color:var(--green-primary);color:var(--green-dark)}
+.wh-suggest{border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--page-bg)}
+.wh-suggest .ws-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.wh-suggest .ws-det{font-size:11px;color:var(--text-muted);margin-bottom:4px}
+.wh-suggest .ws-ai{font-size:11px;color:var(--green-dark)}
+.wh-suggest .ws-link{font-size:11px;color:var(--green-primary);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block}
+.register-btn{width:100%;padding:14px;background:var(--green-dark);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;margin-top:6px}
+.register-btn:hover{background:var(--green-primary)}
+.register-btn-sub{text-align:center;font-size:10px;color:var(--text-muted);margin-top:4px}
+/* Table */
+.panel{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:20px 24px}
+.section-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.section-head h2{font-size:16px;font-weight:600}.section-head .sub{font-size:12px;color:var(--text-muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.search-input{flex:1;min-width:180px;padding:9px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;outline:none;background:#fff}
+.search-input:focus{border-color:var(--green-primary)}
+.filter-sel{padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-weight:500;background:#fff;cursor:pointer;outline:none}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{padding:10px 12px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);border-bottom:1px solid var(--border);background:#FAFAF9;cursor:pointer}
+.tbl th:hover{color:var(--green-dark)}
+.tbl td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr{cursor:pointer;transition:.15s}.tbl tbody tr:hover{background:var(--green-light)}
+.crop-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;display:inline-block}
+.ct-tomato{background:#FCEBEB;color:#791F1F}.ct-onion{background:#F5E6FF;color:#6B21A8}.ct-potato{background:var(--amber-light);color:#633806}.ct-grapes{background:var(--blue-light);color:#1D4ED8}
+.risk-val{font-weight:600;font-size:11px}.rl{color:var(--green-dark)}.rm{color:var(--amber)}.rh{color:var(--red-primary);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.st-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:6px}
+.st-storage{background:var(--green-light);color:var(--green-dark)}.st-dispatched{background:var(--blue-light);color:#1D4ED8}.st-pending{background:var(--amber-light);color:#633806}
+.act-btns{display:flex;gap:4px}
+.act-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:.15s}
+.act-btn:hover{background:var(--green-light)}
+.expand-row{display:none}.expand-row.open{display:table-row}
+.exp-content{padding:14px;background:#FAFAF9}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.exp-item{padding:10px;border-radius:8px;border:1px solid var(--border);font-size:12px}.exp-item .ei-l{font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}.exp-item .ei-v{font-weight:600}
+.shelf-bar{height:6px;background:#eee;border-radius:4px;overflow:hidden;margin-top:4px}.shelf-bar .fill{height:100%;border-radius:4px;transition:width 1s ease-out}
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cal-month{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}
+.cal-month .cm-title{font-size:13px;font-weight:600;text-align:center;margin-bottom:8px}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:10px}
+.cal-week.hdr{font-weight:600;color:var(--text-muted);margin-bottom:4px}
+.cal-day{padding:4px 2px;border-radius:4px;cursor:default;position:relative;font-size:11px}
+.cal-day.empty{visibility:hidden}
+.cal-day.harvest{background:var(--green-light);color:var(--green-dark);font-weight:600}
+.cal-day.deadline{background:var(--amber-light);color:#633806;font-weight:600}
+.cal-day.planting{background:var(--blue-light);color:#1D4ED8;font-weight:600}
+.cal-day[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--text-primary);color:#fff;padding:4px 8px;border-radius:4px;font-size:9px;white-space:nowrap;z-index:10;pointer-events:none}
+.legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary)}
+.legend-item .lb{width:12px;height:12px;border-radius:3px}
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green-dark);color:#fff;padding:14px 28px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:150}.overlay.show{display:block}
+@media(max-width:1023px){
+.app{grid-template:"header header" 60px "sidebar main" 1fr / 64px 1fr}
+.sidebar .nt,.sidebar-label,.sidebar-sub,.sidebar-clock,.sidebar-lang,.sidebar-farm{display:none!important}
+.sidebar{padding:16px 6px;align-items:center}.nav-item{justify-content:center;padding:10px;border-left:none!important}
+.form-grid{grid-template-columns:1fr}.cal-grid{grid-template-columns:1fr 1fr}.exp-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:767px){
+.app{grid-template:"header" 60px "main" 1fr / 1fr}
+.sidebar{position:fixed;left:0;top:60px;bottom:0;width:260px;z-index:200;transform:translateX(-100%);transition:transform .3s;padding:16px 12px;box-shadow:4px 0 20px rgba(0,0,0,.1)}
+.sidebar.open{transform:translateX(0)}.sidebar .nt,.sidebar-label,.sidebar-sub,.sidebar-clock,.sidebar-lang,.sidebar-farm{display:block!important}
+.hamburger{display:flex}.header-center{display:none}
+.form-grid{grid-template-columns:1fr}.cal-grid{grid-template-columns:1fr}.ai-pills{flex-direction:column}
+.crop-sel{grid-template-columns:repeat(2,1fr)}.exp-grid{grid-template-columns:1fr}
+.filters{flex-direction:column}.search-input{min-width:100%}
+.tbl{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="toast" id="toast"></div>
+<div class="app">
+<header class="header">
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="header-left"><div class="logo-box"><svg viewBox="0 0 24 24"><path d="M17.8 2.8C16 2.09 13.86 2.36 12.1 3.66 10.34 2.36 8.2 2.09 6.4 2.8 4.09 3.72 2.73 6.08 3.05 8.58c.52 4.02 4.16 7.61 9.05 11.42 4.89-3.81 8.53-7.4 9.05-11.42.32-2.5-1.04-4.86-3.35-5.78z"/></svg></div><span class="app-name" data-t="appName">AgriFresh</span><span class="app-sub" data-t="appSub">Farmer Intelligence</span></div>
+<div class="header-center"><span class="alert-pill pill-green">🌾 <span data-t="pillCrop">Crop Advisory Ready</span></span><span class="alert-pill pill-amber">⚠ <span data-t="pillRisk">1 Batch at Risk</span></span><span class="alert-pill pill-green">✓ <span data-t="pillPrice">₹180 Best Price</span></span><span class="alert-pill pill-pink">🤖 <span data-t="pillAI">AI: 94% Acc</span></span></div>
+<div class="header-right"><button class="lang-pill active" onclick="setLang('en')">EN</button><button class="lang-pill" onclick="setLang('mr')">मराठी</button><button class="lang-pill" onclick="setLang('hi')">हिंदी</button></div>
+</header>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-label" data-t="sidebarLabel">FARMER COMMAND CENTER</div>
+<div class="sidebar-sub"><span class="dot"></span><span data-t="sidebarConn">Connected to AgriFresh Network</span></div>
+<div class="sidebar-clock" id="sidebarClock">--:--:--</div>
+<nav class="nav-items">
+<a href="farmer-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span class="nt" data-t="nav1">Dashboard</span></a>
+<a href="farmer-warehouse-finder.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4z"/></svg><span class="nt" data-t="nav2">Warehouse Finder</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0 1.38 1.12 2.5 2.5 2.5.53 0 1.01-.16 1.42-.44l-.02.19c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5l-.02-.19c.4.28.89.44 1.42.44 1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.25 1.43-2.25 0-1.38-1.12-2.5-2.5-2.5-.53 0-1.01.16-1.42.44l.02-.19C14.5 2.12 13.38 1 12 1S9.5 2.12 9.5 3.5l.02.19c-.4-.28-.89-.44-1.42-.44-1.38 0-2.5 1.12-2.5 2.5 0 1 .59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25zM12 5.5c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5S9.5 9.38 9.5 8s1.12-2.5 2.5-2.5zM3 13c0 4.97 4.03 9 9 9 0-4.97-4.03-9-9-9z"/></svg><span class="nt" data-t="nav3">Crop Planner</span></a>
+<a href="#" class="nav-item active"><svg viewBox="0 0 24 24"><path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H4V5h16v14zM4 7h16v2H4zm0 4h6v6H4z"/></svg><span class="nt" data-t="nav4">Harvest Tracker</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg><span class="nt" data-t="nav5">Weather & Soil</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1 0-2 1-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/></svg><span class="nt" data-t="nav6">My Produce</span></a>
+</nav>
+<div class="sidebar-lang"><select onchange="setLang(this.value)" id="sidebarLangSelect"><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिंदी</option></select></div>
+<div class="sidebar-farm"><div class="fl" data-t="myFarmLabel">MY FARM</div><div class="fr"><span data-t="farmCrops">Active Crops</span><span class="v">1</span></div><div class="fr"><span data-t="farmBatches">Stored Batches</span><span class="v">2</span></div><div class="fr"><span data-t="farmAttn">Needs Attention</span><span class="v red">01</span></div><button class="help-btn" data-t="helpBtn">Get Help</button></div>
+</aside>
+
+<div class="main">
+<!-- Page Head -->
+<div class="pg-head"><div><h1 data-t="trackerTitle">Harvest Tracker</h1><div class="sub" data-t="trackerSub">Log your harvest · Auto-book warehouse slots</div></div><button class="btn-dark" data-t="registerBtn">+ Register New Harvest</button></div>
+
+<!-- AI Summary -->
+<div class="ai-summary">
+<div class="ai-top"><div class="label">🤖 <span data-t="aiSummaryLabel">AI Harvest Intelligence</span></div><div class="upd" data-t="updatedAgo">Updated 5 mins ago</div></div>
+<div class="ai-pills">
+<div class="ai-pill"><div class="pl" data-t="nextHarvest">NEXT HARVEST</div><div class="pv">8 Days</div></div>
+<div class="ai-pill"><div class="pl" data-t="totalYield">TOTAL YIELD EST</div><div class="pv">~450 kg</div></div>
+<div class="ai-pill"><div class="pl" data-t="peakSeason">PEAK SEASON</div><div class="pv">Tomato</div></div>
+<div class="ai-pill"><div class="pl" data-t="confidence">MODEL CONFIDENCE</div><div class="pv">91.4%</div></div>
+</div>
+<div class="ai-text" data-t="aiRecText">System recommends harvesting tomatoes before March 18. Weather window is optimal Tuesday–Wednesday. Nashik Hub has available cold storage at ₹180/qtl.</div>
+</div>
+
+<!-- Register Form -->
+<div class="form-card">
+<div class="form-title" data-t="registerFormTitle">Register Harvest Batch</div>
+<div class="form-sub" data-t="registerFormSub">AI will auto-find best warehouse + generate booking</div>
+<div class="form-grid">
+<div>
+<div class="f-group"><label class="f-label" data-t="cropTypeLabel">Crop Type</label>
+<div class="crop-sel" id="cropSel">
+<div class="crop-btn sel" data-crop="Tomato" onclick="selCrop(this)"><span class="ci">🍅</span>Tomato</div>
+<div class="crop-btn" data-crop="Onion" onclick="selCrop(this)"><span class="ci">🧅</span>Onion</div>
+<div class="crop-btn" data-crop="Potato" onclick="selCrop(this)"><span class="ci">🥔</span>Potato</div>
+<div class="crop-btn" data-crop="Grapes" onclick="selCrop(this)"><span class="ci">🍇</span>Grapes</div>
+<div class="crop-btn" data-crop="Wheat" onclick="selCrop(this)"><span class="ci">🌾</span>Wheat</div>
+<div class="crop-btn" data-crop="Other" onclick="selCrop(this)"><span class="ci">+</span>Other</div>
+</div></div>
+<div class="f-group"><label class="f-label" data-t="quantityLabel">Expected Yield</label>
+<input class="f-input" type="number" id="qtyInput" placeholder="Enter quantity" value="450">
+<div class="unit-toggle"><button class="unit-btn sel" onclick="setUnit('kg',this)">KG</button><button class="unit-btn" onclick="setUnit('qtl',this)">Quintal</button></div></div>
+<div class="f-group"><label class="f-label" data-t="harvestDateLabel">Planned Harvest Date</label>
+<input class="f-input" type="date" id="dateInput" value="2026-03-18" onchange="checkDate()">
+<div class="ai-sug" id="dateSug">✓ AI suggests: Mar 18–19 (optimal weather window)</div></div>
+<div class="f-group"><label class="f-label" data-t="qualityLabel">Expected Quality</label>
+<div class="grade-sel"><div class="grade-btn sel" onclick="selGrade(this)">A+ Premium</div><div class="grade-btn" onclick="selGrade(this)">A Standard</div><div class="grade-btn" onclick="selGrade(this)">B Grade</div></div></div>
+</div>
+<div>
+<div class="f-group"><label class="f-label" data-t="locationLabel">Farm Location</label>
+<input class="f-input" value="Sangli North, MH" readonly>
+<div style="font-size:11px;color:var(--green-primary);cursor:pointer;margin-top:4px">Change Location</div></div>
+<div class="f-group"><label class="f-label" data-t="warehouseLabel">AI Suggested Warehouse</label>
+<div class="wh-suggest"><div class="ws-name">Nashik Central Hub</div><div class="ws-det">142 km · ₹180/qtl · Zone A Available</div><div class="ws-ai">Best price + cold zone for tomatoes</div><div class="ws-link">Change Warehouse</div></div></div>
+<div class="f-group"><label class="f-label" data-t="notesLabel">Notes (optional)</label>
+<textarea class="f-input" placeholder="Any special notes about this harvest..."></textarea></div>
+<button class="register-btn" onclick="registerHarvest()" data-t="registerCta">REGISTER HARVEST + BOOK SLOT</button>
+<div class="register-btn-sub" data-t="registerCtaSub">AI will auto-generate Batch ID and warehouse booking</div>
+</div>
+</div>
+</div>
+
+<!-- My Harvests Table -->
+<div class="panel">
+<div class="section-head"><div><h2 data-t="myHarvestsTitle">My Harvest Records</h2><div class="sub" data-t="myHarvestsSub">All registered harvests and warehouse assignments</div></div></div>
+<div class="filters">
+<input class="search-input" id="hSearch" placeholder="Search by batch, crop..." oninput="filterH()">
+<select class="filter-sel" id="hCrop" onchange="filterH()"><option value="">All Crops</option><option>Tomato</option><option>Onion</option><option>Potato</option><option>Grapes</option></select>
+<select class="filter-sel" id="hStatus" onchange="filterH()"><option value="">All Status</option><option value="storage" data-t="inStorage">In Storage</option><option value="dispatched" data-t="dispatched">Dispatched</option><option value="pending" data-t="pending">Pending</option></select>
+</div>
+<div style="overflow-x:auto"><table class="tbl"><thead><tr>
+<th data-t="batchLabel" onclick="sortH('id')">BATCH ID</th><th data-t="cropCol" onclick="sortH('crop')">CROP</th><th data-t="quantityCol" onclick="sortH('qty')">QUANTITY</th><th data-t="harvestDateCol">HARVEST DATE</th><th data-t="expiryCol">EXPIRY</th><th data-t="warehouseCol">WAREHOUSE</th><th data-t="riskCol" onclick="sortH('risk')">RISK%</th><th data-t="statusCol">STATUS</th><th data-t="actionsCol">ACTIONS</th>
+</tr></thead><tbody id="hBody"></tbody></table></div>
+</div>
+
+<!-- Calendar -->
+<div class="panel">
+<div class="section-head"><div><h2 data-t="calendarTitle">Harvest Calendar</h2><div class="sub" data-t="calendarSub">Planned and active harvest windows</div></div></div>
+<div class="cal-grid" id="calGrid"></div>
+<div class="legend">
+<div class="legend-item"><div class="lb" style="background:var(--green-light)"></div><span data-t="legHarvest">Harvest</span></div>
+<div class="legend-item"><div class="lb" style="background:var(--amber-light)"></div><span data-t="legDeadline">Booking Deadline</span></div>
+<div class="legend-item"><div class="lb" style="background:var(--blue-light)"></div><span data-t="legPlanting">Planting</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const T={
+en:{appName:'AgriFresh',appSub:'Farmer Intelligence',trackerTitle:'Harvest Tracker',trackerSub:'Log your harvest · Auto-book warehouse slots',registerBtn:'+ Register New Harvest',aiSummaryLabel:'AI Harvest Intelligence',updatedAgo:'Updated 5 mins ago',nextHarvest:'NEXT HARVEST',totalYield:'TOTAL YIELD EST',peakSeason:'PEAK SEASON',confidence:'MODEL CONFIDENCE',aiRecText:'System recommends harvesting tomatoes before March 18. Weather window is optimal Tuesday–Wednesday. Nashik Hub has available cold storage at ₹180/qtl.',registerFormTitle:'Register Harvest Batch',registerFormSub:'AI will auto-find best warehouse + generate booking',cropTypeLabel:'Crop Type',quantityLabel:'Expected Yield',harvestDateLabel:'Planned Harvest Date',qualityLabel:'Expected Quality',locationLabel:'Farm Location',warehouseLabel:'AI Suggested Warehouse',notesLabel:'Notes (optional)',registerCta:'REGISTER HARVEST + BOOK SLOT',registerCtaSub:'AI will auto-generate Batch ID and warehouse booking',myHarvestsTitle:'My Harvest Records',myHarvestsSub:'All registered harvests and warehouse assignments',batchLabel:'BATCH ID',cropCol:'CROP',quantityCol:'QUANTITY',harvestDateCol:'HARVEST DATE',expiryCol:'EXPIRY',warehouseCol:'WAREHOUSE',riskCol:'RISK%',statusCol:'STATUS',actionsCol:'ACTIONS',inStorage:'In Storage',dispatched:'Dispatched',pending:'Pending',calendarTitle:'Harvest Calendar',calendarSub:'Planned and active harvest windows',legHarvest:'Harvest',legDeadline:'Booking Deadline',legPlanting:'Planting',nav1:'Dashboard',nav2:'Warehouse Finder',nav3:'Crop Planner',nav4:'Harvest Tracker',nav5:'Weather & Soil',nav6:'My Produce',myFarmLabel:'MY FARM',farmCrops:'Active Crops',farmBatches:'Stored Batches',farmAttn:'Needs Attention',helpBtn:'Get Help',sidebarLabel:'FARMER COMMAND CENTER',sidebarConn:'Connected to AgriFresh Network',pillCrop:'Crop Advisory Ready',pillRisk:'1 Batch at Risk',pillPrice:'₹180 Best Price',pillAI:'AI: 94% Acc',toastOk:'✓ Batch #{id} registered! Warehouse slot booked at Nashik Central Hub. Confirmation sent.'},
+mr:{appName:'एग्रीफ्रेश',appSub:'शेतकरी बुद्धिमत्ता',trackerTitle:'कापणी ट्रॅकर',trackerSub:'कापणी नोंदवा · गोदामात जागा ऑटो-बुक करा',registerBtn:'+ नवीन कापणी नोंदणी',aiSummaryLabel:'AI कापणी बुद्धिमत्ता',updatedAgo:'५ मिनिटांपूर्वी अपडेट',nextHarvest:'पुढची कापणी',totalYield:'एकूण उत्पादन अंदाज',peakSeason:'हंगाम',confidence:'मॉडेल विश्वासार्हता',aiRecText:'मार्च १८ पूर्वी टोमॅटो काढण्याची शिफारस. मंगळवार-बुधवार हवामान अनुकूल. नाशिक हबमध्ये ₹१८०/क्विंटल ने शीतगृह उपलब्ध.',registerFormTitle:'कापणी बॅच नोंदणी',registerFormSub:'AI सर्वोत्तम गोदाम शोधून बुकिंग करेल',cropTypeLabel:'पीक प्रकार',quantityLabel:'अपेक्षित उत्पादन',harvestDateLabel:'नियोजित कापणी तारीख',qualityLabel:'अपेक्षित गुणवत्ता',locationLabel:'शेताचे ठिकाण',warehouseLabel:'AI सुचवलेले गोदाम',notesLabel:'टिपा (ऐच्छिक)',registerCta:'कापणी नोंदवा + जागा बुक करा',registerCtaSub:'AI बॅच ID आणि गोदाम बुकिंग ऑटो-जनरेट करेल',myHarvestsTitle:'माझ्या कापणीच्या नोंदी',myHarvestsSub:'सर्व नोंदणीकृत कापण्या आणि गोदाम असाइनमेंट',batchLabel:'बॅच ID',cropCol:'पीक',quantityCol:'प्रमाण',harvestDateCol:'कापणी तारीख',expiryCol:'मुदत',warehouseCol:'गोदाम',riskCol:'धोका%',statusCol:'स्थिती',actionsCol:'कृती',inStorage:'साठवणुकीत',dispatched:'पाठवले',pending:'प्रलंबित',calendarTitle:'कापणी कॅलेंडर',calendarSub:'नियोजित आणि सक्रिय कापणी कालावधी',legHarvest:'कापणी',legDeadline:'बुकिंग अंतिम मुदत',legPlanting:'लागवड',nav1:'डॅशबोर्ड',nav2:'गोदाम शोधा',nav3:'पीक नियोजक',nav4:'कापणी ट्रॅकर',nav5:'हवामान आणि माती',nav6:'माझा माल',myFarmLabel:'माझी शेती',farmCrops:'सक्रिय पिके',farmBatches:'साठवलेले बॅचेस',farmAttn:'लक्ष आवश्यक',helpBtn:'मदत मिळवा',sidebarLabel:'शेतकरी कमांड सेंटर',sidebarConn:'एग्रीफ्रेश नेटवर्कशी जोडलेले',pillCrop:'पीक सल्ला तयार',pillRisk:'१ बॅच धोक्यात',pillPrice:'₹१८० सर्वोत्तम किंमत',pillAI:'AI: ९४% अचूक',toastOk:'✓ बॅच #{id} नोंदणी झाली! नाशिक सेंट्रल हबमध्ये जागा बुक. पुष्टीकरण पाठवले.'},
+hi:{appName:'एग्रीफ्रेश',appSub:'किसान बुद्धिमत्ता',trackerTitle:'कटाई ट्रैकर',trackerSub:'कटाई दर्ज करें · गोदाम स्लॉट ऑटो-बुक करें',registerBtn:'+ नई कटाई पंजीकृत करें',aiSummaryLabel:'AI कटाई बुद्धिमत्ता',updatedAgo:'5 मिनट पहले अपडेट',nextHarvest:'अगली कटाई',totalYield:'कुल उपज अनुमान',peakSeason:'मौसम',confidence:'मॉडल विश्वसनीयता',aiRecText:'मार्च 18 से पहले टमाटर काटने की सिफारिश। मंगलवार-बुधवार मौसम अनुकूल। नासिक हब में ₹180/क्विंटल पर कोल्ड स्टोरेज उपलब्ध।',registerFormTitle:'कटाई बैच पंजीकरण',registerFormSub:'AI सबसे अच्छा गोदाम खोजकर बुकिंग करेगा',cropTypeLabel:'फसल प्रकार',quantityLabel:'अपेक्षित उपज',harvestDateLabel:'नियोजित कटाई तिथि',qualityLabel:'अपेक्षित गुणवत्ता',locationLabel:'खेत का स्थान',warehouseLabel:'AI सुझाया गोदाम',notesLabel:'नोट्स (वैकल्पिक)',registerCta:'कटाई पंजीकृत करें + स्लॉट बुक करें',registerCtaSub:'AI बैच ID और गोदाम बुकिंग ऑटो-जनरेट करेगा',myHarvestsTitle:'मेरे कटाई रिकॉर्ड',myHarvestsSub:'सभी पंजीकृत कटाई और गोदाम असाइनमेंट',batchLabel:'बैच ID',cropCol:'फसल',quantityCol:'मात्रा',harvestDateCol:'कटाई तिथि',expiryCol:'समाप्ति',warehouseCol:'गोदाम',riskCol:'जोखिम%',statusCol:'स्थिति',actionsCol:'कार्रवाई',inStorage:'संग्रहीत',dispatched:'भेजा गया',pending:'लंबित',calendarTitle:'कटाई कैलेंडर',calendarSub:'नियोजित और सक्रिय कटाई अवधि',legHarvest:'कटाई',legDeadline:'बुकिंग अंतिम तिथि',legPlanting:'रोपण',nav1:'डैशबोर्ड',nav2:'गोदाम खोजें',nav3:'फसल योजनाकार',nav4:'कटाई ट्रैकर',nav5:'मौसम और मिट्टी',nav6:'मेरा माल',myFarmLabel:'मेरी खेती',farmCrops:'सक्रिय फसलें',farmBatches:'संग्रहीत बैच',farmAttn:'ध्यान चाहिए',helpBtn:'मदद लें',sidebarLabel:'किसान कमांड सेंटर',sidebarConn:'एग्रीफ्रेश नेटवर्क से जुड़ा',pillCrop:'फसल सलाह तैयार',pillRisk:'1 बैच जोखिम में',pillPrice:'₹180 सबसे अच्छी कीमत',pillAI:'AI: 94% सटीक',toastOk:'✓ बैच #{id} पंजीकृत! नासिक सेंट्रल हब में स्लॉट बुक। पुष्टि भेजी गई।'}
+};
+let lang='en';
+function t(k){return T[lang][k]||T.en[k]||k;}
+function setLang(l){lang=l;document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));document.querySelectorAll('.lang-pill').forEach(p=>p.classList.toggle('active',p.textContent.trim()===(l==='en'?'EN':l==='mr'?'मराठी':'हिंदी')));document.getElementById('sidebarLangSelect').value=l;document.documentElement.lang=l;renderH();renderCal();}
+setInterval(()=>{document.getElementById('sidebarClock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+function showToast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000);}
+
+/* Form */
+function selCrop(el){document.querySelectorAll('.crop-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+let unit='kg';
+function setUnit(u,el){unit=u;document.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');const inp=document.getElementById('qtyInput');if(u==='qtl')inp.value=Math.round(inp.value/100*100)/100;else inp.value=Math.round(inp.value*100);}
+function selGrade(el){document.querySelectorAll('.grade-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+function checkDate(){const v=document.getElementById('dateInput').value;const d=new Date(v);const day=d.getDay();const s=document.getElementById('dateSug');if(day===4||day===5){s.textContent='⚠ Weather caution on this day — consider Tue/Wed';s.className='ai-sug warn';}else{s.textContent='✓ AI suggests: Mar 18–19 (optimal weather window)';s.className='ai-sug';}}
+function registerHarvest(){const id='AF-'+Math.floor(Math.random()*900+100);showToast(t('toastOk').replace('{id}',id));}
+
+/* Harvest Table */
+const harvests=[
+{id:'#AF-290',crop:'Tomato',qty:'450 kg',hDate:'Feb 18, 2026',exp:'Feb 28, 2026',wh:'Nashik Hub Zone C4',risk:87,status:'storage',temp:'15.2°C',hum:'62%',days:13,maxD:28},
+{id:'#AF-412',crop:'Onion',qty:'1200 kg',hDate:'Jan 22, 2026',exp:'Apr 15, 2026',wh:'Nashik Hub Zone B2',risk:12,status:'storage',temp:'17.5°C',hum:'55%',days:52,maxD:83},
+{id:'#AF-105',crop:'Potato',qty:'800 kg',hDate:'Feb 10, 2026',exp:'May 10, 2026',wh:'Nashik Hub Zone A1',risk:10,status:'storage',temp:'14.8°C',hum:'48%',days:57,maxD:90},
+{id:'#AF-332',crop:'Tomato',qty:'300 kg',hDate:'Feb 20, 2026',exp:'Mar 5, 2026',wh:'Nashik Hub Zone C2',risk:18,status:'storage',temp:'15.5°C',hum:'60%',days:19,maxD:28},
+{id:'#AF-089',crop:'Grapes',qty:'200 kg',hDate:'Jan 15, 2026',exp:'Feb 15, 2026',wh:'Kolhapur Cold Store',risk:0,status:'dispatched',temp:'--',hum:'--',days:0,maxD:30},
+{id:'#TOM-2026-03',crop:'Tomato',qty:'~450 kg',hDate:'Mar 18, 2026',exp:'--',wh:'PENDING BOOKING',risk:0,status:'pending',temp:'--',hum:'--',days:0,maxD:0}
+];
+let expanded=null,sortKey='',sortAsc=true;
+function cropCls(c){return c==='Tomato'?'ct-tomato':c==='Onion'?'ct-onion':c==='Grapes'?'ct-grapes':'ct-potato';}
+function riskCls(r){return r>60?'rh':r>30?'rm':'rl';}
+function stBadge(s){const m={storage:['st-storage','inStorage'],dispatched:['st-dispatched','dispatched'],pending:['st-pending','pending']};const x=m[s];return `<span class="st-badge ${x[0]}">${t(x[1])}</span>`;}
+function sortH(k){if(sortKey===k)sortAsc=!sortAsc;else{sortKey=k;sortAsc=true;}renderH();}
+function filterH(){renderH();}
+function renderH(){
+let d=[...harvests];const q=document.getElementById('hSearch').value.toLowerCase();const cr=document.getElementById('hCrop').value;const st=document.getElementById('hStatus').value;
+if(q)d=d.filter(h=>(h.id+h.crop).toLowerCase().includes(q));if(cr)d=d.filter(h=>h.crop===cr);if(st)d=d.filter(h=>h.status===st);
+if(sortKey==='id')d.sort((a,b)=>sortAsc?a.id.localeCompare(b.id):b.id.localeCompare(a.id));
+if(sortKey==='crop')d.sort((a,b)=>sortAsc?a.crop.localeCompare(b.crop):b.crop.localeCompare(a.crop));
+if(sortKey==='qty')d.sort((a,b)=>{const pa=parseInt(a.qty)||0,pb=parseInt(b.qty)||0;return sortAsc?pa-pb:pb-pa;});
+if(sortKey==='risk')d.sort((a,b)=>sortAsc?a.risk-b.risk:b.risk-a.risk);
+const tb=document.getElementById('hBody');tb.innerHTML='';
+d.forEach(h=>{const isExp=expanded===h.id;const pct=h.maxD?Math.round(h.days/h.maxD*100):0;const barClr=h.risk>60?'var(--red-primary)':h.risk>30?'var(--amber)':'var(--green-primary)';
+tb.innerHTML+=`<tr onclick="expanded=expanded==='${h.id}'?null:'${h.id}';renderH();">
+<td style="font-weight:600">${h.id}</td><td><span class="crop-tag ${cropCls(h.crop)}">${h.crop}</span></td><td>${h.qty}</td><td>${h.hDate}</td><td>${h.exp}</td><td style="font-size:11px">${h.wh}</td>
+<td>${h.risk?`<span class="risk-val ${riskCls(h.risk)}">${h.risk}%</span>`:'--'}</td><td>${stBadge(h.status)}</td>
+<td><div class="act-btns"><button class="act-btn">👁</button><button class="act-btn">📊</button><button class="act-btn">${h.status==='dispatched'?'✓':'🚛'}</button></div></td></tr>
+${isExp?`<tr class="expand-row open"><td colspan="9"><div class="exp-content"><div class="exp-grid">
+<div class="exp-item"><div class="ei-l">Temperature</div><div class="ei-v">${h.temp}</div></div>
+<div class="exp-item"><div class="ei-l">Humidity</div><div class="ei-v">${h.hum}</div></div>
+<div class="exp-item"><div class="ei-l">Shelf Life</div><div class="ei-v">${h.days} days</div><div class="shelf-bar"><div class="fill" style="width:${pct}%;background:${barClr}"></div></div></div>
+</div></div></td></tr>`:''}`;});
+}
+
+/* Calendar */
+function renderCal(){
+const months=[{name:'March 2026',y:2026,m:2},{name:'April 2026',y:2026,m:3},{name:'May 2026',y:2026,m:4}];
+const events={2:{18:{cls:'harvest',tip:'Tomato harvest ✓'},19:{cls:'harvest',tip:'Tomato harvest ✓'},22:{cls:'deadline',tip:'Booking deadline'}},3:{5:{cls:'planting',tip:'Onion planting'},6:{cls:'planting',tip:'Onion planting'},7:{cls:'planting',tip:'Onion planting'},8:{cls:'planting',tip:'Onion planting'},9:{cls:'planting',tip:'Onion planting'},10:{cls:'planting',tip:'Onion planting'}},4:{}};
+const g=document.getElementById('calGrid');g.innerHTML='';
+const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+months.forEach(mo=>{
+const first=new Date(mo.y,mo.m,1).getDay();const total=new Date(mo.y,mo.m+1,0).getDate();
+let html=`<div class="cal-month"><div class="cm-title">${mo.name}</div><div class="cal-week hdr">${days.map(d=>`<span>${d}</span>`).join('')}</div><div class="cal-week">`;
+for(let i=0;i<first;i++)html+='<span class="cal-day empty"></span>';
+for(let d=1;d<=total;d++){const ev=(events[mo.m]||{})[d];const cls=ev?ev.cls:'';const tip=ev?` data-tip="${ev.tip}"`:'';
+if((first+d-1)%7===0&&d>1)html+='</div><div class="cal-week">';
+html+=`<span class="cal-day ${cls}"${tip}>${d}</span>`;}
+html+='</div></div>';g.innerHTML+=html;});
+}
+
+document.addEventListener('DOMContentLoaded',()=>{renderH();renderCal();});
+</script>
+</body>
+</html>

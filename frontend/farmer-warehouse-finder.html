@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Finder | AgriFresh Farmer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--green-primary:#1D9E75;--green-dark:#27500A;--green-light:#EAF3DE;--green-mid:#3B6D11;--page-bg:#F0F7F0;--sidebar-bg:#FFF;--card-bg:#FFF;--text-primary:#1A1A1A;--text-secondary:#5F5E5A;--text-muted:#888780;--amber:#BA7517;--amber-light:#FAEEDA;--red-primary:#E24B4A;--red-light:#FCEBEB;--blue:#3B82F6;--blue-light:#EBF2FF;--border:rgba(0,0,0,0.08);--shadow-card:0 1px 3px rgba(0,0,0,0.06);--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans','Noto Sans Devanagari','Segoe UI',sans-serif;background:var(--page-bg);color:var(--text-primary);line-height:1.5;overflow:hidden;height:100vh}
+.app{display:grid;grid-template:"header header" 60px "sidebar main" 1fr / 240px 1fr;height:100vh}
+
+/* HEADER */
+.header{grid-area:header;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-box{width:32px;height:32px;background:var(--green-dark);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-box svg{width:18px;height:18px;fill:#fff}
+.app-name{font-size:16px;font-weight:700;color:var(--green-dark)}
+.app-sub{font-size:11px;color:var(--text-muted)}
+.header-center{display:flex;gap:8px;flex:1;justify-content:center;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.header-center::-webkit-scrollbar{display:none}
+.alert-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;flex-shrink:0}
+.pill-green{background:var(--green-light);color:var(--green-dark)}
+.pill-amber{background:var(--amber-light);color:#633806}
+.pill-pink{background:#F5E6FF;color:#6B21A8}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.lang-pill{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-secondary);transition:.15s}
+.lang-pill.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.refresh-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.refresh-btn:hover{background:var(--green-light)}
+.refresh-btn svg{width:14px;height:14px;fill:var(--text-secondary)}
+.hamburger{display:none;width:36px;height:36px;border-radius:8px;border:none;background:var(--green-dark);color:#fff;font-size:16px;cursor:pointer;align-items:center;justify-content:center}
+
+/* SIDEBAR */
+.sidebar{grid-area:sidebar;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:16px 12px;transition:width .3s}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;padding:0 12px;margin-bottom:4px}
+.sidebar-sub{font-size:10px;color:var(--green-primary);padding:0 12px;margin-bottom:2px;display:flex;align-items:center;gap:5px}
+.sidebar-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--green-primary)}
+.sidebar-clock{font-size:11px;font-weight:600;color:var(--text-primary);padding:0 12px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.nav-items{display:flex;flex-direction:column;gap:2px;margin-bottom:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--text-secondary);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:.15s}
+.nav-item svg{width:18px;height:18px;fill:currentColor;flex-shrink:0}
+.nav-item:hover{background:#F5F5F5;color:var(--text-primary)}
+.nav-item.active{background:var(--green-light);color:var(--green-dark);font-weight:600;border-left-color:var(--green-primary)}
+.nav-item .nav-text{white-space:nowrap;overflow:hidden}
+.sidebar-lang{padding:0 12px;margin-bottom:12px}
+.sidebar-lang select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-weight:500;background:#fff;cursor:pointer;outline:none}
+.sidebar-farm{background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin:0 4px}
+.sidebar-farm .farm-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:10px}
+.farm-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0}
+.farm-row .val{font-weight:600}
+.farm-row .val.red{color:var(--red-primary)}
+.help-btn{margin-top:12px;width:100%;padding:8px;background:var(--green-dark);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:.2s}
+.help-btn:hover{background:var(--green-primary)}
+
+/* MAIN */
+.main{grid-area:main;overflow-y:auto;padding:20px 24px 40px;display:flex;flex-direction:column;gap:18px}
+
+/* Page Head */
+.pg-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.pg-head h1{font-size:24px;font-weight:600}
+.pg-head .sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.btn-dark{padding:8px 20px;background:var(--green-dark);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+.btn-dark:hover{background:var(--green-primary)}
+
+/* Smart Rec */
+.smart-section{display:grid;grid-template-columns:1fr 260px;gap:14px}
+.smart-panel{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);position:relative;overflow:hidden;padding:20px}
+.ribbon{position:absolute;top:14px;right:-30px;background:var(--green-primary);color:#fff;font-size:9px;font-weight:600;padding:3px 36px;transform:rotate(45deg);letter-spacing:.06em;text-transform:uppercase}
+.smart-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:14px}
+.rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rec-card{border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.rec-top{display:flex;justify-content:space-between;align-items:center}
+.rec-id{font-size:11px;font-weight:600;color:var(--text-muted)}
+.ai-tag{background:var(--green-light);color:var(--green-dark);font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600}
+.rec-name{font-size:13px;font-weight:600}
+.rec-detail{font-size:11px;color:var(--text-muted)}
+.rec-status{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;width:fit-content}
+.rec-status.avail{background:var(--green-light);color:var(--green-dark)}
+.rec-status.filling{background:var(--amber-light);color:#633806}
+.rec-conf{font-size:11px;font-weight:600;color:var(--green-dark)}
+.rec-reason{font-size:11px;color:var(--text-secondary);line-height:1.4}
+.book-ai-btn{width:100%;padding:8px;background:var(--green-dark);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;margin-top:auto;transition:.2s}
+.book-ai-btn:hover{background:var(--green-primary)}
+
+/* Live Feed */
+.live-panel{background:#1A1A1A;border-radius:var(--radius);padding:20px;color:#fff;display:flex;flex-direction:column;gap:14px}
+.live-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#888;display:flex;align-items:center;gap:6px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#00E676;animation:livePulse 1.5s infinite}
+@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(0,230,118,0)}}
+.live-stat{display:flex;flex-direction:column;gap:2px}
+.live-stat .ll{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.04em}
+.live-stat .lv{font-size:22px;font-weight:700;color:#4DD0E1}
+.live-stat .lv.small{font-size:14px}
+.live-meta{font-size:9px;color:#555;font-family:monospace;letter-spacing:.04em}
+
+/* Filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:200px;padding:9px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;outline:none;background:#fff;transition:.15s}
+.search-input:focus{border-color:var(--green-primary)}
+.filter-sel{padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-weight:500;background:#fff;cursor:pointer;outline:none;color:var(--text-primary)}
+
+/* TABLE */
+.tbl-wrap{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{padding:12px 14px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);border-bottom:1px solid var(--border);background:#FAFAF9}
+.tbl td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr{cursor:pointer;transition:.15s}
+.tbl tbody tr:hover{background:var(--green-light)}
+.wh-n{font-weight:600}.wh-c{font-size:11px;color:var(--text-muted)}
+.crop-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;display:inline-block}
+.crop-tomato{background:#FCEBEB;color:#791F1F}.crop-onion{background:#F5E6FF;color:#6B21A8}
+.crop-grapes{background:#EBF2FF;color:#1D4ED8}.crop-potato{background:var(--amber-light);color:#633806}
+.vac-bar{width:60px;height:5px;background:#eee;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:6px;overflow:hidden}
+.vac-bar .fill{height:100%;border-radius:4px;transition:width 1s ease-out}
+.temp-ok{color:var(--green-dark)}.temp-warn{color:var(--red-primary)}
+.risk-val{font-weight:600;font-size:12px}
+.risk-low{color:var(--green-dark)}.risk-med{color:var(--amber)}.risk-high{color:var(--red-primary);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.st-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:6px}
+.st-avail{background:var(--green-light);color:var(--green-dark)}.st-filling{background:var(--amber-light);color:#633806}
+.st-full{background:#E5E5E5;color:var(--text-secondary)}.st-risk{background:var(--red-light);color:#791F1F}
+.act-btns{display:flex;gap:4px}
+.act-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
+.act-btn:hover{background:var(--green-light)}
+
+/* Expand Row */
+.expand-row{display:none}
+.expand-row.open{display:table-row}
+.expand-content{padding:16px 20px;background:#FAFAF9;border-bottom:1px solid var(--border)}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:12px}
+.exp-zone{padding:10px;border-radius:8px;border:1px solid var(--border);text-align:center;font-size:12px}
+.exp-zone.z-avail{background:var(--green-light);border-color:rgba(29,158,117,.2)}
+.exp-zone.z-full{background:#E5E5E5}.exp-zone.z-warn{background:var(--amber-light)}
+.exp-zone .zn{font-weight:600;margin-bottom:2px;display:block}
+.exp-prices{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin-bottom:10px}
+.exp-prices span{padding:3px 8px;border-radius:4px;background:#F5F5F5;font-weight:500}
+.exp-ai{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:12px}
+.book-full-btn{width:100%;padding:10px;background:var(--green-dark);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:.2s}
+.book-full-btn:hover{background:var(--green-primary)}
+
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green-dark);color:#fff;padding:14px 28px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .3s ease;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Mobile cards */
+.mobile-cards{display:none}
+.mob-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:8px}
+.mob-card .mc-top{display:flex;justify-content:space-between;align-items:center}
+.mob-card .mc-name{font-size:14px;font-weight:600}
+.mob-card .mc-dist{font-size:11px;color:var(--text-muted)}
+.mob-card .mc-row{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;align-items:center}
+.mob-card .mc-row .tag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
+
+/* Overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:150}
+.overlay.show{display:block}
+
+/* RESPONSIVE */
+@media(max-width:1023px){
+.app{grid-template:"header header" 60px "sidebar main" 1fr / 64px 1fr}
+.sidebar .nav-text,.sidebar-label,.sidebar-sub,.sidebar-clock,.sidebar-lang,.sidebar-farm{display:none !important}
+.sidebar{padding:16px 6px;align-items:center}
+.nav-item{justify-content:center;padding:10px;border-left:none!important}
+.smart-section{grid-template-columns:1fr}
+.rec-grid{grid-template-columns:1fr 1fr}
+.exp-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:767px){
+.app{grid-template:"header" 60px "main" 1fr / 1fr}
+.sidebar{position:fixed;left:0;top:60px;bottom:0;width:260px;z-index:200;transform:translateX(-100%);transition:transform .3s;padding:16px 12px;box-shadow:4px 0 20px rgba(0,0,0,.1)}
+.sidebar.open{transform:translateX(0)}
+.sidebar .nav-text,.sidebar-label,.sidebar-sub,.sidebar-clock,.sidebar-lang,.sidebar-farm{display:block!important}
+.hamburger{display:flex}
+.header-center{display:none}
+.smart-section{grid-template-columns:1fr}
+.live-panel{order:-1}
+.rec-grid{grid-template-columns:1fr}
+.tbl-wrap{display:none}
+.mobile-cards{display:flex;flex-direction:column;gap:10px}
+.exp-grid{grid-template-columns:1fr}
+.filters{flex-direction:column}
+.search-input{min-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="toast" id="toast"></div>
+<div class="app">
+<!-- HEADER -->
+<header class="header">
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="header-left">
+<div class="logo-box"><svg viewBox="0 0 24 24"><path d="M17.8 2.8C16 2.09 13.86 2.36 12.1 3.66 10.34 2.36 8.2 2.09 6.4 2.8 4.09 3.72 2.73 6.08 3.05 8.58c.52 4.02 4.16 7.61 9.05 11.42 4.89-3.81 8.53-7.4 9.05-11.42.32-2.5-1.04-4.86-3.35-5.78z"/></svg></div>
+<span class="app-name" data-t="appName">AgriFresh</span>
+<span class="app-sub" data-t="appSub">Farmer Intelligence</span>
+</div>
+<div class="header-center">
+<span class="alert-pill pill-green">🌾 <span data-t="pillCrop">Crop Advisory Ready</span></span>
+<span class="alert-pill pill-amber">⚠ <span data-t="pillRisk">1 Batch at Risk</span></span>
+<span class="alert-pill pill-green">✓ <span data-t="pillPrice">₹180 Best Price</span></span>
+<span class="alert-pill pill-pink">🤖 <span data-t="pillAI">AI: 94% Acc</span></span>
+</div>
+<div class="header-right">
+<button class="lang-pill active" onclick="setLang('en')">EN</button>
+<button class="lang-pill" onclick="setLang('mr')">मराठी</button>
+<button class="lang-pill" onclick="setLang('hi')">हिंदी</button>
+<button class="refresh-btn" title="Refresh"><svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+</div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-label" data-t="sidebarLabel">FARMER COMMAND CENTER</div>
+<div class="sidebar-sub"><span class="dot"></span><span data-t="sidebarConn">Connected to AgriFresh Network</span></div>
+<div class="sidebar-clock" id="sidebarClock">--:--:--</div>
+<nav class="nav-items">
+<a href="farmer-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span class="nav-text" data-t="nav1">Dashboard</span></a>
+<a href="#" class="nav-item active"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4z"/></svg><span class="nav-text" data-t="nav2">Warehouse Finder</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0 1.38 1.12 2.5 2.5 2.5.53 0 1.01-.16 1.42-.44l-.02.19c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5l-.02-.19c.4.28.89.44 1.42.44 1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.25 1.43-2.25 0-1.38-1.12-2.5-2.5-2.5-.53 0-1.01.16-1.42.44l.02-.19C14.5 2.12 13.38 1 12 1S9.5 2.12 9.5 3.5l.02.19c-.4-.28-.89-.44-1.42-.44-1.38 0-2.5 1.12-2.5 2.5 0 1 .59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25zM12 5.5c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5S9.5 9.38 9.5 8s1.12-2.5 2.5-2.5zM3 13c0 4.97 4.03 9 9 9 0-4.97-4.03-9-9-9z"/></svg><span class="nav-text" data-t="nav3">Crop Planner</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H4V5h16v14zM4 7h16v2H4zm0 4h6v6H4z"/></svg><span class="nav-text" data-t="nav4">Harvest Tracker</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg><span class="nav-text" data-t="nav5">Weather & Soil</span></a>
+<a href="#" class="nav-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1 0-2 1-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/></svg><span class="nav-text" data-t="nav6">My Produce</span></a>
+</nav>
+<div class="sidebar-lang"><select onchange="setLang(this.value)" id="sidebarLangSelect"><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिंदी</option></select></div>
+<div class="sidebar-farm">
+<div class="farm-label" data-t="myFarmLabel">MY FARM</div>
+<div class="farm-row"><span data-t="farmCrops">Active Crops</span><span class="val">1</span></div>
+<div class="farm-row"><span data-t="farmBatches">Stored Batches</span><span class="val">2</span></div>
+<div class="farm-row"><span data-t="farmAttn">Needs Attention</span><span class="val red">01</span></div>
+<button class="help-btn" data-t="helpBtn">Get Help</button>
+</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- Page Header -->
+<div class="pg-head">
+<div><h1 data-t="finderTitle">Warehouse Finder</h1><div class="sub" data-t="finderSub">Find best storage for your crop · Compare price, vacancy and AI risk score</div></div>
+<button class="btn-dark" data-t="registerBtn">📦 Register New Batch</button>
+</div>
+
+<!-- Smart Dispatch Recommendations -->
+<div class="smart-section">
+<div class="smart-panel">
+<div class="ribbon" data-t="aiOptimized">AI OPTIMIZED</div>
+<div class="smart-label" data-t="smartTitle">SMART BOOKING RECOMMENDATIONS</div>
+<div class="rec-grid" id="recGrid"></div>
+</div>
+<div class="live-panel">
+<div class="live-label"><span class="live-dot"></span> <span data-t="liveFeed">LIVE WAREHOUSE FEED</span></div>
+<div class="live-stat"><span class="ll" data-t="nearestLabel">NEAREST AVAILABLE</span><span class="lv" id="liveNearest">Kolhapur</span><span class="ll"><span id="liveDist">65</span> km</span></div>
+<div class="live-stat"><span class="ll" data-t="bestPriceLabel">BEST PRICE</span><span class="lv" id="livePrice">₹160/qtl</span></div>
+<div class="live-meta">PACKET_RECEIVE: CRC_OK | LATENCY: <span id="liveLatency">18</span>ms</div>
+</div>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+<input class="search-input" type="text" id="searchInput" data-t-placeholder="searchPlaceholder" placeholder="Search warehouses, city or zone... 🔍" oninput="filterTable()">
+<select class="filter-sel" id="filterCrop" onchange="filterTable()"><option value="" data-t="allCrops">All Crops</option><option value="Tomato">Tomato</option><option value="Onion">Onion</option><option value="Grapes">Grapes</option><option value="Potato">Potato</option></select>
+<select class="filter-sel" id="filterRadius" onchange="filterTable()"><option value="999">Any Radius</option><option value="50">50 km</option><option value="100">100 km</option><option value="150">150 km</option></select>
+<select class="filter-sel" id="filterVacancy" onchange="filterTable()"><option value="0" data-t="anyVac">Any Vacancy</option><option value="25">25%+</option><option value="50">50%+</option><option value="75">75%+</option></select>
+<select class="filter-sel" id="filterSort" onchange="filterTable()"><option value="vacancy" data-t="sortVacancy">Sort: Highest Vacancy</option><option value="price" data-t="sortPrice">Sort: Lowest Price</option><option value="dist" data-t="sortDist">Sort: Nearest</option><option value="risk" data-t="sortRisk">Sort: Lowest Risk</option></select>
+</div>
+
+<!-- Table -->
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr>
+<th data-t="colName">WAREHOUSE NAME</th><th data-t="colDist">DISTANCE</th><th data-t="colCrop">CROP</th><th data-t="colVac">VACANCY</th><th data-t="colPrice">PRICE/QTL</th><th data-t="colTemp">TEMP</th><th data-t="colRisk">RISK%</th><th data-t="colStatus">STATUS</th><th data-t="colActions">ACTIONS</th>
+</tr></thead>
+<tbody id="tblBody"></tbody>
+</table>
+</div>
+
+<!-- Mobile Cards -->
+<div class="mobile-cards" id="mobCards"></div>
+
+</div>
+</div>
+
+<script>
+/* ═══ DATA ═══ */
+const WH=[
+{id:1,name:'Nashik Central Hub',city:'Nashik, MH',dist:142,crop:'Tomato',vacancy:21,price:180,temp:15.2,tempOk:true,risk:18,status:'avail',zones:[{n:'Zone A',s:'avail'},{n:'Zone B',s:'full'},{n:'Zone C',s:'warn'}],prices:{Tomato:180,Onion:140,Grapes:220},aiText:'Best match for tomato storage. Lowest price within 150km radius with excellent cold chain infrastructure.'},
+{id:2,name:'Nashik Central Hub',city:'Nashik, MH',dist:142,crop:'Onion',vacancy:34,price:140,temp:17.1,tempOk:true,risk:12,status:'filling',zones:[{n:'Zone A',s:'avail'},{n:'Zone B',s:'full'},{n:'Zone C',s:'warn'}],prices:{Tomato:180,Onion:140,Grapes:220},aiText:'Zone B filling fast. Secure slot within 48 hours for optimal onion storage conditions.'},
+{id:3,name:'Pune Agri Storage',city:'Pune, MH',dist:98,crop:'Tomato',vacancy:54,price:240,temp:16.8,tempOk:true,risk:31,status:'avail',zones:[{n:'Zone A',s:'avail'},{n:'Zone B',s:'avail'},{n:'Zone C',s:'full'}],prices:{Tomato:240,Potato:210,Onion:195},aiText:'Good availability with higher price point. Suitable as backup option with reliable infrastructure.'},
+{id:4,name:'Kolhapur Cold Store',city:'Kolhapur, MH',dist:65,crop:'Grapes',vacancy:8,price:160,temp:12.1,tempOk:true,risk:9,status:'full',zones:[{n:'Zone A',s:'full'},{n:'Zone B',s:'full'},{n:'Zone C',s:'warn'}],prices:{Grapes:160,Tomato:175,Potato:150},aiText:'Excellent temperature control but very limited space. Join waitlist for next available slot.'},
+{id:5,name:'Solapur Agri Godown',city:'Solapur, MH',dist:110,crop:'Tomato',vacancy:72,price:145,temp:22.4,tempOk:false,risk:74,status:'risk',zones:[{n:'Zone A',s:'warn'},{n:'Zone B',s:'avail'},{n:'Zone C',s:'avail'}],prices:{Tomato:145,Onion:130,Wheat:110,Potato:125},aiText:'NOT RECOMMENDED for perishables. Temperature 22.4°C exceeds safe limit. High spoilage risk.'},
+{id:6,name:'Satara Cold Chain',city:'Satara, MH',dist:85,crop:'Potato',vacancy:45,price:195,temp:14.5,tempOk:true,risk:22,status:'avail',zones:[{n:'Zone A',s:'avail'},{n:'Zone B',s:'avail'},{n:'Zone C',s:'full'}],prices:{Potato:195,Tomato:210,Onion:180},aiText:'Reliable facility with good temperature controls. Recommended for potato and root vegetable storage.'}
+];
+const RECS=[
+{id:'#NCH-001',name:'Nashik Central Hub',detail:'Tomato · Zone A · Cold Section',statusKey:'available',conf:95,reason:'Best match: Low risk + lowest price in 50km radius',bookDate:'Book by Mar 18'},
+{id:'#NCH-002',name:'Nashik Central Hub',detail:'Onion · Zone B · Dry Storage',statusKey:'fillingFast',conf:82,reason:'Zone B filling fast — secure slot within 48 hours',bookDate:'Book by Mar 16'},
+{id:'#PAS-019',name:'Pune Agri Storage',detail:'Tomato · Zone A · Cold Section',statusKey:'available',conf:71,reason:'Backup option: Higher price but good availability',bookDate:'Book by Mar 20'}
+];
+
+/* ═══ i18n ═══ */
+const T={
+en:{appName:'AgriFresh',appSub:'Farmer Intelligence',finderTitle:'Warehouse Finder',finderSub:'Find best storage for your crop · Compare price, vacancy and AI risk score',registerBtn:'📦 Register New Batch',smartTitle:'SMART BOOKING RECOMMENDATIONS',aiOptimized:'AI OPTIMIZED',liveFeed:'LIVE WAREHOUSE FEED',nearestLabel:'NEAREST AVAILABLE',bestPriceLabel:'BEST PRICE',available:'Available',fillingFast:'Filling Fast',fullLabel:'Full',highRiskLabel:'High Risk',bookAI:'BOOK AI',bookThisBtn:'Book This Warehouse',colName:'WAREHOUSE NAME',colDist:'DISTANCE',colCrop:'CROP',colVac:'VACANCY',colPrice:'PRICE/QTL',colTemp:'TEMP',colRisk:'RISK%',colStatus:'STATUS',colActions:'ACTIONS',searchPlaceholder:'Search warehouses, city or zone... 🔍',allCrops:'All Crops',anyVac:'Any Vacancy',sortVacancy:'Sort: Highest Vacancy',sortPrice:'Sort: Lowest Price',sortDist:'Sort: Nearest',sortRisk:'Sort: Lowest Risk',nav1:'Dashboard',nav2:'Warehouse Finder',nav3:'Crop Planner',nav4:'Harvest Tracker',nav5:'Weather & Soil',nav6:'My Produce',myFarmLabel:'MY FARM',farmCrops:'Active Crops',farmBatches:'Stored Batches',farmAttn:'Needs Attention',helpBtn:'Get Help',sidebarLabel:'FARMER COMMAND CENTER',sidebarConn:'Connected to AgriFresh Network',pillCrop:'Crop Advisory Ready',pillRisk:'1 Batch at Risk',pillPrice:'₹180 Best Price',pillAI:'AI: 94% Acc',expandZones:'Zone Breakdown',expandPrice:'Price per Crop',expandAI:'AI Recommendation',bookBtn:'Book Slot',toastMsg:'Booking request sent to {name}. Confirmation on your registered number.'},
+mr:{appName:'एग्रीफ्रेश',appSub:'शेतकरी बुद्धिमत्ता',finderTitle:'गोदाम शोधा',finderSub:'तुमच्या पिकासाठी सर्वोत्तम साठवणूक शोधा · किंमत, जागा आणि AI धोका स्कोअर तुलना करा',registerBtn:'📦 नवीन बॅच नोंदणी',smartTitle:'स्मार्ट बुकिंग शिफारसी',aiOptimized:'AI ऑप्टिमाइज्ड',liveFeed:'थेट गोदाम फीड',nearestLabel:'जवळचे उपलब्ध',bestPriceLabel:'सर्वोत्तम किंमत',available:'उपलब्ध',fillingFast:'लवकर भरत आहे',fullLabel:'भरलेले',highRiskLabel:'जास्त धोका',bookAI:'AI बुक करा',bookThisBtn:'हे गोदाम बुक करा',colName:'गोदाम नाव',colDist:'अंतर',colCrop:'पीक',colVac:'जागा',colPrice:'किंमत/क्विंटल',colTemp:'तापमान',colRisk:'धोका%',colStatus:'स्थिती',colActions:'कृती',searchPlaceholder:'गोदाम, शहर किंवा झोन शोधा... 🔍',allCrops:'सर्व पिके',anyVac:'कोणतीही जागा',sortVacancy:'क्रम: सर्वाधिक जागा',sortPrice:'क्रम: कमी किंमत',sortDist:'क्रम: जवळचे',sortRisk:'क्रम: कमी धोका',nav1:'डॅशबोर्ड',nav2:'गोदाम शोधा',nav3:'पीक नियोजक',nav4:'कापणी ट्रॅकर',nav5:'हवामान आणि माती',nav6:'माझा माल',myFarmLabel:'माझी शेती',farmCrops:'सक्रिय पिके',farmBatches:'साठवलेले बॅचेस',farmAttn:'लक्ष आवश्यक',helpBtn:'मदत मिळवा',sidebarLabel:'शेतकरी कमांड सेंटर',sidebarConn:'एग्रीफ्रेश नेटवर्कशी जोडलेले',pillCrop:'पीक सल्ला तयार',pillRisk:'१ बॅच धोक्यात',pillPrice:'₹१८० सर्वोत्तम किंमत',pillAI:'AI: ९४% अचूक',expandZones:'झोन तपशील',expandPrice:'पीक निहाय किंमत',expandAI:'AI शिफारस',bookBtn:'जागा बुक करा',toastMsg:'{name} ला बुकिंग विनंती पाठवली. तुमच्या नोंदणीकृत नंबरवर पुष्टीकरण येईल.'},
+hi:{appName:'एग्रीफ्रेश',appSub:'किसान बुद्धिमत्ता',finderTitle:'गोदाम खोजें',finderSub:'अपनी फसल के लिए सबसे अच्छा भंडारण खोजें · कीमत, जगह और AI जोखिम स्कोर की तुलना करें',registerBtn:'📦 नया बैच पंजीकृत करें',smartTitle:'स्मार्ट बुकिंग सिफारिशें',aiOptimized:'AI ऑप्टिमाइज़्ड',liveFeed:'लाइव गोदाम फीड',nearestLabel:'निकटतम उपलब्ध',bestPriceLabel:'सबसे अच्छी कीमत',available:'उपलब्ध',fillingFast:'तेज़ी से भर रहा',fullLabel:'भरा हुआ',highRiskLabel:'उच्च जोखिम',bookAI:'AI बुक करें',bookThisBtn:'यह गोदाम बुक करें',colName:'गोदाम नाम',colDist:'दूरी',colCrop:'फसल',colVac:'जगह',colPrice:'कीमत/क्विंटल',colTemp:'तापमान',colRisk:'जोखिम%',colStatus:'स्थिति',colActions:'कार्रवाई',searchPlaceholder:'गोदाम, शहर या ज़ोन खोजें... 🔍',allCrops:'सभी फसलें',anyVac:'कोई भी जगह',sortVacancy:'क्रम: सबसे ज़्यादा जगह',sortPrice:'क्रम: कम कीमत',sortDist:'क्रम: निकटतम',sortRisk:'क्रम: कम जोखिम',nav1:'डैशबोर्ड',nav2:'गोदाम खोजें',nav3:'फसल योजनाकार',nav4:'कटाई ट्रैकर',nav5:'मौसम और मिट्टी',nav6:'मेरा माल',myFarmLabel:'मेरी खेती',farmCrops:'सक्रिय फसलें',farmBatches:'संग्रहीत बैच',farmAttn:'ध्यान चाहिए',helpBtn:'मदद लें',sidebarLabel:'किसान कमांड सेंटर',sidebarConn:'एग्रीफ्रेश नेटवर्क से जुड़ा',pillCrop:'फसल सलाह तैयार',pillRisk:'1 बैच जोखिम में',pillPrice:'₹180 सबसे अच्छी कीमत',pillAI:'AI: 94% सटीक',expandZones:'ज़ोन विवरण',expandPrice:'फसल अनुसार कीमत',expandAI:'AI सिफारिश',bookBtn:'स्लॉट बुक करें',toastMsg:'{name} को बुकिंग अनुरोध भेजा गया। आपके पंजीकृत नंबर पर पुष्टि आएगी।'}
+};
+let lang='en';
+function t(k){return T[lang][k]||T.en[k]||k;}
+function setLang(l){
+  lang=l;document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll('[data-t-placeholder]').forEach(el=>el.placeholder=t(el.dataset.tPlaceholder||el.getAttribute('data-t-placeholder')));
+  document.querySelectorAll('.lang-pill').forEach(p=>p.classList.toggle('active',p.textContent.trim()===(l==='en'?'EN':l==='mr'?'मराठी':'हिंदी')));
+  document.getElementById('sidebarLangSelect').value=l;
+  document.documentElement.lang=l==='mr'?'mr':l==='hi'?'hi':'en';
+  renderRecs();renderTable();
+}
+
+/* ═══ CLOCK ═══ */
+setInterval(()=>{document.getElementById('sidebarClock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+
+/* ═══ SIDEBAR ═══ */
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+
+/* ═══ TOAST ═══ */
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+
+/* ═══ RENDER RECS ═══ */
+function renderRecs(){
+  const g=document.getElementById('recGrid');g.innerHTML='';
+  RECS.forEach(r=>{
+    const stCls=r.statusKey==='available'?'avail':'filling';
+    g.innerHTML+=`<div class="rec-card">
+      <div class="rec-top"><span class="rec-id">${r.id}</span><span class="ai-tag">AI</span></div>
+      <div class="rec-name">${r.name}</div><div class="rec-detail">${r.detail}</div>
+      <div class="rec-status ${stCls}">${t(r.statusKey)}</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:2px">${r.bookDate}</div>
+      <div class="rec-conf">${r.conf}% Confidence</div>
+      <div class="rec-reason">${r.reason}</div>
+      <button class="book-ai-btn" onclick="showToast(t('toastMsg').replace('{name}','${r.name}'))">${t('bookAI')}</button>
+    </div>`;
+  });
+}
+
+/* ═══ RENDER TABLE ═══ */
+let expanded=null;
+function getFiltered(){
+  let d=[...WH];const q=document.getElementById('searchInput').value.toLowerCase();
+  const crop=document.getElementById('filterCrop').value;
+  const rad=+document.getElementById('filterRadius').value;
+  const vac=+document.getElementById('filterVacancy').value;
+  const sort=document.getElementById('filterSort').value;
+  if(q)d=d.filter(w=>(w.name+w.city+w.crop).toLowerCase().includes(q));
+  if(crop)d=d.filter(w=>w.crop===crop);
+  d=d.filter(w=>w.dist<=rad&&w.vacancy>=vac);
+  if(sort==='vacancy')d.sort((a,b)=>b.vacancy-a.vacancy);
+  else if(sort==='price')d.sort((a,b)=>a.price-b.price);
+  else if(sort==='dist')d.sort((a,b)=>a.dist-b.dist);
+  else if(sort==='risk')d.sort((a,b)=>a.risk-b.risk);
+  return d;
+}
+function cropCls(c){return c==='Tomato'?'crop-tomato':c==='Onion'?'crop-onion':c==='Grapes'?'crop-grapes':'crop-potato';}
+function vacColor(v){return v>40?'var(--green-primary)':v>10?'var(--amber)':'var(--red-primary)';}
+function stBadge(s){const m={avail:['st-avail','available'],filling:['st-filling','fillingFast'],full:['st-full','fullLabel'],risk:['st-risk','highRiskLabel']};const x=m[s]||m.avail;return `<span class="st-badge ${x[0]}">${t(x[1])}</span>`;}
+function riskCls(r){return r>60?'risk-high':r>30?'risk-med':'risk-low';}
+function zCls(s){return s==='avail'?'z-avail':s==='full'?'z-full':'z-warn';}
+function zLabel(s){return s==='avail'?t('available'):s==='full'?t('fullLabel'):t('fillingFast');}
+
+function renderTable(){
+  const d=getFiltered();const tb=document.getElementById('tblBody');tb.innerHTML='';
+  const mc=document.getElementById('mobCards');mc.innerHTML='';
+  d.forEach(w=>{
+    const isExp=expanded===w.id;
+    tb.innerHTML+=`<tr onclick="toggleExpand(${w.id})">
+      <td><span class="wh-n">${w.name}</span><br><span class="wh-c">${w.city}</span></td>
+      <td>${w.dist} km</td>
+      <td><span class="crop-tag ${cropCls(w.crop)}">${w.crop}</span></td>
+      <td><span class="vac-bar"><span class="fill" style="width:${w.vacancy}%;background:${vacColor(w.vacancy)}"></span></span>${w.vacancy}%</td>
+      <td>₹${w.price}<span style="color:var(--text-muted);font-size:11px">/qtl</span></td>
+      <td class="${w.tempOk?'temp-ok':'temp-warn'}">${w.temp}°C ${w.tempOk?'✓':'⚠'}</td>
+      <td><span class="risk-val ${riskCls(w.risk)}">${w.risk}%</span></td>
+      <td>${stBadge(w.status)}</td>
+      <td><div class="act-btns"><button class="act-btn" title="View">👁</button><button class="act-btn" title="Zones">📊</button><button class="act-btn" title="Book" onclick="event.stopPropagation();showToast(t('toastMsg').replace('{name}','${w.name}'))">🚛</button></div></td>
+    </tr>
+    <tr class="expand-row${isExp?' open':''}" id="exp-${w.id}"><td colspan="9"><div class="expand-content">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px" data-t="expandZones">${t('expandZones')}</div>
+      <div class="exp-grid">${w.zones.map(z=>`<div class="exp-zone ${zCls(z.s)}"><span class="zn">${z.n}</span>${zLabel(z.s)}</div>`).join('')}</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px" data-t="expandPrice">${t('expandPrice')}</div>
+      <div class="exp-prices">${Object.entries(w.prices).map(([c,p])=>`<span>${c} ₹${p}</span>`).join('')}</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px" data-t="expandAI">${t('expandAI')}</div>
+      <div class="exp-ai">${w.aiText}</div>
+      <button class="book-full-btn" onclick="event.stopPropagation();showToast(t('toastMsg').replace('{name}','${w.name}'))" data-t="bookThisBtn">${t('bookThisBtn')}</button>
+    </div></td></tr>`;
+    // Mobile card
+    mc.innerHTML+=`<div class="mob-card">
+      <div class="mc-top"><span class="mc-name">${w.name}</span>${stBadge(w.status)}</div>
+      <div class="mc-dist">${w.city} · ${w.dist} km</div>
+      <div class="mc-row"><span class="tag ${cropCls(w.crop)}">${w.crop}</span><span>₹${w.price}/qtl</span><span>${w.temp}°C ${w.tempOk?'✓':'⚠'}</span><span class="risk-val ${riskCls(w.risk)}">${w.risk}% risk</span></div>
+      <div class="mc-row"><span class="vac-bar" style="width:80px"><span class="fill" style="width:${w.vacancy}%;background:${vacColor(w.vacancy)}"></span></span>${w.vacancy}% vacancy</div>
+      <button class="btn-dark" style="width:100%;justify-content:center;margin-top:4px" onclick="showToast(t('toastMsg').replace('{name}','${w.name}'))">${t('bookBtn')}</button>
+    </div>`;
+  });
+}
+function toggleExpand(id){expanded=expanded===id?null:id;renderTable();}
+function filterTable(){renderTable();}
+
+/* ═══ LIVE FEED ═══ */
+setInterval(()=>{
+  document.getElementById('liveDist').textContent=65+Math.floor(Math.random()*5-2);
+  document.getElementById('livePrice').textContent='₹'+(160+Math.floor(Math.random()*11-5))+'/qtl';
+  document.getElementById('liveLatency').textContent=15+Math.floor(Math.random()*8);
+},8000);
+
+/* ═══ INIT ═══ */
+document.addEventListener('DOMContentLoaded',()=>{renderRecs();renderTable();});
+</script>
+</body>
+</html>
