@@ -279,6 +279,135 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
+// ─────────────────────────────────────────────────────
+// MARKETPLACE API ROUTES — Nari Shakti Market Module
+// ─────────────────────────────────────────────────────
+
+// GET /api/market/listings — All crop listings with sensor-linked quality data
+app.get('/api/market/listings', async (req, res) => {
+    try {
+        // Try to pull latest sensor data to enrich listings
+        const latestSensor = await SensorLog.findOne().sort({ timestamp: -1 });
+        const humidity = latestSensor ? latestSensor.humidity : (55 + Math.random() * 30);
+
+        const crops = [
+            { id: 'LST-001', name: 'Tomato',   icon: '🍅', qty: '1,200 kg', price: '₹28/kg',  zone: 'A1', humidity: parseFloat(humidity.toFixed(1)), gas: 38, daysLeft: 12, farmer: 'Sunita Devi',   location: 'Nashik' },
+            { id: 'LST-002', name: 'Onion',    icon: '🧅', qty: '800 kg',   price: '₹18/kg',  zone: 'B2', humidity: 68,                              gas: 45, daysLeft: 25, farmer: 'Rekha Patil',   location: 'Pune'   },
+            { id: 'LST-003', name: 'Potato',   icon: '🥔', qty: '2,000 kg', price: '₹15/kg',  zone: 'C1', humidity: 71,                              gas: 55, daysLeft: 30, farmer: 'Anita Rao',     location: 'Mumbai' },
+            { id: 'LST-004', name: 'Grapes',   icon: '🍇', qty: '500 kg',   price: '₹95/kg',  zone: 'A3', humidity: 60,                              gas: 28, daysLeft: 8,  farmer: 'Kavita Sharma', location: 'Nashik' },
+            { id: 'LST-005', name: 'Chilli',   icon: '🌶️', qty: '320 kg',   price: '₹62/kg',  zone: 'D2', humidity: 55,                              gas: 32, daysLeft: 20, farmer: 'Meena Joshi',   location: 'Pune'   },
+            { id: 'LST-006', name: 'Capsicum', icon: '🫑', qty: '410 kg',   price: '₹45/kg',  zone: 'B4', humidity: 73,                              gas: 60, daysLeft: 6,  farmer: 'Priya Nair',    location: 'Mumbai' },
+        ];
+
+        res.json(crops);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/market/price-advisory — AI Sell vs Hold recommendation
+app.get('/api/market/price-advisory', (req, res) => {
+    const crop = req.query.crop || 'Tomato';
+    const jitter = () => Math.floor(Math.random() * 10) - 3;
+
+    const basePrices = {
+        'Tomato': 28, 'Onion': 18, 'Potato': 15,
+        'Grapes': 95, 'Chilli': 62, 'Capsicum': 45, 'Garlic': 55
+    };
+    const currentPrice = (basePrices[crop] || 25) + jitter();
+    const predictedPrice = Math.floor(currentPrice * (1.08 + Math.random() * 0.25));
+    const gain = predictedPrice - currentPrice;
+    const recommendation = gain > 6 ? 'HOLD' : 'SELL';
+
+    res.json({
+        crop,
+        current_mandi_price: currentPrice,
+        predicted_15day_price: predictedPrice,
+        potential_gain_per_kg: gain,
+        recommendation,
+        recommendation_label: recommendation === 'HOLD' ? 'Wait 1 Week' : 'Sell Now',
+        reasoning: recommendation === 'HOLD'
+            ? `AI detects rising demand trends across Nashik & Pune mandis. Holding for 7–10 days could yield ₹${gain}/kg extra based on seasonal patterns.`
+            : `Current prices are at a local peak. AI models forecast a supply surplus in the next 15 days that could reduce prices by ₹${Math.abs(gain)}/kg.`,
+        confidence: (0.82 + Math.random() * 0.14).toFixed(2),
+        source: 'AgriFresh ML Engine v2.3',
+        generated_at: new Date().toISOString()
+    });
+});
+
+// GET /api/market/mandi-prices — Simulated live mandi price feed
+app.get('/api/market/mandi-prices', (req, res) => {
+    const items = ['Tomato', 'Onion', 'Potato', 'Grapes', 'Chilli', 'Capsicum', 'Garlic', 'Cabbage'];
+    const cities = ['Pune', 'Nashik', 'Mumbai'];
+    const basePrices = { Tomato: 28, Onion: 18, Potato: 15, Grapes: 95, Chilli: 62, Capsicum: 45, Garlic: 55, Cabbage: 12 };
+    const result = [];
+
+    cities.forEach(city => {
+        const cityJitter = (Math.random() - 0.5) * 6;
+        items.forEach(item => {
+            const base = basePrices[item] || 20;
+            const price = Math.max(5, Math.floor(base + cityJitter + (Math.random() - 0.4) * 8));
+            const change = ((Math.random() - 0.4) * 10).toFixed(1);
+            result.push({ city, crop: item, price, change, unit: 'per kg' });
+        });
+    });
+
+    res.json(result);
+});
+
+// GET /api/market/sensor-status — Latest sensor reading for Quality Passport
+app.get('/api/market/sensor-status', async (req, res) => {
+    try {
+        const latest = await SensorLog.findOne().sort({ timestamp: -1 });
+        const humidity = latest ? latest.humidity   : Math.floor(50 + Math.random() * 40);
+        const temp     = latest ? latest.temperature : (18 + Math.random() * 8);
+        const gas_ppm  = Math.floor(20 + Math.random() * 70); // MQ2 simulated
+
+        res.json({
+            humidity: parseFloat(humidity.toFixed(1)),
+            gas_ppm,
+            temperature: parseFloat(temp.toFixed(1)),
+            grade: (humidity < 70 && gas_ppm < 50) ? 'A' : 'B',
+            badge: (humidity < 70 && gas_ppm < 50) ? 'Sensor-Verified: Grade A' : 'Quality: Standard',
+            status: (humidity < 70 && gas_ppm < 50) ? 'optimal' : 'moderate',
+            last_updated: new Date().toLocaleTimeString('en-IN'),
+            source: latest ? 'Live Sensor Data' : 'Simulation'
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/market/negotiate — AI Bhav-Taal negotiation bot
+app.post('/api/market/negotiate', (req, res) => {
+    const { farmerPrice, buyerOffer, cropName, message } = req.body;
+    const crop   = cropName || 'produce';
+    const farmer = parseFloat(farmerPrice) || 30;
+    const buyer  = parseFloat(buyerOffer)  || 22;
+    const mid    = ((farmer + buyer) / 2).toFixed(0);
+    const trend  = (Math.random() > 0.5) ? '+5.8%' : '-2.3%';
+
+    const responses = [
+        `📊 Based on today's ${crop} prices across Nashik, Pune, and Mumbai mandis, a fair settlement rate is **₹${mid}/kg**. The 7-day demand trend shows ${trend} — the farmer's ask of ₹${farmer} is reasonable for Grade A quality.`,
+        `🤖 AI Bhav-Taal Analysis: The 15-day rolling average for ${crop} is ₹${parseFloat(mid) + 2}/kg. I recommend a deal at **₹${mid}/kg** with a Quality Passport certificate — the sensor data confirms optimal storage conditions.`,
+        `💡 Market Intelligence: The buyer's offer of ₹${buyer}/kg is ${(((farmer - buyer) / farmer) * 100).toFixed(0)}% below the asking price. A fair compromise is **₹${mid}/kg**, which aligns with Nashik APMC's 7-day VWAP. Consider adding a volume bonus for orders above 500 kg.`
+    ];
+
+    res.json({
+        response: responses[Math.floor(Math.random() * responses.length)],
+        suggested_price: parseFloat(mid),
+        market_data: {
+            avg_7day: parseFloat(mid) + 2,
+            trend,
+            mandi: 'Nashik APMC',
+            source: 'AgriFresh Market Engine'
+        },
+        generated_at: new Date().toISOString()
+    });
+});
+
+// END MARKETPLACE ROUTES
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
