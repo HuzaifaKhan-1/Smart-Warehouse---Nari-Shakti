@@ -306,37 +306,77 @@ app.get('/api/market/listings', async (req, res) => {
 });
 
 // GET /api/market/price-advisory — AI Sell vs Hold recommendation
-app.get('/api/market/price-advisory', (req, res) => {
+app.get('/api/market/price-advisory', async (req, res) => {
     const crop = req.query.crop || 'Tomato';
     const jitter = () => Math.floor(Math.random() * 10) - 3;
 
-    const basePrices = {
-        'Tomato': 28, 'Onion': 18, 'Potato': 15,
-        'Grapes': 95, 'Chilli': 62, 'Capsicum': 45, 'Garlic': 55
-    };
-    const currentPrice = (basePrices[crop] || 25) + jitter();
-    const predictedPrice = Math.floor(currentPrice * (1.08 + Math.random() * 0.25));
-    const gain = predictedPrice - currentPrice;
-    const recommendation = gain > 6 ? 'HOLD' : 'SELL';
+    let currentPrice = 25;
 
-    res.json({
-        crop,
-        current_mandi_price: currentPrice,
-        predicted_15day_price: predictedPrice,
-        potential_gain_per_kg: gain,
-        recommendation,
-        recommendation_label: recommendation === 'HOLD' ? 'Wait 1 Week' : 'Sell Now',
-        reasoning: recommendation === 'HOLD'
-            ? `AI detects rising demand trends across Nashik & Pune mandis. Holding for 7–10 days could yield ₹${gain}/kg extra based on seasonal patterns.`
-            : `Current prices are at a local peak. AI models forecast a supply surplus in the next 15 days that could reduce prices by ₹${Math.abs(gain)}/kg.`,
-        confidence: (0.82 + Math.random() * 0.14).toFixed(2),
-        source: 'AgriFresh ML Engine v2.3',
-        generated_at: new Date().toISOString()
-    });
+    // Use REAL DATA if available in cache, otherwise simulated base
+    if (typeof mandiPricesCache !== 'undefined' && mandiPricesCache.data && mandiPricesCache.data.length > 0) {
+        const match = mandiPricesCache.data.find(r => r.crop.toLowerCase() === crop.toLowerCase());
+        if (match) currentPrice = parseFloat(match.price);
+        else currentPrice = 25 + jitter();
+    } else {
+        const basePrices = {
+            'Tomato': 28, 'Onion': 18, 'Potato': 15,
+            'Grapes': 95, 'Chilli': 62, 'Capsicum': 45, 'Garlic': 55
+        };
+        currentPrice = (basePrices[crop] || 25) + jitter();
+    }
+
+    try {
+        // CALL THE REAL PYTHON ML SERVICE
+        const mlResponse = await axios.post('http://localhost:8000/predict_price', {
+            crop: crop,
+            current_price: currentPrice
+        }, { timeout: 2000 });
+
+        const { predicted_15day_price: predictedPrice, confidence } = mlResponse.data;
+        const gain = predictedPrice - currentPrice;
+        const recommendation = gain > 6 ? 'HOLD' : 'SELL';
+
+        return res.json({
+            crop,
+            current_mandi_price: currentPrice,
+            predicted_15day_price: predictedPrice,
+            potential_gain_per_kg: gain,
+            recommendation,
+            recommendation_label: recommendation === 'HOLD' ? 'Wait 1 Week' : 'Sell Now',
+            reasoning: recommendation === 'HOLD'
+                ? `AgriFresh ML Engine detects rising demand trends across Nashik & Pune mandis. Holding for 15 days is mathematically optimized.`
+                : `Current prices are at a local peak. ML models forecast a supply surplus in the next 15 days. Sell now to maximize profit.`,
+            confidence: confidence,
+            source: 'AgriFresh ML Engine (RandomForestRegressor)',
+            generated_at: new Date().toISOString()
+        });
+    } catch (err) {
+        console.warn("[Market API] ML Service unreachable, using fallback predictor.");
+        const predictedPrice = Math.floor(currentPrice * (1.08 + Math.random() * 0.25));
+        const gain = predictedPrice - currentPrice;
+        const recommendation = gain > 6 ? 'HOLD' : 'SELL';
+
+        res.json({
+            crop,
+            current_mandi_price: currentPrice,
+            predicted_15day_price: predictedPrice,
+            potential_gain_per_kg: gain,
+            recommendation,
+            recommendation_label: recommendation === 'HOLD' ? 'Wait 1 Week' : 'Sell Now',
+            reasoning: recommendation === 'HOLD'
+                ? `AI detects rising demand trends across Nashik & Pune mandis. Holding for 7–10 days could yield ₹${gain}/kg extra based on seasonal patterns.`
+                : `Current prices are at a local peak. AI models forecast a supply surplus in the next 15 days that could reduce prices by ₹${Math.abs(gain)}/kg.`,
+            confidence: (0.82 + Math.random() * 0.14).toFixed(2),
+            source: 'AgriFresh ML Engine (Fallback)',
+            generated_at: new Date().toISOString()
+        });
+    }
 });
 
-// GET /api/market/mandi-prices — Simulated live mandi price feed
-app.get('/api/market/mandi-prices', (req, res) => {
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour cache
+let mandiPricesCache = { data: null, last_updated: null };
+
+function getSimulatedMandiPrices() {
     const items = ['Tomato', 'Onion', 'Potato', 'Grapes', 'Chilli', 'Capsicum', 'Garlic', 'Cabbage'];
     const cities = ['Pune', 'Nashik', 'Mumbai'];
     const basePrices = { Tomato: 28, Onion: 18, Potato: 15, Grapes: 95, Chilli: 62, Capsicum: 45, Garlic: 55, Cabbage: 12 };
@@ -348,11 +388,64 @@ app.get('/api/market/mandi-prices', (req, res) => {
             const base = basePrices[item] || 20;
             const price = Math.max(5, Math.floor(base + cityJitter + (Math.random() - 0.4) * 8));
             const change = ((Math.random() - 0.4) * 10).toFixed(1);
-            result.push({ city, crop: item, price, change, unit: 'per kg' });
+            result.push({ city, crop: item, price, change, unit: 'per kg', source: 'Simulated' });
         });
     });
+    return result;
+}
 
-    res.json(result);
+// GET /api/market/mandi-prices — Real live mandi price feed from data.gov.in (with fallback)
+app.get('/api/market/mandi-prices', async (req, res) => {
+    try {
+        const apiKey = process.env.DATA_GOV_API_KEY;
+        
+        // 1. If we have a fresh cache, return it to avoid rate limiting
+        const now = new Date().getTime();
+        if (mandiPricesCache.data && (now - mandiPricesCache.last_updated < CACHE_TTL_MS)) {
+            return res.json(mandiPricesCache.data);
+        }
+
+        // 2. If no API Key is provided in .env, fallback to localized simulation
+        if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+            console.log("[Market API] No DATA_GOV_API_KEY found in .env, using simulated live prices.");
+            const simData = getSimulatedMandiPrices();
+            return res.json(simData);
+        }
+
+        // 3. Fetch real data from data.gov.in (Agmarknet Mandi Prices dataset)
+        // Dataset ID: 9ef84268-d588-465a-a308-a864a43d0070 (Current Daily Prices of various commodities)
+        const format = 'json';
+        const limit = 50; 
+        const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${apiKey}&format=${format}&limit=${limit}&filters[state]=Maharashtra`;
+
+        const response = await axios.get(url, { timeout: 8000 });
+        
+        if (response.data && response.data.records && response.data.records.length > 0) {
+            // Map real data to our frontend format
+            const realData = response.data.records.map(record => ({
+                city: record.district,
+                crop: record.commodity,
+                // The dataset provides 'modal_price' (usually in Rs/Quintal). Converting to Rs/Kg
+                price: (parseFloat(record.modal_price) / 100).toFixed(0), 
+                // Open data lacks daily change, simulating this metric for the UI ticker
+                change: ((Math.random() - 0.4) * 5).toFixed(1), 
+                unit: 'per kg',
+                source: 'data.gov.in (Real)'
+            }));
+
+            // Save to cache
+            mandiPricesCache = { data: realData, last_updated: now };
+            console.log("[Market API] Real Mandi Prices successfully fetched from data.gov.in");
+            return res.json(realData);
+        } else {
+            throw new Error("Invalid response format or empty data from Government API");
+        }
+
+    } catch (err) {
+        console.error("[Market API] Error fetching real mandi prices:", err.message);
+        // Fallback gracefully on API failure
+        res.json(getSimulatedMandiPrices());
+    }
 });
 
 // GET /api/market/sensor-status — Latest sensor reading for Quality Passport
