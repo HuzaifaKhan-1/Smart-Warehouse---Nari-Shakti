@@ -27,25 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const citySelector = document.getElementById('citySelector');
     if (citySelector) {
-        citySelector.addEventListener('change', (e) => {
+        citySelector.addEventListener('change', async (e) => {
             const city = e.target.value;
             const hubText = document.getElementById('currentHubText');
             if (hubText) hubText.innerText = `${city} Hub`;
 
             // Simulation shortcut: randomize data on city change
             AppState.metrics.lossPrevented += Math.floor(Math.random() * 50000);
-            AppState.fetchDashboardData();
+            await AppState.fetchDashboardData();
+            AIEngine.renderDecisionCards('aiDecisionCenter');
         });
     }
 
-    const refreshBtn = document.getElementById('manualRefreshBtn');
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
+        refreshBtn.addEventListener('click', async () => {
             const icon = refreshBtn.querySelector('i');
             icon.classList.add('fa-spin');
-            AppState.fetchDashboardData().then(() => {
-                setTimeout(() => icon.classList.remove('fa-spin'), 600);
-            });
+            await AppState.fetchDashboardData();
+            AIEngine.renderDecisionCards('aiDecisionCenter');
+            setTimeout(() => icon.classList.remove('fa-spin'), 600);
         });
     }
 
@@ -83,9 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 800);
 
     // 6. Live Heartbeat
-    setInterval(() => {
+    setInterval(async () => {
         simulateLiveTelemetry();
-        AppState.fetchDashboardData(); // Sync with backend every 5s
+        await AppState.fetchDashboardData(); // Sync with backend every 5s
+        AIEngine.renderDecisionCards('aiDecisionCenter');
     }, 5000);
 });
 
@@ -111,24 +112,23 @@ function updateClock() {
     }
 }
 
-function updateTrendData(range) {
+async function updateTrendData(range) {
     if (!window.envTrendChart) return;
 
-    const data24h = [13.1, 13.4, 14.2, 14.8, 14.2, 13.8, 14.2];
-    const labels24h = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Now'];
+    try {
+        const response = await fetch(`/api/sensors/history?range=${range}`);
+        const result = await response.json();
 
-    const data7d = [12.5, 13.8, 15.2, 14.1, 13.9, 14.5, 14.2];
-    const labels7d = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-    if (range === '24h') {
-        window.envTrendChart.data.labels = labels24h;
-        window.envTrendChart.data.datasets[0].data = data24h;
-    } else {
-        window.envTrendChart.data.labels = labels7d;
-        window.envTrendChart.data.datasets[0].data = data7d;
+        window.envTrendChart.data.labels = result.labels;
+        window.envTrendChart.data.datasets[0].data = result.temps;
+        
+        // Update source label if needed
+        console.log(`Trends updated from: ${result.source}`);
+        
+        window.envTrendChart.update();
+    } catch (err) {
+        console.error("Failed to load trend data:", err);
     }
-
-    window.envTrendChart.update();
 }
 
 function initDashboardCharts() {

@@ -44,19 +44,22 @@ export const AppState = {
     async fetchDashboardData() {
         try {
             // Fetch real metrics from Node.js backend
-            const [lossRes, utilRes, riskRes] = await Promise.all([
+            const [lossRes, utilRes, riskRes, recRes] = await Promise.all([
                 fetch('/api/analytics/loss-reduction'),
                 fetch('/api/analytics/utilization'),
-                fetch('/api/analytics/risk-distribution')
+                fetch('/api/analytics/risk-distribution'),
+                fetch('/api/warehouse/recommendations')
             ]);
 
             const lossData = await lossRes.json();
             const utilData = await utilRes.json();
             const riskData = await riskRes.json();
+            const recData = await recRes.json();
 
             this.metrics.lossPrevented = lossData.metrics.total_loss_prevented;
             this.metrics.utilization = ((utilData.used_capacity / utilData.total_capacity) * 100).toFixed(1);
             this.metrics.atRiskBatches = riskData.distribution.find(d => d.label === 'High Risk')?.count || 0;
+            this.recommendations = recData;
 
             // Only update status if not in manual simulation mode
             if (this.metrics.status !== 'CRITICAL ALERT') {

@@ -13,37 +13,30 @@ export const WarehouseHeatmap = {
         this.renderInitialGrid();
     },
 
-    renderInitialGrid() {
+    async renderInitialGrid() {
         const grid = document.getElementById(this.containerId);
         if (!grid) return;
-        grid.innerHTML = '';
-        this.zones = [];
+        grid.innerHTML = '<div style="color:var(--primary); padding:20px; font-weight:700;">Loading real-time zone data...</div>';
 
-        const rows = ['A', 'B', 'C', 'D'];
-        for (let r of rows) {
-            for (let i = 1; i <= 6; i++) {
-                const zone = {
-                    id: `${r}${i}`,
-                    temp: 14 + Math.random() * 4,
-                    humidity: 55 + Math.random() * 10,
-                    risk: Math.random() * 80,
-                    batches: Math.floor(Math.random() * 10) + 2,
-                    status: 'safe'
-                };
+        try {
+            const response = await fetch('/api/warehouse/zones');
+            const zonesData = await response.json();
+            
+            if (zonesData.error) throw new Error(zonesData.error);
 
-                if (zone.id === 'C4') {
-                    zone.temp = 14.5;
-                    zone.risk = 12;
-                }
+            grid.innerHTML = '';
+            this.zones = zonesData;
 
-                if (zone.risk > 80) zone.status = 'critical';
-                else if (zone.risk > 50) zone.status = 'warning';
-
-                this.zones.push(zone);
+            zonesData.forEach(zone => {
                 grid.appendChild(this.createZoneElement(zone));
-            }
+            });
+
+            AppState.zones = this.zones;
+            console.log("Heatmap updated with live database data.");
+        } catch (err) {
+            console.error("Heatmap Load Failed:", err);
+            grid.innerHTML = `<div style="color:var(--danger); padding:20px;">Error loading zones: ${err.message}. Please ensure the server is running and database is seeded.</div>`;
         }
-        AppState.zones = this.zones;
     },
 
     createZoneElement(zone) {
