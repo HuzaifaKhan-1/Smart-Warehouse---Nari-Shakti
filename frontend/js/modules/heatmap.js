@@ -13,6 +13,26 @@ export const WarehouseHeatmap = {
         this.renderInitialGrid();
     },
 
+    getFallbackZones() {
+        const zones = ['A1','A2','A3','B1','B2','B3','C1','C2','C3','D1','D2','D3'];
+        return zones.map((id, i) => {
+            const temp = parseFloat((12 + Math.random() * 8).toFixed(1));
+            const humidity = parseFloat((55 + Math.random() * 30).toFixed(0));
+            let risk = 10;
+            if (temp > 18) risk += (temp - 18) * 10;
+            if (humidity > 75) risk += 15;
+            risk = Math.min(Math.round(risk + Math.random() * 20), 98);
+            return {
+                id,
+                temp,
+                humidity,
+                risk,
+                batches: Math.floor(Math.random() * 8) + 1,
+                status: risk > 80 ? 'critical' : (risk > 50 ? 'warning' : 'safe')
+            };
+        });
+    },
+
     async renderInitialGrid() {
         const grid = document.getElementById(this.containerId);
         if (!grid) return;
@@ -20,9 +40,11 @@ export const WarehouseHeatmap = {
 
         try {
             const response = await fetch('/api/warehouse/zones');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const zonesData = await response.json();
             
             if (zonesData.error) throw new Error(zonesData.error);
+            if (!Array.isArray(zonesData) || zonesData.length === 0) throw new Error('No zone data returned');
 
             grid.innerHTML = '';
             this.zones = zonesData;
@@ -34,8 +56,21 @@ export const WarehouseHeatmap = {
             AppState.zones = this.zones;
             console.log("Heatmap updated with live database data.");
         } catch (err) {
-            console.error("Heatmap Load Failed:", err);
-            grid.innerHTML = `<div style="color:var(--danger); padding:20px;">Error loading zones: ${err.message}. Please ensure the server is running and database is seeded.</div>`;
+            console.warn("Heatmap API unavailable, using demo data:", err.message);
+            // Fallback: render demo zones so the heatmap is always visible
+            const fallbackZones = this.getFallbackZones();
+            grid.innerHTML = '';
+            this.zones = fallbackZones;
+            fallbackZones.forEach(zone => {
+                grid.appendChild(this.createZoneElement(zone));
+            });
+            AppState.zones = this.zones;
+
+            // Add a small notice that data is simulated
+            const notice = document.createElement('div');
+            notice.style.cssText = 'grid-column: 1 / -1; text-align:center; font-size:0.75rem; color:var(--text-secondary); padding:8px; background:var(--warning-bg); border-radius:8px; margin-top:5px;';
+            notice.innerHTML = '<i class="fas fa-satellite-dish"></i> Showing demo data — backend offline. Start the server to see live sensor readings.';
+            grid.appendChild(notice);
         }
     },
 

@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const refreshBtn = document.getElementById('manualRefreshBtn');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', async () => {
             const icon = refreshBtn.querySelector('i');
