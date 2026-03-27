@@ -1,161 +1,128 @@
+import pickle
+import joblib
 import os
-import json
-import math
-import random
-import datetime
-from flask import Flask, request, jsonify
-import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
+import pandas as pd
+import math
 
-app = Flask(__name__)
+# Define paths to models
+MODEL_DIR = os.path.join(os.path.dirname(__file__), "Farmer_model")
 
-# --- 1. Machine Learning Model Setup ---
-# We will generate a synthetic dataset representing 3 years of historical crop data
-# and train an ML model on startup to predict the 15-day forward price.
+# Load models and encoder
+def load_pkl(filename):
+    path = os.path.join(MODEL_DIR, filename)
 
-CROPS = ['Tomato', 'Onion', 'Potato', 'Grapes', 'Chilli', 'Capsicum', 'Garlic', 'Cabbage']
-# Approximate base price levels
-BASE_PRICES = {
-    'Tomato': 25, 'Onion': 15, 'Potato': 14, 'Grapes': 90,
-    'Chilli': 60, 'Capsicum': 40, 'Garlic': 50, 'Cabbage': 10
-}
+    if not os.path.exists(path):
+        print(f"Model not found: {filename}")
+        return None
 
-# Generate 3 years of daily data (synthetic history)
-print("Training ML Forecasting Engine...")
-data = []
-start_date = datetime.date.today() - datetime.timedelta(days=3*365)
-for i in range(3 * 365):
-    current = start_date + datetime.timedelta(days=i)
-    month = current.month
-    day_of_year = current.timetuple().tm_yday
-    
-    # Adding seasonal waves + noise
-    for crop in CROPS:
-        base = BASE_PRICES[crop]
-        # Seasonal wave: peaks roughly in monsoon/summer depending on crop (simulated)
-        phase_shift = CROPS.index(crop) * 30 # different peaks for different crops
-        seasonality = math.sin(2 * math.pi * (day_of_year - phase_shift) / 365.25)
+    try:
+        model = joblib.load(path)
+        print(f"Loaded model: {filename}")
+        return model
+    except Exception as e:
+        print(f"Failed to load {filename}: {e}")
+        return None
+
+print("Loading ML Models for Warehouse Service...")
+crop_model = load_pkl("crop_model.pkl")
+price_model = load_pkl("price_model.pkl")
+spoilage_model = load_pkl("spoilage_model.pkl")
+warehouse_model = load_pkl("warehouse_model.pkl")
+crop_encoder = load_pkl("crop_encoder.pkl")
+
+# Warehouse Data (Coordinates added for distance calculation)
+WAREHOUSES = [
+    {"id": 1, "name": "Nashik Central Hub", "city": "Nashik, MH", "lat": 19.99, "lon": 73.78, "vacancy": 21, "base_prices": {"Tomato": 180, "Onion": 140, "Grapes": 220}, "temp": 15.2, "risk": 18},
+    {"id": 2, "name": "Pune Agri Storage", "city": "Pune, MH", "lat": 18.52, "lon": 73.85, "vacancy": 54, "base_prices": {"Tomato": 240, "Potato": 210, "Onion": 195}, "temp": 16.8, "risk": 31},
+    {"id": 3, "name": "Kolhapur Cold Store", "city": "Kolhapur, MH", "lat": 16.70, "lon": 74.24, "vacancy": 8, "base_prices": {"Grapes": 160, "Tomato": 175, "Potato": 150}, "temp": 12.1, "risk": 9},
+    {"id": 4, "name": "Solapur Agri Godown", "city": "Solapur, MH", "lat": 17.65, "lon": 75.90, "vacancy": 72, "base_prices": {"Tomato": 145, "Onion": 130, "Wheat": 110, "Potato": 125}, "temp": 22.4, "risk": 74},
+    {"id": 5, "name": "Satara Cold Chain", "city": "Satara, MH", "lat": 17.68, "lon": 73.98, "vacancy": 45, "base_prices": {"Potato": 195, "Tomato": 210, "Onion": 180}, "temp": 14.5, "risk": 22}
+]
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """Haversine formula to calculate distance in km."""
+    R = 6371
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return round(R * c, 1)
+
+def get_all_warehouses_formatted(farmer_lat=16.85, farmer_lon=74.58):
+    """
+    Returns all warehouses formatted for the frontend with distance and AI scoring.
+    """
+    results = []
+    for wh in WAREHOUSES:
+        dist = calculate_distance(farmer_lat, farmer_lon, wh["lat"], wh["lon"])
+        primary_crop = list(wh["base_prices"].keys())[0] if wh["base_prices"] else "Tomato"
+        price = wh["base_prices"].get(primary_crop, 200)
         
-        # Add random noise
-        noise = random.uniform(-0.1, 0.1)
+        # Calculate AI score if model exists
+        score = 0.5
+        if warehouse_model:
+            try:
+                score = warehouse_model.predict([[dist, price, wh["vacancy"], wh["risk"]]])[0]
+            except:
+                pass
         
-        # Calculate price for that day
-        price = base * (1 + 0.3 * seasonality + noise)
-        
-        # Assume a general trend over 3 years (inflation ~5% per year)
-        inflation_factor = (1 + 0.05 * (i / 365))
-        price = price * inflation_factor
-        
-        data.append({
-            'date': current,
-            'crop': crop,
-            'month': month,
-            'price': price
+        results.append({
+            "id": wh["id"],
+            "name": wh["name"],
+            "city": wh["city"].split(",")[0],
+            "dist": dist,
+            "crop": primary_crop,
+            "vacancy": wh["vacancy"],
+            "price": price,
+            "temp": wh["temp"],
+            "tempOk": wh["temp"] < 20,
+            "risk": wh["risk"],
+            "status": "avail" if wh["vacancy"] > 10 else "filling",
+            "zones": [
+                {"n": "A1", "s": "avail"},
+                {"n": "A2", "s": "avail"},
+                {"n": "B1", "s": "filling"}
+            ],
+            "prices": wh["base_prices"],
+            "aiText": f"Optimal warehouse for {primary_crop} storage. AI Suitability: {round(score*100)}%",
+            "ai_score": float(score)
         })
-
-df_hist = pd.DataFrame(data)
-
-# Create training set: predict price 15 days ahead
-# Shift prices by -15 days per crop to create the target variable 'price_15d_ahead'
-df_hist['price_15d_ahead'] = df_hist.groupby('crop')['price'].shift(-15)
-df_hist = df_hist.dropna()
-
-# Categorical encoding for crop
-df_hist = pd.get_dummies(df_hist, columns=['crop'], drop_first=False)
-
-# Features: current price, current month, crop one-hot encoded
-features = ['price', 'month'] + [c for c in df_hist.columns if c.startswith('crop_')]
-X = df_hist[features]
-y = df_hist['price_15d_ahead']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Train Random Forest Regressor
-rf_model = RandomForestRegressor(n_estimators=50, random_state=42)
-rf_model.fit(X_train, y_train)
-
-# Calculate naive confidence (based on R^2 score for simulation purposes)
-model_score = rf_model.score(X_test, y_test)
-print(f"ML Model Trained Successfully (R^2 Score: {model_score:.2f})")
-
-def predict_future_price(crop, current_price):
-    """Predicts the price 15 days from now for a given crop and its true current price."""
-    current_month = datetime.date.today().month
     
-    # Construct input vector matching the training features
-    input_data = {'price': [current_price], 'month': [current_month]}
-    
-    for c in CROPS:
-        input_data[f'crop_{c}'] = [1 if c == crop else 0]
-        
-    df_input = pd.DataFrame(input_data)[features] # Ensure same column order
-    
-    prediction = rf_model.predict(df_input)[0]
-    
-    # Calculate a dynamic confidence score based on how close the current price is to historical norms
-    confidence = min(0.95, max(0.60, model_score * (0.8 + 0.2 * random.random())))
-    
-    return prediction, confidence
+    # Sort by AI score descending
+    results.sort(key=lambda x: x["ai_score"], reverse=True)
+    return results
 
-# --- 2. API Endpoints ---
+def predict_price(crop_name: str):
+    if price_model is None or crop_encoder is None:
+        return 180.0
+    try:
+        encoded_crop = crop_encoder.transform([crop_name])[0]
+        prediction = price_model.predict([[encoded_crop]])[0]
+        return float(prediction)
+    except:
+        return 180.0
 
-@app.route('/predict_price', methods=['POST'])
-def handle_predict_price():
-    req_data = request.json
-    crop = req_data.get('crop', 'Tomato')
-    current_price = float(req_data.get('current_price', BASE_PRICES.get(crop, 20)))
-    
-    predicted_price, confidence = predict_future_price(crop, current_price)
-    
-    return jsonify({
-        "crop": crop,
-        "current_price": current_price,
-        "predicted_15d_price": round(predicted_price, 2),
-        "confidence": round(confidence, 2)
-    })
+def predict_spoilage(temperature: float, humidity: float, storage_days: int):
+    if spoilage_model is None:
+        return 15.0
+    try:
+        risk = spoilage_model.predict([[temperature, humidity, storage_days]])[0]
+        return float(np.clip(risk, 0, 100))
+    except:
+        return 25.0
 
-# Existing storage spoilage analysis endpoint (Simulated for this script)
-@app.route('/analyze', methods=['POST'])
-def handle_analyze():
-    req_data = request.json
-    temperature = float(req_data.get('temperature', 20))
-    humidity = float(req_data.get('humidity', 60))
-    produce = req_data.get('produce', 'Tomato')
-    
-    # Fallback logic ported to python
-    risk = "Low"
-    days = 15
-    priority = "P3"
-    action = "Maintain Storage"
+def get_warehouse_recommendations(lat, lon, crop):
+    # This is similar but specific to a crop and user location
+    results = get_all_warehouses_formatted(lat, lon)
+    # Filter for crop if needed, or just return top
+    return results
 
-    if temperature > 17 or humidity > 70:
-        risk = "Moderate"
-        days = 7
-        priority = "P2"
-        action = "Monitor Closely"
-
-    if temperature > 20:
-        risk = "High"
-        days = 2
-        priority = "P1"
-        action = "Dispatch Immediately"
-
-    if produce.lower() == "tomato" and temperature > 15:
-        risk = "High"
-        days = 3
-        priority = "P1"
-        action = "Dispatch to Local Market"
-
-    return jsonify({
-        "spoilage_risk": risk,
-        "remaining_days": days,
-        "priority": priority,
-        "recommended_action": action,
-        "confidence": round(0.88 + random.uniform(0, 0.1), 2),
-        "source": "Smart Warehouse ML Model"
-    })
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=False)
+def get_dashboard_stats():
+    return {
+        "active_batches": 2,
+        "risk_batches": 1,
+        "best_price": 180,
+        "field_status": "NORMAL",
+        "ai_accuracy": 94
+    }

@@ -435,14 +435,75 @@ function countUp(el,target,prefix='',suffix='',duration=800){
   const timer=setInterval(()=>{start+=step;if(start>=n){start=n;clearInterval(timer);}el.textContent=prefix+start+suffix;},interval);
 }
 
+const API_BASE = "http://localhost:8000";
+
 /* ══════ STAT CARDS INIT ══════ */
-function initStats(){
-  countUp(document.getElementById('stat1'),2);
-  countUp(document.getElementById('stat2'),1);
-  const s3=document.getElementById('stat3');
-  countUp(s3,180,'₹','/qtl');
-  setTimeout(()=>{document.getElementById('priceFill').style.width='65%';},200);
-  document.getElementById('stat4').textContent='NORMAL';
+async function initStats(){
+  try {
+    const res = await fetch(`${API_BASE}/dashboard-summary`);
+    const data = await res.json();
+    
+    countUp(document.getElementById('stat1'), data.active_batches);
+    countUp(document.getElementById('stat2'), data.risk_batches);
+    document.getElementById('stat4').textContent = data.field_status;
+    
+    // Update accuracy in pill
+    const aiPill = document.querySelector('[data-t="pillAI"]');
+    if(aiPill) aiPill.textContent = `AI Model: ${data.ai_accuracy}% Acc`;
+
+    // Fetch Price
+    await updateBestPrice();
+    // Fetch Batch Risks
+    await updateBatchRisks();
+
+  } catch (err) {
+    console.error("Dashboard init error:", err);
+    // Fallback to static if server is down
+    countUp(document.getElementById('stat1'),2);
+    countUp(document.getElementById('stat2'),1);
+    document.getElementById('stat3').textContent = '₹180/qtl';
+    document.getElementById('stat4').textContent = 'NORMAL';
+  }
+}
+
+async function updateBestPrice() {
+  try {
+    const res = await fetch(`${API_BASE}/price-predict?crop=Tomato`);
+    const data = await res.json();
+    const s3 = document.getElementById('stat3');
+    countUp(s3, Math.round(data.predicted_price), '₹', '/qtl');
+    setTimeout(() => { document.getElementById('priceFill').style.width = '75%'; }, 200);
+    
+    // Also update header pill
+    const pricePill = document.querySelector('[data-t="pillPrice"]');
+    if(pricePill) pricePill.textContent = `₹${Math.round(data.predicted_price)} Best Price Today`;
+  } catch (e) { console.error(e); }
+}
+
+async function updateBatchRisks() {
+  for (let b of batches) {
+    try {
+      const res = await fetch(`${API_BASE}/batch-risk`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          temperature: parseFloat(b.temp),
+          humidity: parseFloat(b.hum),
+          storage_days: b.days
+        })
+      });
+      const data = await res.json();
+      b.risk = Math.round(data.spoilage_risk_percentage);
+      b.riskLevel = b.risk > 70 ? 'high' : b.risk > 40 ? 'med' : 'low';
+      
+      // Update Alert Banner if it's the high risk batch
+      if(b.id === '#AF-290') {
+         const banner = document.querySelector('[data-t="alertBanner"]');
+         if(banner) banner.textContent = `Batch ${b.id} has ${b.risk}% spoilage risk · Consider early dispatch`;
+      }
+    } catch (e) { console.error(e); }
+  }
+  renderProduce();
 }
 
 /* ══════ WAREHOUSE DATA & RENDER ══════ */
@@ -505,16 +566,19 @@ function renderForecast(){
 }
 
 /* ══════ RUN SIMULATION ══════ */
-function runSimulation(){
+async function runSimulation(){
   const cards=document.querySelectorAll('.stat-card,.wh-card,.batch-card');
   cards.forEach(c=>{c.style.transition='background .15s';c.style.background='var(--green-light)';});
   setTimeout(()=>{cards.forEach(c=>{c.style.background='var(--card-bg)';});},300);
-  setTimeout(()=>{
-    batches[0].risk=Math.floor(Math.random()*40)+60;
-    batches[1].risk=Math.floor(Math.random()*25)+5;
-    renderProduce();
-  },500);
+  
+  // Re-fetch everything
+  await initStats();
 }
+
+/* ══════ INIT ══════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  initStats();renderWarehouses();renderProduce();renderForecast();
+});
 
 /* ══════ INIT ══════ */
 document.addEventListener('DOMContentLoaded',()=>{
