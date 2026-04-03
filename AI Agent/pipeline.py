@@ -1,5 +1,5 @@
-from ml_engine import predict_batch
-from ai_agent import ai_decision_from_ml
+from ai_agent.ml_engine import predict_batch
+from ai_agent.ai_agent import ai_decision_from_ml
 
 
 def analyze_batch(temp, humidity, days, produce):
