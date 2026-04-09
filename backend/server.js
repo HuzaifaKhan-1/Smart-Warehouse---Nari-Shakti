@@ -524,11 +524,24 @@ app.post('/api/farmer-chat', async (req, res) => {
     // --- Grounding Context: Fetch live data to give REAL answers ---
     let extraContext = "";
     try {
-        // 1. Get live weather context
-        const weatherResp = await axios.get(`http://127.0.0.1:${PORT}/api/weather`, { timeout: 1000 }).catch(() => null);
-        if (weatherResp && weatherResp.data) {
-            const w = weatherResp.data;
-            extraContext += `LIVE WEATHER in ${w.city}: ${w.temp}°C, ${w.description}, Humidity: ${w.humidity}%, Rain info: ${w.rain}mm. `;
+        // 1. Get live weather context (Sangli, Nashik, Pune)
+        const fetchWeather = async (lat, lon, cityName) => {
+            try {
+                const res = await axios.get(`http://127.0.0.1:${PORT}/api/weather?lat=${lat}&lon=${lon}`, { timeout: 1500 });
+                if (res && res.data) return `${cityName}: ${res.data.temp}°C, ${res.data.description}, Rain: ${res.data.rain || 0}mm`;
+            } catch (err) { }
+            return null;
+        };
+
+        const weatherResults = await Promise.all([
+            fetchWeather(16.8527, 74.5815, 'Sangli'),
+            fetchWeather(20.0, 73.78, 'Nashik'),
+            fetchWeather(18.52, 73.85, 'Pune')
+        ]);
+        
+        const validWeather = weatherResults.filter(Boolean);
+        if (validWeather.length > 0) {
+            extraContext += `LIVE WEATHER: ${validWeather.join(' | ')}. `;
         }
 
         // 2. Get warehouse status
@@ -545,8 +558,18 @@ app.post('/api/farmer-chat', async (req, res) => {
             return null;
         });
         if (marketResp && marketResp.data && Array.isArray(marketResp.data)) {
-            // Take the first 10 items (more variety)
-            const prices = marketResp.data.slice(0, 10).map(r => `${r.crop} in ${r.city}: ₹${r.price}/${r.unit}`).join(', ');
+            // Prioritize relevant regional cities for this dashboard user (Sangli/Nashik/Pune)
+            const preferredCities = ['Nashik', 'Pune', 'Sangli', 'Mumbai', 'Kolhapur'];
+            let sortedData = marketResp.data.sort((a, b) => {
+                const aPref = preferredCities.includes(a.city) ? 1 : 0;
+                const bPref = preferredCities.includes(b.city) ? 1 : 0;
+                return bPref - aPref; // Put preferred cities first
+            });
+            
+            // Take top 40 results to give a much better statewide view, ensuring local hubs are first
+            const prices = sortedData.filter((val, i, arr) => arr.findIndex(t => t.crop === val.crop && t.city === val.city) === i) // unique
+                                     .slice(0, 40)
+                                     .map(r => `${r.crop} in ${r.city}: ₹${r.price}/${r.unit}`).join(', ');
             extraContext += `LIVE MARKET PRICES: ${prices}. `;
         }
     } catch (ctxErr) {
@@ -555,17 +578,18 @@ app.post('/api/farmer-chat', async (req, res) => {
 
     console.log(`[Chatbot Context]: ${extraContext}`);
 
-    const systemPrompt = `You are Kisan Mitra AI, an expert agriculture assistant for Indian farmers. 
+    const systemPrompt = `You are Kisan Mitra AI, an expert agriculture assistant for Indian farmers.
 Current System Context: ${extraContext || "Live data unavailable."}
 
 Rules:
 1. Answer in the SAME language the user uses (Hindi, Marathi, English).
-2. Use the LIVE MARKET PRICES, LIVE WEATHER, and WAREHOUSE STATUS provided in the context for factual answers.
-3. If they ask about prices, mention the specific commodity price from the text above.
-4. Keep answers simple, practical, and highly accurate for the Indian agricultural context.`;
+2. Answer the user's specific question directly and concisely. Do ONLY what the user asks.
+3. You have live market prices, live weather (Sangli, Nashik, Pune), and Nashik Central Hub warehouse status. USE this data.
+4. If a user asks for weather outside Sangli/Nashik/Pune, politely say we are currently tracking only these core AgriFresh hubs.
+5. If the user asks for a price currently missing in the LIVE MARKET PRICES context, politely state that you only have current pricing for the items listed in the system. Do NOT makeup prices.`;
 
     try {
-        const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
             contents: [
                 {
                     parts: [
@@ -579,13 +603,15 @@ Rules:
 
         if (response.data && response.data.candidates && response.data.candidates[0].content && response.data.candidates[0].content.parts[0].text) {
             let aiText = response.data.candidates[0].content.parts[0].text.trim();
+            console.log("[Chatbot Response Success]");
             res.json({ response: aiText });
         } else {
+            console.error("[Chatbot Error] Invalid response structure:", JSON.stringify(response.data));
             throw new Error("Invalid response structure from Gemini API");
         }
     } catch (err) {
         console.error("Gemini API error:", err.response ? JSON.stringify(err.response.data) : err.message);
-        res.status(500).json({ response: "I'm having trouble processing your query right now. Please try again." });
+        res.status(500).json({ response: "I'm having trouble processing your query right now. Please try again.", debug_error: err.response ? err.response.data : err.message });
     }
 });
 
@@ -782,7 +808,7 @@ app.get('/api/market/mandi-prices', async (req, res) => {
         // 3. Fetch real data from data.gov.in (Agmarknet Mandi Prices dataset)
         // Dataset ID: 9ef84268-d588-465a-a308-a864a43d0070 (Current Daily Prices of various commodities)
         const format = 'json';
-        const limit = 50; 
+        const limit = 1000; 
         const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${apiKey}&format=${format}&limit=${limit}&filters[state]=Maharashtra`;
 
         const response = await axios.get(url, { timeout: 8000 });
