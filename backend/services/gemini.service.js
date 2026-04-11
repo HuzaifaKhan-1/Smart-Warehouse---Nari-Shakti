@@ -14,54 +14,85 @@ let currentModelIndex = 0;
 const sendToGemini = async (chatHistory, extraContext = null) => {
     let lastError = null;
 
+    // Try each model in the fallback chain
     for (let m = 0; m < GEMINI_MODELS.length; m++) {
+        // Start from last known working model
         const modelIndex = (currentModelIndex + m) % GEMINI_MODELS.length;
         const modelName = GEMINI_MODELS[modelIndex];
-
+        
+        // Retry same model up to 2 times
         for (let attempt = 1; attempt <= 2; attempt++) {
             try {
-                const url = getGeminiURL(modelName);
-                console.log(`🤖 Model: ${modelName} | Attempt: ${attempt}`);
+                console.log(`🤖 Trying model: ${modelName} (attempt ${attempt})`);
 
+                const url = getGeminiURL(modelName);
+
+                // Inject extra context (weather/market) into last user message
                 let contents = [...chatHistory];
                 if (extraContext) {
                     const lastIndex = contents.length - 1;
                     const lastText = contents[lastIndex].parts[0].text;
                     contents[lastIndex] = {
                         role: "user",
-                        parts: [{ text: `${lastText}\n\n[Real-time Context]:\n${extraContext}` }],
+                        parts: [{ text: `${lastText}\n\n[Real-time Data]:\n${extraContext}` }],
                     };
                 }
 
-                const response = await axios.post(url, {
-                    system_instruction: { parts: [{ text: AGRIFRESH_SYSTEM_PROMPT }] },
+                const payload = {
+                    system_instruction: {
+                        parts: [{ text: AGRIFRESH_SYSTEM_PROMPT }],
+                    },
                     contents,
-                    generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
-                }, { 
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 1024,
+                    },
+                };
+
+                const response = await axios.post(url, payload, {
                     headers: { "Content-Type": "application/json" },
-                    timeout: 20000 
+                    timeout: 15000, // 15 second timeout
                 });
 
-                const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!reply) throw new Error("Empty AI response");
+                const reply =
+                    response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-                currentModelIndex = modelIndex;
+                if (!reply) throw new Error("Empty response from Gemini");
+
+                // ✅ Success — remember this working model for next time
+                if (currentModelIndex !== modelIndex) {
+                    console.log(`✅ Switched to working model: ${modelName}`);
+                    currentModelIndex = modelIndex;
+                }
+
                 return reply;
 
             } catch (error) {
+                const status = error.response?.status;
                 const errMsg = error.response?.data?.error?.message || error.message;
-                console.error(`❌ ${modelName} fail: ${errMsg}`);
+
+                console.error(`❌ Model ${modelName} attempt ${attempt} failed: [${status}] ${errMsg}`);
                 lastError = errMsg;
 
-                if (error.response?.status === 401 || error.response?.status === 403) {
-                    throw new Error("Invalid Gemini API Key");
+                // Don't retry on auth errors — API key is wrong
+                if (status === 400 || status === 401 || status === 403) {
+                    throw new Error(`Gemini Auth Error: ${errMsg}`);
                 }
 
-                if (attempt < 2) await new Promise(r => setTimeout(r, 1000));
+                // Wait before retrying same model
+                if (attempt < 2) {
+                    await new Promise((res) => setTimeout(res, 1500));
+                }
             }
         }
+
+        // Wait before trying next model
+        console.log(`⏭️ Moving to next fallback model...`);
+        await new Promise((res) => setTimeout(res, 1000));
     }
-    throw new Error(lastError || "All models failed");
+
+    // All models failed
+    throw new Error(`All Gemini models unavailable. Last error: ${lastError}`);
 };
 
 module.exports = { sendToGemini };

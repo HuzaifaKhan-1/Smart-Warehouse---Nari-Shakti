@@ -3,6 +3,7 @@
 const { sendToGemini } = require("../services/gemini.service");
 const { getWeatherByCity, formatWeatherForGemini } = require("../services/weather.service");
 const { getMarketPrices, formatMarketForGemini } = require("../services/market.service");
+const { getLocalAnswer } = require("../knowledge/farming.knowledge");
 
 // ─── Intent Detection Keywords ───────────────────────────────────────────────
 
@@ -58,18 +59,9 @@ const extractCommodity = (message) => {
     return null;
 };
 
-// ─── Friendly fallback messages when all models fail ─────────────────────────
-const FALLBACK_MESSAGES = [
-    "I'm experiencing high demand right now. Please try again in a moment! 🌾",
-    "Our AI assistant is temporarily busy. Please retry shortly. 🙏",
-    "Service is temporarily unavailable due to high traffic. Try again in 30 seconds!",
-];
-let fallbackIndex = 0;
-
 // ─── Main Chat Handler ────────────────────────────────────────────────────────
 
 const handleChat = async (req, res) => {
-    console.log("📨 Chat request received:", req.body.message);
     try {
         const { message, chatHistory = [], city: cityFromBody } = req.body;
 
@@ -88,7 +80,6 @@ const handleChat = async (req, res) => {
                 extraContext += formatWeatherForGemini(weatherData) + "\n\n";
             } catch (err) {
                 console.warn("Weather fetch failed:", err.message);
-                extraContext += `Weather data temporarily unavailable for ${city}.\n\n`;
             }
         }
 
@@ -101,7 +92,6 @@ const handleChat = async (req, res) => {
                     extraContext += formatMarketForGemini(prices, commodity) + "\n\n";
                 } catch (err) {
                     console.warn("Market fetch failed:", err.message);
-                    extraContext += `Market price data temporarily unavailable for ${commodity}.\n\n`;
                 }
             }
         }
@@ -112,27 +102,18 @@ const handleChat = async (req, res) => {
             { role: "user", parts: [{ text: message }] },
         ];
 
-        // Send to Gemini with fallback chain
-        let reply;
+        // ── Try Gemini first ──
+        let reply = null;
+        let source = "gemini";
+
         try {
             reply = await sendToGemini(updatedHistory, extraContext.trim() || null);
         } catch (geminiError) {
-            // If ALL models fail — return a friendly message instead of 500 error
-            console.error("All Gemini models failed:", geminiError.message);
-            reply = FALLBACK_MESSAGES[fallbackIndex % FALLBACK_MESSAGES.length];
-            fallbackIndex++;
+            console.warn("⚠️ Gemini unavailable. Using local knowledge base...");
 
-            return res.json({
-                role: "model",
-                parts: [{ text: reply }],
-                reply, // Fallback for old clients
-                chatHistory: updatedHistory,
-                meta: {
-                    usedWeatherAPI: isWeather,
-                    usedMarketAPI: isMarket,
-                    geminiStatus: "unavailable",
-                },
-            });
+            // ── Fallback to local knowledge base ──
+            reply = getLocalAnswer(message);
+            source = "local";
         }
 
         // Add model reply to history
@@ -141,16 +122,14 @@ const handleChat = async (req, res) => {
             { role: "model", parts: [{ text: reply }] },
         ];
 
-        console.log("✅ Reply successfully generated");
         res.json({
-            role: "model",
-            parts: [{ text: reply }],
-            reply, // Fallback for old clients
+            reply,
             chatHistory: newHistory,
             meta: {
                 usedWeatherAPI: isWeather,
                 usedMarketAPI: isMarket,
-                geminiStatus: "ok",
+                geminiStatus: source === "gemini" ? "ok" : "unavailable",
+                source, // "gemini" or "local"
             },
         });
 

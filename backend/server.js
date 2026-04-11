@@ -16,7 +16,7 @@ const Inventory = require('./models/Inventory');
 const ChatLog = require('./models/ChatLog');
 const User = require('./models/User');
 const Warehouse = require('./models/Warehouse');
-dotenv.config({ path: path.join(__dirname, '../env') });
+dotenv.config(); // Load environment variables from .env in the current directory
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -30,9 +30,9 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // Modular Routes
 // Modular Routes
 app.use("/api/chat", chatbotRoutes);
-app.use("/api/farmer-chat", chatbotRoutes); // Compatibility for frontend
+app.use("/api/chatbot", chatbotRoutes); // Compatibility for frontend
 app.use("/api/weather", weatherRoutes);
-app.use("/api/market-modular", marketRoutes);
+app.use("/api/market", marketRoutes);
 
 
 
@@ -79,6 +79,10 @@ app.post('/api/sensor-data', async (req, res) => {
 });
 
 // Health Check
+app.get("/", (req, res) => {
+    res.json({ status: "AgriFresh Chatbot API is running 🌾" });
+});
+
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'Online',
@@ -662,7 +666,13 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error("Server Error:", err.message);
+    res.status(500).json({ error: "Internal server error", details: err.message });
+});
+
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`✅ AgriFresh backend running on port ${PORT}`);
 });
 
