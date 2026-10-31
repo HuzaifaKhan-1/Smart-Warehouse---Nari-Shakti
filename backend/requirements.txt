@@ -1,0 +1,23 @@
+# Python dependencies for the AgriFresh FastAPI AI service
+# Generated from inspection of main.py, ml_service.py, farmer_ai_api.py,
+# ai/farmer_ai/ai_agent_farmer.py, and ai/farmer_ai/ml_engine_farmer.py
+
+# Web framework
+fastapi==0.128.0
+uvicorn[standard]==0.40.0
+
+# Data science / ML
+scikit-learn==1.6.1
+numpy==1.26.4
+pandas==2.2.1
+joblib==1.5.3
+
+# AI / LLM integration
+huggingface_hub==1.4.1
+
+# Data validation (FastAPI peer dependency — pinned for Pydantic v2)
+pydantic==2.12.5
+
+# Environment variable loading
+python-dotenv==1.2.1
+

@@ -4,7 +4,7 @@
   "description": "AgriFresh Smart Warehouse API",
   "main": "server.js",
   "scripts": {
-    "start": "concurrently \"node server.js\" \"uvicorn main:app --reload\"",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {
