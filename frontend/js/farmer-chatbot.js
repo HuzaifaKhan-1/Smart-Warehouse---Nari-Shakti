@@ -304,7 +304,8 @@
 
         try {
             // Task 1 & 2: Use absolute URL for backend on port 5000
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const _chatBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000' : '';
+            const response = await fetch(`${_chatBase}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

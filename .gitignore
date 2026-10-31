@@ -1,4 +1,4 @@
-# Environment variables
+# Environment variables — never commit this file
 .env
 .env.*
 
@@ -11,4 +11,8 @@ logs
 
 __pycache__/
 *.pyc
-.env
+
+# Python
+*.pyc
+__pycache__/
+venv/

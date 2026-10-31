@@ -1352,11 +1352,11 @@
     /* ═══ DATA ═══ */
     let WH = [];
     let RECS = [];
-    const API_BASE = "http://localhost:8000";
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000/api/python' : '/api/python';
 
     async function loadAIWarehouses() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/warehouses");
+        const response = await fetch(`${API_BASE}/warehouses`);
         const data = await response.json();
         WH = data;
 
